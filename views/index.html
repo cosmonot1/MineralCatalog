@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <title>Mineral Catalog</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="author" content="Zachary Shute">
+  <meta name="description" content="Mineral Cataloging application.">
+
+  <script>
+
+    WebFontConfig = {
+      google: {
+        families: [
+          'Roboto:400,500'
+        ]
+      }
+    };
+
+    (d => {
+      const wf = d.createElement( 'script' ), s = d.scripts[ 0 ];
+      wf.src = 'https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js';
+      wf.async = true;
+      s.parentNode.insertBefore( wf, s );
+    })( document );
+
+  </script>
+
+  <style is="custom-style">
+
+    body {
+
+      height: 100vh;
+      width: 100vw;
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
+
+      /* Global Defaults */
+      color: rgb(0,0,0);
+      font-size: 12px;
+      font-family: Roboto, sans-serif;
+      letter-spacing: 0.12px;
+
+    }
+
+  </style>
+
+  <style>
+
+    [spinner] {
+      z-index: -10;
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+    }
+
+    [spinner] span {
+      --size: 40px;
+      box-sizing: border-box;
+      border-radius: 50%;
+      width: var(--size);
+      height: var(--size);
+      border: calc(var(--size) / 8) solid rgba(35, 35, 44, 0.2);
+      border-top-color: rgb(35, 35, 44);
+      animation: spin 1s infinite linear;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+  </style>
+
+</head>
+
+<body>
+<div spinner><span></span></div>
+<h1>YAY TESTING SHIT</h1>
+<div><span>booty gang</span></div>
+</body>
+
+</html>

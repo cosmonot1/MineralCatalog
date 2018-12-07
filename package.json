@@ -4,7 +4,10 @@
   "description": "Basic mineral cataloging app.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "docker-build": "docker build --compress --squash --file=Dockerfile --tag mineralcatalog .",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "ensure-catalog-number": "node ./services/ensure-catalog-number.js",
+    "start": "npm run ensure-catalog-number & node ./index.js"
   },
   "repository": {
     "type": "git",
@@ -19,13 +22,18 @@
   "dependencies": {
     "async-exit-hook": "^2.0.1",
     "body-parser": "^1.18.3",
+    "compression": "^1.7.3",
     "cookie-parser": "^1.4.3",
     "deep-equal": "^1.0.1",
+    "deepmerge": "^3.0.0",
     "express": "^4.16.4",
     "flat": "^4.1.0",
     "jsonwebtoken": "^8.4.0",
+    "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "mongodb": "^3.1.10",
-    "object-path": "^0.11.4"
+    "mongojs": "^2.6.0",
+    "object-path": "^0.11.4",
+    "uuid": "^3.3.2"
   }
 }

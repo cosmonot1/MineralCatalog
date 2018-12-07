@@ -1,0 +1,59 @@
+kind: Deployment
+apiVersion: apps/v1beta1
+metadata:
+  name: app-qa
+  namespace: default
+  labels:
+    app: app-qa
+spec:
+  replicas: 0
+  template:
+    metadata:
+      labels:
+        app: app-qa
+    spec:
+      volumes:
+        - name: configs
+          configMap:
+            name: app-qa
+      containers:
+        - name: app-qa
+          image: gcr.io/simple-emotion-development/app-qa:v2.3.0-27
+          resources:
+            requests:
+              cpu: 200m
+              memory: 500Mi
+            limits:
+              cpu: 200m
+              memory: 500Mi
+          ports:
+            - containerPort: 80
+              protocol: TCP
+          volumeMounts:
+            - name: configs
+              mountPath: /configs
+          env:
+            - name: app_qa_configfile
+              value: /configs/app-qa.json
+            - name: GOOGLE_APPLICATION_CREDENTIALS
+              value: /configs/gcloud.json
+          readinessProbe:
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 1
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP
+          livenessProbe:
+            initialDelaySeconds: 20
+            periodSeconds: 5
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 1
+            httpGet:
+              path: /
+              port: 80
+              scheme: HTTP

@@ -26,12 +26,9 @@
     "secret": "()*&YDF()&*#$N"
   },
   "services": {
-    "gcloud": {
-      "projectId": "simple-emotion-development"
-    },
     "db": {
       "mongodb": {
-        "uri": "localhost/app-qa"
+        "uri": "localhost/mineralcatalog"
       }
     }
   }

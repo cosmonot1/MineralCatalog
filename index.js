@@ -1,6 +1,6 @@
 'use strict';
 
-const pkg = require( 'pkg' );
+const pkg = require( './package' );
 const _Config = require( './utils/config' )( pkg.name );
 const fs = require( 'fs' );
 const path = require( 'path' );
@@ -8,10 +8,12 @@ const objectPath = require( 'object-path' );
 const express = require( 'express' );
 const exitHook = require( 'async-exit-hook' );
 
+const Config = _Config.current;
+
 if ( require.main === module ) {
   Server().start( err => {
     if ( err ) {
-      console.log( err );
+      console.error( err );
       process.kill( process.pid );
     }
   } );
@@ -20,7 +22,8 @@ if ( require.main === module ) {
 module.exports = Server;
 
 function Server( config ) {
-  if ( !this || !this.constructor !== Server ) {
+
+  if ( !this || this.constructor !== Server ) {
     return new Server( config );
   }
 
@@ -49,9 +52,10 @@ function Server( config ) {
     // Initialize http(s) server
     // Currently only doing basic HTTP server. Will be expanded to HTTPS server if needed
     const app = express();
+
     // if ( Config().server.protocol === 'https' ) {
     //
-    //   Log.log( '[!] Initializing HTTPS server.' );
+    //   console.log( '[!] Initializing HTTPS server.' );
     //
     //   server = require( 'https' ).createServer(
     //     {
@@ -64,12 +68,12 @@ function Server( config ) {
     //
     // }
     // else {
-    Log.log( '[!] Initializing HTTP server.' );
+    console.log( '[!] Initializing HTTP server.' );
     server = require( 'http' ).createServer( app );
     // }
 
     // Configure Express
-    Log.log( '[!] Configuring HTTP server.' );
+    console.log( '[!] Configuring HTTP server.' );
 
     app.disable( 'x-powered-by' );
     app.set( 'env', 'production' );
@@ -84,12 +88,12 @@ function Server( config ) {
     app.use( require( './middleware/cache' ).disallow );
 
     //TODO: UPDATE THESE DIRECTORIES
-    const static1 = path.resolve( __dirname, Config().build ? 'build' : '', 'views', 'src' );
-    const static2 = path.resolve( __dirname, 'views', 'static' );
+    const static1 = path.resolve( __dirname, '..', 'views' );
+    // const static2 = path.resolve( __dirname, 'views', 'static' );
 
     // Static
     app.use( express.static( static1, { index: false } ) );
-    app.use( express.static( static2, { index: false } ) );
+    // app.use( express.static( static2, { index: false } ) );
 
     // Headers
     app.use( require( './middleware/cookie-parser' ).express() );
@@ -99,11 +103,11 @@ function Server( config ) {
     // app.use( require( './middleware/session' ).express() );
 
     // Set up route handlers
-    Log.log( '[!] Generating route handlers.' );
+    console.log( '[!] Generating route handlers.' );
     app.use( '/', require( './routes' )() );
 
     // Start the server
-    Log.log( '[!] Starting web server.' );
+    console.log( '[!] Starting web server.' );
 
     const port = Config().server[ Config().server.protocol ].port;
 
@@ -113,10 +117,10 @@ function Server( config ) {
         return done( err );
       }
 
-      Log.log( `[!] Web server listening on port ${port}.` );
+      console.log( `[!] Web server listening on port ${port}.` );
 
       // Start services
-      Log.log( '[!] Starting services.' );
+      console.log( '[!] Starting services.' );
 
       // Check if we need to start a redirect server for HTTP to HTTPS
       if ( Config().server.protocol === 'https' && Config().server.http.redirect ) {

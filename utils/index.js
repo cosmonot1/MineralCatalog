@@ -3,6 +3,8 @@
 const fs = require( 'fs' );
 const path = require( 'path' );
 const objectpath = require( 'object-path' );
+const util = require( 'util' );
+const p = util.promisify;
 
 module.exports = {
   array,
@@ -15,7 +17,9 @@ module.exports = {
   isFunction: isFunction,
   regexEscape,
   arrayMergePreserveSource,
+  promisify,
   round,
+  trace,
   unflatten,
   weightedAvg
 };
@@ -121,6 +125,35 @@ function arrayMergePreserveSource( dest, source, options ) {
   return source;
 }
 
+function promisify( fn ) {
+
+  fn = p( fn );
+
+  return async function () {
+
+    const stack = new Error().stack.split( '\n' ).slice( 2 ).join( '\n' );
+
+    try {
+      return await fn( ...arguments );
+    }
+    catch ( err ) {
+
+      if ( err.err && err.err instanceof Error ) {
+        err.err.stack = `${err.err.stack}\n${stack}`;
+      }
+
+      else if ( err instanceof Error ) {
+        err.stack = `${err.stack}\n---\n${stack}`;
+      }
+
+      throw err;
+
+    }
+
+  };
+
+}
+
 function round( n, z = 100 ) {
 
   if ( typeof n === 'number' ) {
@@ -144,6 +177,29 @@ function round( n, z = 100 ) {
   }
 
   return n;
+
+}
+
+function trace( fn ) {
+
+  var err = new Error( 'If you are seeing this error message, something is broken!' );
+  var tmp = [];
+  var filter = err.stack.split( '\n' ).slice( 2 );
+
+  return function () {
+
+    if ( !arguments[ 0 ] ) {
+      return fn.apply( null, arguments );
+    }
+
+    filter.forEach( tmp.push.bind( tmp ) );
+    arguments[ 0 ] = buildError( arguments[ 0 ] );
+    arguments[ 0 ].stack.reverse().forEach( tmp.unshift.bind( tmp ) );
+    arguments[ 0 ].stack = tmp;
+
+    fn.apply( null, arguments );
+
+  };
 
 }
 

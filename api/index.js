@@ -18,5 +18,6 @@ for ( let i = 0; i <= VERSION.major; ++i ) {
     module.exports[ `v${i}` ] = require( `./v${i}` );
   }
   catch ( err ) {
+    console.log( err );
   }
 }

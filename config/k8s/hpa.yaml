@@ -1,0 +1,15 @@
+kind: HorizontalPodAutoscaler
+apiVersion: autoscaling/v1
+metadata:
+  name: app-qa
+  namespace: default
+  labels:
+    app: app-qa
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1beta1
+    kind: Deployment
+    name: app-qa
+  minReplicas: 1
+  maxReplicas: 20
+  targetCPUUtilizationPercentage: 50

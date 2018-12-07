@@ -2,7 +2,14 @@
 
 const Specimen = require( '../../models/v0/specimen' );
 
-module.exports = {};
+module.exports = {
+  add(){},
+  get(){},
+  list(){},
+  remove(){},
+  update(){},
+
+};
 
 function fmtReqRes( fn ) {
   return async req => {
