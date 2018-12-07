@@ -1,0 +1,27 @@
+{
+  "name": "mineralcatalog",
+  "version": "0.0.1",
+  "description": "Basic mineral cataloging app.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cosmonot1/MineralCatalog.git"
+  },
+  "author": "Zach Shute <cosmonot1@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cosmonot1/MineralCatalog/issues"
+  },
+  "homepage": "https://github.com/cosmonot1/MineralCatalog#readme",
+  "dependencies": {
+    "async-exit-hook": "^2.0.1",
+    "body-parser": "^1.18.3",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.16.4",
+    "jsonwebtoken": "^8.4.0",
+    "object-path": "^0.11.4"
+  }
+}

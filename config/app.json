@@ -1,0 +1,38 @@
+{
+  "verbose": true,
+  "build": false,
+  "server": {
+    "hostname": "localhost",
+    "protocol": "http",
+    "http": {
+      "redirect": false,
+      "port": 80
+    },
+    "https": {
+      "port": 443,
+      "key": "certificates/localhost.key",
+      "crt": "certificates/localhost.crt",
+      "ca": "certificates/DigiCertCA.crt"
+    },
+    "origin": "http://localhost",
+    "body": {
+      "size": {
+        "limit": "1kb"
+      }
+    }
+  },
+  "session": {
+    "lifetime": 86400,
+    "secret": "()*&YDF()&*#$N"
+  },
+  "services": {
+    "gcloud": {
+      "projectId": "simple-emotion-development"
+    },
+    "db": {
+      "mongodb": {
+        "uri": "localhost/app-qa"
+      }
+    }
+  }
+}
