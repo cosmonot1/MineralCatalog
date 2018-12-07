@@ -1,4 +1,6 @@
 'use strict';
 
-//TODO: export APIS
-module.exports = {};
+module.exports = {
+  specimen: require( './specimen' ),
+  user: require( './user' )
+};

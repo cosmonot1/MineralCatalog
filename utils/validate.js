@@ -1,6 +1,6 @@
 'use strict';
 
-const Utils = require( '@simple-emotion/utils' );
+const Utils = require( './index' );
 const { promisify: p } = require( 'util' );
 const equal = require( 'deep-equal' );
 const moment = require( 'moment' );
