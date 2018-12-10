@@ -89,11 +89,12 @@ function Server( config ) {
 
     //TODO: UPDATE THESE DIRECTORIES
     const static1 = path.resolve( __dirname, 'views','build' );
+    const static2 = path.resolve( __dirname, 'views','utils' );
     // const static2 = path.resolve( __dirname, 'views', 'static' );
 
     // Static
     app.use( express.static( static1, { index: false } ) );
-    // app.use( express.static( static2, { index: false } ) );
+    app.use( express.static( static2, { index: false } ) );
 
     // Headers
     app.use( require( './middleware/cookie-parser' ).express() );

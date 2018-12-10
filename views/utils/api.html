@@ -1,0 +1,121 @@
+<link rel="import" href="./cookie.html" async>
+
+<script>
+
+  window.API = ( function API() {
+
+    // Detect browser support for CORS
+    if ( !( 'withCredentials' in new XMLHttpRequest() ) && typeof XDomainRequest === 'undefined' ) {
+      throw new Error( 'CORS not supported by browser.' );
+    }
+
+    const that = Object.create( API.prototype );
+
+    that.version = '0.0.1';
+
+    const isRelativeUrl = url => {
+      try {
+        new URL( url );
+      }
+      catch ( err ) {
+        return true;
+      }
+    };
+
+    const ajax = ( method, url, data, done ) => {
+
+      const cookie = window.getCookie( 'access_token' );
+
+      const token = cookie && window.jwt_decode( cookie );
+
+      if ( method.toUpperCase() === 'GET' ) {
+        url += QueryString.encode( window.flatten( data || {} ) );
+      }
+
+      const xhr = new XMLHttpRequest();
+
+      xhr.open( method, url, true );
+      xhr.responseType = 'json';
+
+      if ( isRelativeUrl( url ) ) {
+        xhr.setRequestHeader( 'Content-Type', 'application/json;charset=UTF-8' );
+        xhr.setRequestHeader( 'Authorization', 'Bearer ' + cookie );
+      }
+
+      xhr.onload = () => {
+
+        if ( !xhr.response ) {
+          return done( new Error( 'Received invalid response from server.' ), null );
+        }
+
+        if ( !( xhr.response.err && ( xhr.response.err.code === 401 ) && token ) ) {
+          return done( xhr.response.err || null, xhr.response.err ? null : xhr.response );
+        }
+
+        SimpleToast.toast( 'Session has expired.' );
+
+        const query = {
+          redirect: window.location.href
+        };
+
+        //TODO: REDIRECT on 401
+        //
+        // if ( token.session.provider === 'simple-emotion' ) {
+        //   return window.location.href = '/login' + QueryString.encode( query );
+        // }
+        //
+        // if ( token.session.provider === 'google' ) {
+        //   return window.location.href = '/api/authorize/google' + QueryString.encode( query );
+        // }
+        //
+        // if ( token.session.provider === 'talkdesk' ) {
+        //
+        //   query.talkdesk_installation_id = token.session.talkdesk_installation_id;
+        //   query.talkdesk_user_id = token.session.talkdesk_user_id;
+        //
+        //   return window.location.href = '/' + QueryString.encode( query );
+        //
+        // }
+
+      };
+
+      if ( method.toUpperCase() === 'GET' ) {
+        return xhr.send();
+      }
+
+      xhr.send( JSON.stringify( data || {} ) );
+
+    };
+
+    that.user = {
+
+      authorize: ( data, done ) =>
+        ajax( 'POST', '/api/v0/authorize' ),
+
+    };
+
+    that.specimen = {
+
+      // TODO: Make this work the way it should with a GET request
+      add: ( data, done ) =>
+        ajax( 'POST', '/api/v0/specimen', data, done ),
+
+      get: ( data, done ) =>
+        ajax( 'GET', `/api/v0/specimen/${data.specimen._id}`, data, done ),
+
+      list: ( data, done ) =>
+        ajax( 'GET', '/api/v0/specimen', data, done ),
+
+      remove: ( data, done ) =>
+        ajax( 'DELETE', '/api/v0/specimen', data, done ),
+
+      update: ( data, done ) =>
+        ajax( 'PATCH', '/api/v0/specimen', data, done )
+
+    };
+
+    return that;
+
+  } )();
+
+</script>
