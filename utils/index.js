@@ -5,9 +5,11 @@ const path = require( 'path' );
 const objectpath = require( 'object-path' );
 const util = require( 'util' );
 const p = util.promisify;
+const deepmerge = require( 'deepmerge' );
 
 module.exports = {
   array,
+  buildError,
   capitalize,
   clone,
   inArray,
@@ -26,6 +28,42 @@ module.exports = {
 
 function array( v ) {
   return v === undefined ? [] : Array.isArray( v ) ? v : [ v ];
+}
+
+function buildError( err ) {
+
+  if ( err instanceof Error ) {
+    return {
+      message: err.message,
+      stack: err.stack.split( '\n' )
+    };
+  }
+
+  if ( typeof err !== 'object' || Array.isArray( err ) ) {
+
+    var err2 = new Error( err );
+
+    var tmp2 = err2.stack.split( '\n' );
+    tmp2.splice( 1, 1 );
+
+    return { message: JSON.stringify( err ), stack: tmp2 };
+
+  }
+
+  if ( err.err ) {
+    var tmp = buildError( err.err );
+    return deepmerge( err, tmp, { arrayMerge: arrayMergePreserveSource } );
+  }
+
+  // If there error has been caught, traced, and returned through another API server elsewhere it won't have a .err or
+  // .stack
+  if ( err.message && !err.stack ) {
+    var tmp = buildError( new Error( err.message ) );
+    return deepmerge( err, tmp, { arrayMerge: arrayMergePreserveSource } );
+  }
+
+  return err;
+
 }
 
 function capitalize( a ) {

@@ -106,6 +106,7 @@ function Server( config ) {
     // Set up route handlers
     console.log( '[!] Generating route handlers.' );
     app.use( '/', require( './routes' )() );
+    app.use( require( './middleware/error-handler' )( console ) );
 
     // Start the server
     console.log( '[!] Starting web server.' );

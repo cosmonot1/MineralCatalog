@@ -26,8 +26,6 @@
 
       const cookie = window.getCookie( 'access_token' );
 
-      const token = cookie && window.jwt_decode( cookie );
-
       if ( method.toUpperCase() === 'GET' ) {
         url += QueryString.encode( window.flatten( data || {} ) );
       }
@@ -48,7 +46,7 @@
           return done( new Error( 'Received invalid response from server.' ), null );
         }
 
-        if ( !( xhr.response.err && ( xhr.response.err.code === 401 ) && token ) ) {
+        if ( !( xhr.response.err && ( xhr.response.err.code === 401 ) && cookie ) ) {
           return done( xhr.response.err || null, xhr.response.err ? null : xhr.response );
         }
 
@@ -90,7 +88,10 @@
     that.user = {
 
       authorize: ( data, done ) =>
-        ajax( 'POST', '/api/v0/authorize' ),
+        ajax( 'POST', '/api/v0/authorize', data, done ),
+
+      logout: ( data, done ) =>
+        ajax( 'POST', '/api/v0/user/logout', data, done ),
 
     };
 

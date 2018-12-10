@@ -23,6 +23,7 @@
   },
   "session": {
     "lifetime": 86400,
+    "login":"test-password",
     "secret": "()*&YDF()&*#$N"
   },
   "services": {

@@ -7,6 +7,7 @@ module.exports = function () {
   const router = require( 'express' ).Router();
 
   router.route( '/authorize' ).post( API.v0.user.login );
+  router.route( '/user/logout' ).post( API.v0.user.logout );
 
   router.route( '/specimen' )
     .get( API.v0.specimen.list )

@@ -11,6 +11,11 @@ class Home extends React.Component {
   logout() {
     this.props.changeView( 'login' );
     this.state = { view: 'list' };
+    API.user.logout( {}, () => {
+      if ( err ) {
+        alert( 'Logout failed' );
+      }
+    } );
     // TODO: call logout route and clear cookie
   }
 
@@ -85,9 +90,9 @@ class LoginView extends React.Component {
   login() {
     const pw = this.state.password;
     this.setState( { password: '' } );
-    return this.props.changeView( 'home' );
+
     //If successful change state
-    API.login( { password: pw }, ( err ) => {
+    API.user.authorize( { password: pw }, ( err ) => {
       if ( err ) {
         return alert( 'Incorrect password!' );
       }
