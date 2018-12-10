@@ -88,7 +88,7 @@ function Server( config ) {
     app.use( require( './middleware/cache' ).disallow );
 
     //TODO: UPDATE THESE DIRECTORIES
-    const static1 = path.resolve( __dirname, '..', 'views' );
+    const static1 = path.resolve( __dirname, 'views','build' );
     // const static2 = path.resolve( __dirname, 'views', 'static' );
 
     // Static
