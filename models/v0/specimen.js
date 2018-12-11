@@ -130,10 +130,13 @@ async function list( data ) {
             },
             'timestamps.created': {
               value: [ -1, 1 ]
+            },
+            catalog_number: {
+              value: [ -1, 1 ]
             }
           },
           default: {
-            species: 1
+            catalog_number: 1
           }
         },
         offset: {

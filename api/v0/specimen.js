@@ -4,9 +4,14 @@ const flat = require( 'flat' );
 const Specimen = require( '../../models/v0/specimen' );
 const { callbackify: c, formatBody: fmtBody } = require( '../../utils/api' );
 const moment = require( 'moment' );
+const archiver = require( 'archiver' );
+const json2csv = require( 'json-2-csv' ).json2csvPromisified;
+
+const EXPORT_PAGE_STEP = 100;
 
 module.exports = {
   add: c( fmtBody( fmtReqRes( add ) ) ),
+  download: c( fmtBody( download ) ),
   get: c( fmtBody( fmtReqRes( Specimen.get ) ) ),
   list: c( fmtBody( fmtReqRes( list ) ) ),
   remove: c( fmtBody( fmtReqRes( Specimen.remove ) ) ),
@@ -41,6 +46,32 @@ async function add( data ) {
   };
 
   return await Specimen.add( data );
+}
+
+async function download( req, res ) {
+  res.status( 200 );
+  res.attachment( `specimen_export_${Date.now()}.zip` );
+  res.set( 'Content-Encoding', 'chunked' );
+
+  const archive = archiver( 'zip', { store: true } );
+
+  // Some error handling
+  archive.on( 'error', err => {
+    console.log( err );
+    req.destroy();
+  } );
+
+  archive.on( 'end', () => res.end() );
+
+  // Stream the archive to the client
+  archive.pipe( res );
+
+  __buildArchive( archive, req.body.specimen, req.body.type )
+    .catch( err => {
+      console.log( err );
+      req.destroy();
+    } )
+    .finally( () => archive.finalize() );
 }
 
 async function list( data ) {
