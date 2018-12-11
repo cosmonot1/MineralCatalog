@@ -50,7 +50,7 @@ async function add( data ) {
     }
   );
 
-  const result = await p( collection.insert )( data ).catch( err => {
+  const result = await p( collection.insert )( specimen ).catch( err => {
 
     // Check for duplicate key error
     if ( err.message && err.message.startsWith( 'E11000' ) ) {
