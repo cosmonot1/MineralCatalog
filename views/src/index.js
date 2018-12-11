@@ -44,7 +44,78 @@ class Specimen extends React.Component {
   render() {
     return (
       <div>
-        <span>catalog id: {this.props.spec.catalog_number}</span>
+        <div style={{ padding: 8, display: 'inline-block' }}>
+          <div>Catalog: {this.props.spec.catalog_number}</div>
+          <div>Main Photo</div>
+          <button>Edit</button>
+        </div>
+        <table style={{ padding: 8, display: 'inline-block' }}>
+          <tr>
+            <th style={{ 'padding-right': 8 }}>Physical Dimensions</th>
+            <th style={{ 'padding-right': 8 }}>Species</th>
+            <th style={{ 'padding-right': 8 }}>Discovery Location</th>
+            <th style={{ 'padding-right': 8 }}>Analysis</th>
+            <th style={{ 'padding-right': 8 }}>Acquired</th>
+            <th style={{ 'padding-right': 8 }}>States</th>
+            <th style={{ 'padding-right': 8 }}>Storage Location</th>
+          </tr>
+          <tr>
+            <td style={{ 'padding-right': 8 }}>Weight: {this.props.spec.physical_dimensions.weight} (g)</td>
+            <td style={{ 'padding-right': 8 }}>Main: {this.props.spec.species.main}</td>
+            <td style={{ 'padding-right': 8 }}>Stope: {this.props.spec.discovery_location.stope}</td>
+            <td style={{ 'padding-right': 8 }}>Analyzed: {this.props.spec.analysis.analyzed}</td>
+            <td style={{ 'padding-right': 8 }}>Date: {this.props.spec.acquired.date}</td>
+            <td style={{ 'padding-right': 8 }}>Old Label: {this.props.spec.states.old_label}</td>
+            <td style={{ 'padding-right': 8 }}>Exhibit: {this.props.spec.storage_location.exhibit}</td>
+          </tr>
+          <tr>
+            <td style={{ 'padding-right': 8 }}>Length: {this.props.spec.physical_dimensions.length} (cm)</td>
+            <td
+              style={{ 'padding-right': 8 }}>Additional: {this.props.spec.species.additional.reduce( ( acc, val ) => acc + ' ' + val, '' )}</td>
+            <td style={{ 'padding-right': 8 }}>Level: {this.props.spec.discovery_location.level}</td>
+            <td style={{ 'padding-right': 8 }}>By: {this.props.spec.analysis.by}</td>
+            <td style={{ 'padding-right': 8 }}>Paid: {this.props.spec.acquired.paid} ($)</td>
+            <td style={{ 'padding-right': 8 }}>Repair: {this.props.spec.states.repair}</td>
+            <td style={{ 'padding-right': 8 }}>Inside: {this.props.spec.storage_location.inside}</td>
+          </tr>
+          <tr>
+            <td style={{ 'padding-right': 8 }}>Width: {this.props.spec.physical_dimensions.width} (cm)</td>
+            <td style={{ 'padding-right': 8 }}></td>
+            <td style={{ 'padding-right': 8 }}>Mine: {this.props.spec.discovery_location.mine}</td>
+            <td style={{ 'padding-right': 8 }}>Method: {this.props.spec.analysis.method}</td>
+            <td style={{ 'padding-right': 8 }}>From: {this.props.spec.acquired.from}</td>
+            <td style={{ 'padding-right': 8 }}>Story: {this.props.spec.states.story}</td>
+            <td style={{ 'padding-right': 8 }}>Outside: {this.props.spec.storage_location.outside}</td>
+          </tr>
+          <tr>
+            <td style={{ 'padding-right': 8 }}>Height: {this.props.spec.physical_dimensions.height} (cm)</td>
+            <td style={{ 'padding-right': 8 }}></td>
+            <td style={{ 'padding-right': 8 }}>District: {this.props.spec.discovery_location.district}</td>
+            <td style={{ 'padding-right': 8 }}></td>
+            <td style={{ 'padding-right': 8 }}>Where: {this.props.spec.acquired.where}</td>
+            <td style={{ 'padding-right': 8 }}>Figured: {this.props.spec.states.figured}</td>
+            <td style={{ 'padding-right': 8 }}>Loan: {this.props.spec.storage_location.loan}</td>
+          </tr>
+          <tr>
+            <td style={{ 'padding-right': 8 }}>Main Crystal: {this.props.spec.physical_dimensions.main_crystal} (cm)
+            </td>
+            <td style={{ 'padding-right': 8 }}></td>
+            <td style={{ 'padding-right': 8 }}>State: {this.props.spec.discovery_location.state}</td>
+            <td style={{ 'padding-right': 8 }}></td>
+            <td style={{ 'padding-right': 8 }}></td>
+            <td style={{ 'padding-right': 8 }}></td>
+            <td style={{ 'padding-right': 8 }}>Details: {this.props.spec.storage_location.details}</td>
+          </tr>
+          <tr>
+            <td style={{ 'padding-right': 8 }}></td>
+            <td style={{ 'padding-right': 8 }}></td>
+            <td style={{ 'padding-right': 8 }}>Country: {this.props.spec.discovery_location.country}</td>
+            <td style={{ 'padding-right': 8 }}></td>
+            <td style={{ 'padding-right': 8 }}></td>
+            <td style={{ 'padding-right': 8 }}></td>
+            <td style={{ 'padding-right': 8 }}></td>
+          </tr>
+        </table>
       </div>
     );
   }
@@ -77,8 +148,8 @@ class Home extends React.Component {
   render() {
     return (
       <div>
-        <div>
-          <button type="button" onClick={this.goEdit.bind( this )}>Add</button>
+        <div style={{ padding: 8 }}>
+          <button style={{ 'padding-right': 8 }} type="button" onClick={this.goEdit.bind( this )}>Add</button>
           <button type="button" onClick={this.logout.bind( this )}>Logout</button>
         </div>
         <div>{this.state.view === 'list' ? <ListView goEdit={this.goEdit.bind( this )}/> :
@@ -377,53 +448,98 @@ class ListView extends React.Component {
   constructor( props ) {
     super( props );
     this.state = {
+      loading: false,
       specimens: [],
       page: 0,
-      pages: 0
-    }
+      pages: 0,
+      limit: 10
+    };
+    this.search();
   }
 
   search() {
-    API.specimen.list( { limit: 10 }, ( err, result ) => {
+    if ( this.state.loading ) {
+      return;
+    }
+
+    this.setState( { loading: true } );
+
+    API.specimen.list( { limit: this.state.limit, offset: this.state.page * this.state.limit }, ( err, result ) => {
+      this.setState( { loading: false } );
+
       if ( err ) {
         return alert( err.message );
       }
 
-      console.log( result );
       this.setState( {
-        specimens: result.specimens.map( s => <Specimen spec={s}/> ),
-        page: Math.floor( result.offset / result.limit ) + 1,
+        specimens: result.specimens.map( s => <Specimen key={s._id} spec={s}/> ),
+        page: Math.floor( result.offset / result.limit ),
         pages: Math.floor( result.total / result.limit )
       } );
 
-    } )
+    } );
   }
 
-  first() {}
+  first() {
+    this.setState( { page: 0 } );
+    setTimeout( this.search.bind( this ), 0 );
+  }
 
-  last() {}
+  last() {
+    this.setState( { page: this.state.pages } );
+    setTimeout( this.search.bind( this ), 0 );
+  }
 
-  next() {}
+  next() {
+    if ( this.state.page < this.state.pages ) {
+      this.setState( { page: this.state.page + 1 } );
+      setTimeout( this.search.bind( this ), 0 );
+    }
+  }
 
-  previous() {}
+  previous() {
+    if ( this.state.page > 0 ) {
+      this.setState( { page: this.state.page - 1 } );
+      setTimeout( this.search.bind( this ), 0 );
+    }
+  }
+
+  downloadJSON() {
+    this.download( 'json' )
+  }
+
+  downloadCSV() {
+    this.download( 'csv' )
+  }
+
+  download( type ) {
+    //TODO: Query
+    API.specimen.download( { type }, ( err, result ) => {
+      if ( err ) {
+        return alert( err.message );
+      }
+    } );
+  }
 
   render() {
     return (
       <div>
         {/*TODO: SEARCH CRITERIA*/}
-        <button type="button" onClick={this.search.bind( this )}>Search</button>
-        {this.specimens}
-        <div>
-          <button type="button" onClick={this.first.bind( this )}>&lt&lt</button>
-          <button type="button" onClick={this.previous.bind( this )}>&lt</button>
-          <span>{this.state.page + 1} of {this.state.pages + 1}</span>
-          <button type="button" onClick={this.next.bind( this )}>&gt</button>
-          <button type="button" onClick={this.last.bind( this )}>&gt&gt</button>
+        <div style={{ padding: 8 }}>
+          <button type="button" onClick={this.search.bind( this )}>Search</button>
         </div>
-        {/*<button type="button" onClick={this.props.goEdit}>Edit</button>*/}
-        {/*<input type="text" name="Note Text" value={this.state.value} onChange={this.handleChange.bind( this )}/>*/}
-        {/*<button type="button" onClick={this.load.bind( this )}>Load</button>*/}
-        {/*<button type="button" onClick={this.save.bind( this )}>Save</button>*/}
+        <div style={{ padding: 8 }}>
+          {this.state.specimens}
+        </div>
+        <div style={{ padding: 8 }}>
+          <button style={{ 'margin-right': 8 }} type="button" onClick={this.first.bind( this )}>&lt;&lt;</button>
+          <button style={{ 'margin-right': 8 }} type="button" onClick={this.previous.bind( this )}>&lt;</button>
+          <span style={{ 'margin-right': 8 }}>{this.state.page + 1} of {this.state.pages + 1}</span>
+          <button style={{ 'margin-right': 8 }} type="button" onClick={this.next.bind( this )}>&gt;</button>
+          <button type="button" onClick={this.last.bind( this )}>&gt;&gt;</button>
+          <button type="button" onClick={this.downloadJSON.bind( this )}>Download JSON</button>
+          <button type="button" onClick={this.downloadCSV.bind( this )}>Download CSV</button>
+        </div>
       </div>
     );
   }
@@ -458,7 +574,8 @@ class LoginView extends React.Component {
   render() {
     return (
       <div>
-        <input type="text" name="Password" value={this.state.password} onChange={this.handleChange.bind( this )}/>
+        <input style={{ 'padding-right': 8 }} type="text" name="Password" value={this.state.password}
+               onChange={this.handleChange.bind( this )}/>
         <button type="button" onClick={this.login.bind( this )}>Login</button>
       </div>
     )
@@ -479,7 +596,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <h1>Mineral Catalog</h1>
+        <h1 style={{ padding: 8 }}>Mineral Catalog</h1>
         <div>{this.state.view === 'login' ? <LoginView changeView={this.changeView}/> :
           <Home changeView={this.changeView}/>}</div>
       </div>
