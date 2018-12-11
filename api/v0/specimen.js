@@ -8,19 +8,19 @@ const moment = require( 'moment' );
 module.exports = {
   add: c( fmtBody( fmtReqRes( add ) ) ),
   get: c( fmtBody( fmtReqRes( Specimen.get ) ) ),
-  list: c( fmtBody( fmtReqRes( Specimen.list ) ) ),
+  list: c( fmtBody( fmtReqRes( list ) ) ),
   remove: c( fmtBody( fmtReqRes( Specimen.remove ) ) ),
   update: c( fmtBody( fmtReqRes( Specimen.update ) ) )
 
 };
 
 async function add( data ) {
-  data.specimen = flat.unflatten( data.specimen );
 
+  data.specimen = flat.unflatten( data.specimen );
   data.specimen.species.additional = data.specimen.species.additional.split( ' ' );
 
   try {
-    const date = moment( data.specimen.acquired.date  );
+    const date = moment( data.specimen.acquired.date );
     if ( !date.isValid() ) {
       throw new Error( 'Bad date' );
     }
@@ -43,6 +43,44 @@ async function add( data ) {
   return await Specimen.add( data );
 }
 
+async function list( data ) {
+
+  if ( data.offset && typeof data.offset === 'string' ) {
+    data.offset = parseInt( data.offset );
+  }
+
+  if ( data.limit && typeof data.limit === 'string' ) {
+    data.limit = parseInt( data.limit );
+  }
+
+  if ( data.specimen.physical_dimensions && data.specimen.physical_dimensions.weight && typeof data.specimen.physical_dimensions.weight === 'string' ) {
+    data.specimen.physical_dimensions.weight = parseInt( data.specimen.physical_dimensions.weight );
+  }
+
+  if ( data.specimen.physical_dimensions && data.specimen.physical_dimensions.length && typeof data.specimen.physical_dimensions.length === 'string' ) {
+    data.specimen.physical_dimensions.length = parseInt( data.specimen.physical_dimensions.length );
+  }
+
+  if ( data.specimen.physical_dimensions && data.specimen.physical_dimensions.width && typeof data.specimen.physical_dimensions.width === 'string' ) {
+    data.specimen.physical_dimensions.width = parseInt( data.specimen.physical_dimensions.width );
+  }
+
+  if ( data.specimen.physical_dimensions && data.specimen.physical_dimensions.height && typeof data.specimen.physical_dimensions.height === 'string' ) {
+    data.specimen.physical_dimensions.height = parseInt( data.specimen.physical_dimensions.height );
+  }
+
+  if ( data.specimen.physical_dimensions && data.specimen.physical_dimensions.main_crystal && typeof data.specimen.physical_dimensions.main_crystal === 'string' ) {
+    data.specimen.physical_dimensions.main_crystal = parseInt( data.specimen.physical_dimensions.main_crystal );
+  }
+
+  if ( data.specimen.acquired && data.specimen.acquired.paid && typeof data.specimen.acquired.paid === 'string' ) {
+    data.specimen.acquired.paid = parseInt( data.specimen.acquired.paid );
+  }
+
+  return await Specimen.list( data );
+
+}
+
 function fmtReqRes( fn ) {
   return async req => {
 
@@ -50,9 +88,69 @@ function fmtReqRes( fn ) {
       req.body.specimen = {}
     }
 
-    req.body.specimen._id = req.params._id;
+    if ( req.params._id ) {
+      req.body.specimen._id = req.params._id;
+    }
 
     return await fn( req.body );
 
   };
+}
+
+async function __buildArchive( archive, query, type ) {
+  for ( let offset = 0; ; offset += EXPORT_PAGE_STEP ) {
+
+    const { specimens } = await Specimen.list(
+      {
+        specimen: query,
+        offset: offset,
+        limit: EXPORT_PAGE_STEP
+      }
+    );
+
+    if ( !specimens.total ) {
+      return;
+    }
+
+    const files = await __buildFiles( specimens, type );
+
+    for ( const i in specimens ) {
+
+      const timestamp = new Date( specimens[ i ].timestamps.created ).getTime();
+      const catalog_number = specimens[ i ].catalog_number;
+
+      await archive.append(
+        files[ i ],
+        {
+          name: `${catalog_number}.${type}`,
+          date: timestamp
+        }
+      );
+
+    }
+
+  }
+}
+
+async function __buildFiles( audio, type ) {
+
+  if ( type === 'json' ) {
+    return __buildJSON( audio );
+  }
+  else if ( type === 'csv' ) {
+    return __buildCSV( audio );
+  }
+
+  throw new Error( 'Invalid export type.' );
+
+}
+
+function __buildJSON( audio ) {
+  return audio.map( a => JSON.stringify( a ) );
+}
+
+function __buildCSV( audio ) {
+  return Promise.all(
+    audio.map( a => json2csv( flatten( a ), { checkSchemaDifferences: false } ) )
+  );
 }
