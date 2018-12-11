@@ -1,13 +1,8 @@
 'use strict';
 
-const pkg = require( '../package' );
-const Config = require( './config' )( pkg.name ).current;
 const Utils = require( './index' );
 
-const p = LocalUtils2.promisify;
-
 module.exports = {
-  authed,
   callbackify,
   formatBody,
 };
