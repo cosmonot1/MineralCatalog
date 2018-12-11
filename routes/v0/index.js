@@ -18,6 +18,9 @@ module.exports = function () {
     .delete( API.v0.specimen.remove )
     .patch( API.v0.specimen.update );
 
+  router.route( '/specimen/download/:type' )
+    .get( API.v0.specimen.download );
+
   return router;
 
 };
