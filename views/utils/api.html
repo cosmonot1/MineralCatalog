@@ -50,8 +50,6 @@
           return done( xhr.response.err || null, xhr.response.err ? null : xhr.response );
         }
 
-        SimpleToast.toast( 'Session has expired.' );
-
         const query = {
           redirect: window.location.href
         };
