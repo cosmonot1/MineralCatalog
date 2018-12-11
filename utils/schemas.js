@@ -12,10 +12,10 @@ module.exports.default_projection_field = {
 module.exports.specimen_add_ref = {
   photos: {
     type: {
-      main_photo: { type: String, default: '' },
+      main: { type: String, default: '' },
       all: { type: [ [ { type: String } ] ], default: [] },
     },
-    required: true
+    default:{}
   },
   physical_dimensions: {
     type: {
@@ -25,14 +25,14 @@ module.exports.specimen_add_ref = {
       height: { type: Number, default: 0 },
       main_crystal: { type: Number, default: 0 },
     },
-    required: true
+    default:{}
   },
   species: {
     type: {
       main: { type: String, default: '' },
       additional: { type: [ [ { type: String } ] ], default: [] },
     },
-    required: true
+    default:{}
   },
   discovery_location: {
     type: {
@@ -43,7 +43,7 @@ module.exports.specimen_add_ref = {
       state: { type: String },
       country: { type: String }
     },
-    required: true
+    default:{}
   },
   analysis: {
     type: {
@@ -51,16 +51,16 @@ module.exports.specimen_add_ref = {
       by: { type: String, default: '' },
       method: { type: String, default: '' }
     },
-    required: true
+    default:{}
   },
   acquired: {
     type: {
-      date: { format: 'date', default: '' },
+      date: { format: 'date', default: 0 },
       paid: { type: Number, default: 0 },
       from: { type: String, default: '' },
       where: { type: String, default: '' }
     },
-    required: true
+    default:{}
   },
   states: {
     type: {
@@ -69,7 +69,7 @@ module.exports.specimen_add_ref = {
       story: { type: Boolean, default: false },
       figured: { type: Boolean, default: false }
     },
-    required: true
+    default:{}
   },
   storage_location: {
     type: {
@@ -79,7 +79,7 @@ module.exports.specimen_add_ref = {
       loan: { type: Boolean, deafult: false },
       details: { type: String, default: '' }
     },
-    required: true
+    default:{}
   },
   comments: { type: String, default: '' },
   story: { type: String, default: '' },
