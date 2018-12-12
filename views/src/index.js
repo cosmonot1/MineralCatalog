@@ -36,6 +36,107 @@ const cleanMineral = {
   specimen_location: ''
 };
 
+const searchCriteria = [
+  { name: 'weight', type: 'number', field: 'physical_dimensions.weight' },
+  { name: 'length', type: 'number', field: 'physical_dimensions.length' },
+  { name: 'width', type: 'number', field: 'physical_dimensions.width' },
+  { name: 'height', type: 'number', field: 'physical_dimensions.height' },
+  { name: 'main crystal', type: 'number', field: 'physical_dimensions.main_crystal' },
+  { name: 'main', type: 'string', field: 'species.main' },
+  { name: 'additional', type: 'string', field: 'species.additional' },
+  { name: 'stope', type: 'string', field: 'discovery_location.stope' },
+  { name: 'level', type: 'string', field: 'discovery_location.level' },
+  { name: 'mine', type: 'string', field: 'discovery_location.mine' },
+  { name: 'district', type: 'string', field: 'discovery_location.district' },
+  { name: 'state', type: 'string', field: 'discovery_location.state' },
+  { name: 'country', type: 'string', field: 'discovery_location.country' },
+  { name: 'analyzed', type: 'boolean', field: 'analysis.analyzed' },
+  { name: 'by', type: 'string', field: 'analysis.by' },
+  { name: 'method', type: 'string', field: 'analysis.method' },
+  { name: 'date', type: 'date', field: 'acquired.date' },
+  { name: 'paid', type: 'number', field: 'acquired.paid' },
+  { name: 'from', type: 'string', field: 'acquired.from' },
+  { name: 'where', type: 'string', field: 'acquired.where' },
+  { name: 'old label', type: 'boolean', field: 'states.old_label' },
+  { name: 'repair', type: 'boolean', field: 'states.repair' },
+  { name: 'story', type: 'boolean', field: 'states.story' },
+  { name: 'figured', type: 'boolean', field: 'states.figured' },
+  { name: 'exhibit', type: 'boolean', field: 'storage_location.exhibit' },
+  { name: 'inside', type: 'boolean', field: 'storage_location.inside' },
+  { name: 'outside', type: 'boolean', field: 'storage_location.outside' },
+  { name: 'loan', type: 'boolean', field: 'storage_location.loan' },
+  { name: 'details', type: 'string', field: 'storage_location.details' },
+  { name: 'comments', type: 'string', field: 'comments' },
+  { name: 'story', type: 'string', field: 'story' },
+  { name: 'figured', type: 'string', field: 'figured' },
+  { name: 'repair history', type: 'string', field: 'repair_history' },
+  { name: 'analysis history', type: 'string', field: 'analysis_history' },
+  { name: 'specimen location', type: 'string', field: 'specimen_location' }
+];
+
+const searchOperators = {
+  number: [
+    {
+      operator: '$eq',
+      name: 'equal to'
+    },
+    {
+      operator: '$gt',
+      name: 'greater than'
+    },
+    {
+      operator: '$lt',
+      name: 'less than'
+    },
+    {
+      operator: '$ne',
+      name: 'not equal to'
+    }
+  ],
+  string: [
+    {
+      operator: '$gt',
+      name: 'equal to'
+    },
+    {
+      operator: '$ne',
+      name: 'not equal to'
+    },
+    {
+      operator: '$in',
+      name: 'contains'
+    }
+  ],
+  date: [
+    {
+      operator: '$eq',
+      name: 'equal to'
+    },
+    {
+      operator: '$gt',
+      name: 'greater than'
+    },
+    {
+      operator: '$lt',
+      name: 'less than'
+    },
+    {
+      operator: '$ne',
+      name: 'not equal to'
+    }
+  ],
+  boolean: [
+    {
+      operator: '$eq',
+      name: 'equal to'
+    },
+    {
+      operator: '$ne',
+      name: 'not equal to'
+    }
+  ]
+};
+
 class Specimen extends React.Component {
   constructor( props ) {
     super( props );
@@ -125,6 +226,90 @@ class Specimen extends React.Component {
       </div>
     );
   }
+}
+
+class SearchItem extends React.Component {
+  constructor( props ) {
+    super( props );
+    this.state = { value: 'physical_dimensions.weight' };
+  }
+
+  handleChange( e ) {
+    this.setState( { value: e.target.value } );
+  }
+
+  render() {
+    return (
+      <div style={{ display: 'inline-block' }}>
+        <select value={this.state.value} onChange={this.handleChange.bind( this )}>
+          {searchCriteria.map( c => <option value={c.field}>{c.name}</option> )}
+        </select>
+        {/*Dropdown for operator*/}
+        {/*input field or boolean check box for value*/}
+      </div>
+    );
+  }
+}
+
+class SearchCriteria extends React.Component {
+  constructor( props ) {
+    super( props );
+    this.state = {
+      searchCriteria: []
+    };
+  }
+
+  search() {
+    const query = {};
+    //TODO: Loop through search items and build search query, then call parent search function with query
+    this.props.search( query );
+  }
+
+  add() {
+    this.setState( {
+      searchCriteria: [ ...this.state.searchCriteria, <SearchItem key={uuidv4()} remove={this.remove.bind( this )}/> ]
+    } );
+  }
+
+  remove( key ) {
+    //TODO: verify that this works (key === e.key)
+    const idx = this.state.searchCriteria.findIndex( e => {
+      console.log( e );
+      return key === e.key;
+    } );
+
+    if ( idx === -1 ) {
+      return console.warn( 'Unable to find search criteria item for removal.' );
+    }
+
+    this.setState( {
+      searchCriteria: [
+        ...this.state.searchCriteria.slice( 0, idx ),
+        ...this.state.searchCriteria.slice( idx + 1 )
+      ]
+    } );
+
+  }
+
+  reset() {
+    this.setState( { searchCriteria: [] } );
+  }
+
+  render() {
+    return (
+      <div>
+        <div>
+          {this.state.searchCriteria}
+        </div>
+        <div style={{ padding: 8 }}>
+          <button style={{ 'padding-right': 8 }} type="button" onClick={this.search.bind( this )}>Search</button>
+          <button style={{ 'padding-right': 8 }} type="button" onClick={this.reset.bind( this )}>Reset</button>
+          <button style={{ 'padding-right': 8 }} type="button" onClick={this.add.bind( this )}>Add</button>
+        </div>
+      </div>
+    );
+  }
+
 }
 
 class Home extends React.Component {
@@ -239,38 +424,43 @@ class EditView extends React.Component {
     this.setState( { [ t.name ]: t.type === 'checkbox' ? t.checked : t.value } );
   }
 
+  goList() {
+    this.reset();
+    this.props.goList();
+  }
+
   render() {
     return (
       <div>
         <div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <strong>Physical Dimensions</strong>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Weight (g)</div>
             <input type="text" name="physical_dimensions.weight" value={this.state[ 'physical_dimensions.weight' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
 
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Length (cm)</div>
             <input type="text" name="physical_dimensions.length" value={this.state[ 'physical_dimensions.length' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
 
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Width (cm)</div>
             <input type="text" name="physical_dimensions.width" value={this.state[ 'physical_dimensions.width' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
 
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Height (cm)</div>
             <input type="text" name="physical_dimensions.height" value={this.state[ 'physical_dimensions.height' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
 
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Main Crystal (cm)</div>
             <input type="text" name="physical_dimensions.main_crystal"
                    value={this.state[ 'physical_dimensions.main_crystal' ]}
@@ -279,15 +469,15 @@ class EditView extends React.Component {
         </div>
 
         <div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <strong>Species</strong>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Main</div>
             <input type="text" name="species.main" value={this.state[ 'species.main' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Additional</div>
             <input type="text" name="species.additional" value={this.state[ 'species.additional' ]}
                    onChange={this.handleChange.bind( this )}/>
@@ -295,35 +485,35 @@ class EditView extends React.Component {
         </div>
 
         <div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <strong>Discovery Location</strong>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Stope</div>
             <input type="text" name="discovery_location.stope" value={this.state[ 'discovery_location.stope' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Level</div>
             <input type="text" name="discovery_location.level" value={this.state[ 'discovery_location.level' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Mine</div>
             <input type="text" name="discovery_location.mine" value={this.state[ 'discovery_location.mine' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>District</div>
             <input type="text" name="discovery_location.district" value={this.state[ 'discovery_location.district' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>State</div>
             <input type="text" name="discovery_location.state" value={this.state[ 'discovery_location.state' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Country</div>
             <input type="text" name="discovery_location.country" value={this.state[ 'discovery_location.country' ]}
                    onChange={this.handleChange.bind( this )}/>
@@ -331,20 +521,20 @@ class EditView extends React.Component {
         </div>
 
         <div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <strong>Analysis</strong>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Analyzed</div>
             <input type="checkbox" name="analysis.analyzed" checked={this.state[ 'analysis.analyzed' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>By</div>
             <input type="text" name="analysis.by" value={this.state[ 'analysis.by' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Method</div>
             <input type="text" name="analysis.method" value={this.state[ 'analysis.method' ]}
                    onChange={this.handleChange.bind( this )}/>
@@ -352,25 +542,25 @@ class EditView extends React.Component {
         </div>
 
         <div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <strong>Acquired</strong>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Date (DD-MM-YYYY ex: 09-23-1994)</div>
             <input type="text" name="acquired.date" value={this.state[ 'acquired.date' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Paid ($)</div>
             <input type="text" name="acquired.paid" value={this.state[ 'acquired.paid' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>From</div>
             <input type="text" name="acquired.from" value={this.state[ 'acquired.from' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Where</div>
             <input type="text" name="acquired.where" value={this.state[ 'acquired.where' ]}
                    onChange={this.handleChange.bind( this )}/>
@@ -378,25 +568,25 @@ class EditView extends React.Component {
         </div>
 
         <div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <strong>States</strong>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Old Label</div>
             <input type="checkbox" name="states.old_label" checked={this.state[ 'states.old_label' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Repair</div>
             <input type="checkbox" name="states.repair" checked={this.state[ 'states.repair' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Story</div>
             <input type="checkbox" name="states.story" checked={this.state[ 'states.story' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Figured</div>
             <input type="checkbox" name="states.figured" checked={this.state[ 'states.figured' ]}
                    onChange={this.handleChange.bind( this )}/>
@@ -404,30 +594,30 @@ class EditView extends React.Component {
         </div>
 
         <div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <strong>Storage Location</strong>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Exhibit</div>
             <input type="checkbox" name="storage_location.exhibit" checked={this.state[ 'storage_location.exhibit' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Inside</div>
             <input type="checkbox" name="storage_location.inside" checked={this.state[ 'storage_location.inside' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Outside</div>
             <input type="checkbox" name="storage_location.outside" checked={this.state[ 'storage_location.outside' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Loan</div>
             <input type="checkbox" name="storage_location.loan" checked={this.state[ 'storage_location.loan' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Details</div>
             <input type="text" name="storage_location.details" value={this.state[ 'storage_location.details' ]}
                    onChange={this.handleChange.bind( this )}/>
@@ -435,42 +625,42 @@ class EditView extends React.Component {
         </div>
 
         <div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <strong>Other</strong>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Comments</div>
             <input type="text" name="comments" value={this.state[ 'comments' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Story</div>
             <input type="text" name="story" value={this.state[ 'story' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Figured</div>
             <input type="text" name="figured" value={this.state[ 'figured' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Repair History</div>
             <input type="text" name="repair_history" value={this.state[ 'repair_history' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Analysis History</div>
             <input type="text" name="analysis_history" value={this.state[ 'analysis_history' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
-          <div style={{ padding: 8, display: 'inline-block' }}>
+          <div style={{ 'padding-right': 8, 'padding-bottom': 8, display: 'inline-block' }}>
             <div>Specimen Location</div>
             <input type="text" name="specimen_location" value={this.state[ 'specimen_location' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
         </div>
 
-        <button type="button" onClick={this.props.goList}>Cancel</button>
+        <button type="button" onClick={this.goList.bind( this )}>Cancel</button>
         <button type="button" onClick={this.add.bind( this )}>{this.state.spec ? 'Update!' : 'Add!'}</button>
       </div>
     );
@@ -490,14 +680,18 @@ class ListView extends React.Component {
     this.search();
   }
 
-  search() {
+  search( query ) {
     if ( this.state.loading ) {
       return;
     }
 
     this.setState( { loading: true } );
 
-    API.specimen.list( { limit: this.state.limit, offset: this.state.page * this.state.limit }, ( err, result ) => {
+    API.specimen.list( {
+      limit: this.state.limit,
+      offset: this.state.page * this.state.limit,
+      specimen: query
+    }, ( err, result ) => {
       this.setState( { loading: false } );
 
       if ( err ) {
@@ -544,10 +738,7 @@ class ListView extends React.Component {
   render() {
     return (
       <div>
-        {/*TODO: SEARCH CRITERIA*/}
-        <div style={{ padding: 8 }}>
-          <button type="button" onClick={this.search.bind( this )}>Search</button>
-        </div>
+        <SearchCriteria search={this.search.bind( this )}/>
         <div style={{ padding: 8 }}>
           {this.state.specimens}
         </div>
