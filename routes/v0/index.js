@@ -10,8 +10,10 @@ module.exports = function () {
   router.route( '/user/logout' ).post( API.v0.user.logout );
 
   router.route( '/specimen' )
-    .get( API.v0.specimen.list )
     .post( API.v0.specimen.add );
+
+  router.route( '/specimen/list' )
+    .post( API.v0.specimen.list );
 
   router.route( '/specimen/:_id' )
     .get( API.v0.specimen.get )
