@@ -2,7 +2,6 @@
 
 var mongojs = require( 'mongojs' );
 
-// TODO: Reduce into auto generated list if possible
 var fns = [
   'find',
   'findOne',

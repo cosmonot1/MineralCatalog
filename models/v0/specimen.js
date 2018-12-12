@@ -72,7 +72,7 @@ async function add( data ) {
 }
 
 // TODO: indexes for efficiency
-function createIndexes( data ) {
+function createIndexes() {
   collection.createIndex( { catalog_number: 1 }, { unique: true } );
   collection.createIndex( { 'species.main': 1 } );
   collection.createIndex( { 'species.additional': 1 } );

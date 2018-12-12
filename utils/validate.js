@@ -717,7 +717,6 @@ function handleWildcardKeys( [ input, name ], output, [ types, i, n, nextType ],
 
 }
 
-// TODO: SUPPORT CUSTOM FORMAT FUNCTIONS
 function formatValue( input, spec, name, done ) {
 
   if ( !( 'format' in spec ) ) {
