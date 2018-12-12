@@ -2,6 +2,31 @@
 
 module.exports = {};
 
+module.exports.numericType = {
+  '$eq': { type: Number },
+  '$gt': { type: Number },
+  '$lt': { type: Number },
+  '$ne': { type: Number }
+};
+
+module.exports.dateType = {
+  '$eq': { type: [ Number, String ], format: 'date' },
+  '$gt': { type: [ Number, String ], format: 'date' },
+  '$lt': { type: [ Number, String ], format: 'date' },
+  '$ne': { type: [ Number, String ], format: 'date' }
+};
+
+module.exports.stringType = {
+  '$eq': { type: String },
+  '$in': { type: [ [ { type: String } ] ] },
+  '$ne': { type: String }
+};
+
+module.exports.booleanType = {
+  '$eq': { type: Boolean },
+  '$ne': { type: Boolean }
+};
+
 module.exports.default_projection_field = {
   type: Object,
   default: {}
@@ -100,86 +125,55 @@ module.exports.specimen_get_ref = {
   ]
 };
 
-// TODO: Searching text fields
-module.exports.specimen_list_ref = {
-  physical_dimensions: {
-    type: {
-      weight: { type: Number },
-      length: { type: Number },
-      width: { type: Number },
-      height: { type: Number },
-      main_crystal: { type: Number },
-    },
-    flatten: true
-  },
-  species: {
-    type: {
-      main: { type: String },
-      additional: { type: String },
-    },
-    flatten: true
-  },
-  discovery_location: {
-    type: {
-      stope: { type: String },
-      level: { type: String },
-      mine: { type: String },
-      district: { type: String },
-      state: { type: String },
-      country: { type: String }
-    },
-    flatten: true
-  },
-  analysis: {
-    type: {
-      analyzed: { type: Boolean },
-      by: { type: String },
-      method: { type: String }
-    },
-    flatten: true
-  },
-  acquired: {
-    type: {
-      date: { format: 'date' },
-      paid: { type: Number },
-      from: { type: String },
-      where: { type: String }
-    },
-    flatten: true
-  },
-  states: {
-    type: {
-      old_label: { type: Boolean },
-      repair: { type: Boolean },
-      story: { type: Boolean },
-      figured: { type: Boolean }
-    },
-    flatten: true
-  },
-  storage_location: {
-    type: {
-      exhibit: { type: Boolean },
-      inside: { type: Boolean },
-      outside: { type: Boolean },
-      loan: { type: Boolean },
-      details: { type: String }
-    },
-    flatten: true
-  },
-  comments: { type: String },
-  story: { type: String },
-  figured: { type: String },
-  repair_history: { type: String },
-  analysis_history: { type: String },
-  specimen_location: { type: String },
-  timestamps: {
-    type: {
-      created: { format: 'date' },
-      updated: { format: 'date' }
-    },
-    flatten: true
-  }
+module.exports.specimen_list_fields = {
+  'physical_dimensions.weight': { type: [ Number, module.exports.numericType ] },
+  'physical_dimensions.length': { type: [ Number, module.exports.numericType ] },
+  'physical_dimensions.width': { type: [ Number, module.exports.numericType ] },
+  'physical_dimensions.height': { type: [ Number, module.exports.numericType ] },
+  'physical_dimensions.main_crystal': { type: [ Number, module.exports.numericType ] },
+  'species.main': { type: [ String, module.exports.stringType ] },
+  'species.additional': { type: [ String, module.exports.stringType ] },
+  'discovery_location.stope': { type: [ String, module.exports.stringType ] },
+  'discovery_location.level': { type: [ String, module.exports.stringType ] },
+  'discovery_location.mine': { type: [ String, module.exports.stringType ] },
+  'discovery_location.district': { type: [ String, module.exports.stringType ] },
+  'discovery_location.state': { type: [ String, module.exports.stringType ] },
+  'discovery_location.country': { type: [ String, module.exports.stringType ] },
+  'analysis.analyzed': { type: [ Boolean, module.exports.booleanType ] },
+  'analysis.by': { type: [ String, module.exports.stringType ] },
+  'analysis.method': { type: [ String, module.exports.stringType ] },
+  'acquired.date': { type: module.exports.dateType },
+  'acquired.paid': { type: [ Number, module.exports.numericType ] },
+  'acquired.from': { type: [ String, module.exports.stringType ] },
+  'acquired.where': { type: [ String, module.exports.stringType ] },
+  'states.old_label': { type: [ String, module.exports.stringType ] },
+  'states.repair': { type: [ String, module.exports.stringType ] },
+  'states.story': { type: [ String, module.exports.stringType ] },
+  'states.figured': { type: [ String, module.exports.stringType ] },
+  'storage_location.exhibit': { type: [ Boolean, module.exports.booleanType ] },
+  'storage_location.inside': { type: [ Boolean, module.exports.booleanType ] },
+  'storage_location.outside': { type: [ Boolean, module.exports.booleanType ] },
+  'storage_location.loan': { type: [ Boolean, module.exports.booleanType ] },
+  'storage_location.details': { type: [ String, module.exports.stringType ] },
+  'comments': { type: [ String, module.exports.stringType ] },
+  'story': { type: [ String, module.exports.stringType ] },
+  'figured': { type: [ String, module.exports.stringType ] },
+  'repair_history': { type: [ String, module.exports.stringType ] },
+  'analysis_history': { type: [ String, module.exports.stringType ] },
+  'specimen_location': { type: [ String, module.exports.stringType ] },
+  'timestamps.created': { type: module.exports.dateType },
+  'timestamps.modified': { type: module.exports.dateType }
 };
+
+module.exports.specimen_list_ref = Object.assign(
+  {},
+  module.exports.specimen_list_fields,
+  {
+    $and: {
+      type: [ [ { type: module.exports.specimen_list_fields } ] ]
+    }
+  }
+);
 
 // Don't allow change of catalog number
 module.exports.specimen_update_data = {

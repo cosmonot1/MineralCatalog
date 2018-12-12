@@ -113,6 +113,11 @@ async function get( data ) {
 }
 
 async function list( data ) {
+  console.log( JSON.stringify( data.specimen, null, 2 ) );
+
+  if ( '$and' in data.specimen && !data.specimen.$and.length ) {
+    delete data.specimen.$and;
+  }
 
   const { specimen, projection, sort, offset, limit } = await validate(
     data,

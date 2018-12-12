@@ -13,7 +13,7 @@ module.exports = {
   add: c( fmtBody( fmtReqRes( add ) ) ),
   download: downloadC( fmtBody( download ) ),
   get: c( fmtBody( fmtReqRes( Specimen.get ) ) ),
-  list: c( fmtBody( fmtReqRes( list ) ) ),
+  list: c( fmtBody( fmtReqRes( Specimen.list ) ) ),
   remove: c( fmtBody( fmtReqRes( Specimen.remove ) ) ),
   update: c( fmtBody( fmtReqRes( update ) ) )
 
@@ -81,44 +81,6 @@ async function download( req, res ) {
       req.destroy();
     } )
     .finally( () => archive.finalize() );
-}
-
-async function list( data ) {
-
-  if ( data.offset && typeof data.offset === 'string' ) {
-    data.offset = parseInt( data.offset );
-  }
-
-  if ( data.limit && typeof data.limit === 'string' ) {
-    data.limit = parseInt( data.limit );
-  }
-
-  if ( data.specimen.physical_dimensions && data.specimen.physical_dimensions.weight && typeof data.specimen.physical_dimensions.weight === 'string' ) {
-    data.specimen.physical_dimensions.weight = parseInt( data.specimen.physical_dimensions.weight );
-  }
-
-  if ( data.specimen.physical_dimensions && data.specimen.physical_dimensions.length && typeof data.specimen.physical_dimensions.length === 'string' ) {
-    data.specimen.physical_dimensions.length = parseInt( data.specimen.physical_dimensions.length );
-  }
-
-  if ( data.specimen.physical_dimensions && data.specimen.physical_dimensions.width && typeof data.specimen.physical_dimensions.width === 'string' ) {
-    data.specimen.physical_dimensions.width = parseInt( data.specimen.physical_dimensions.width );
-  }
-
-  if ( data.specimen.physical_dimensions && data.specimen.physical_dimensions.height && typeof data.specimen.physical_dimensions.height === 'string' ) {
-    data.specimen.physical_dimensions.height = parseInt( data.specimen.physical_dimensions.height );
-  }
-
-  if ( data.specimen.physical_dimensions && data.specimen.physical_dimensions.main_crystal && typeof data.specimen.physical_dimensions.main_crystal === 'string' ) {
-    data.specimen.physical_dimensions.main_crystal = parseInt( data.specimen.physical_dimensions.main_crystal );
-  }
-
-  if ( data.specimen.acquired && data.specimen.acquired.paid && typeof data.specimen.acquired.paid === 'string' ) {
-    data.specimen.acquired.paid = parseInt( data.specimen.acquired.paid );
-  }
-
-  return await Specimen.list( data );
-
 }
 
 async function update( data ) {
