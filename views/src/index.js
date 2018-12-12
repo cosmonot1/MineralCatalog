@@ -41,80 +41,86 @@ class Specimen extends React.Component {
     super( props );
   }
 
+  edit() {
+    this.props.edit( this.props.spec );
+  }
+
   render() {
     return (
       <div>
         <div style={{ padding: 8, display: 'inline-block' }}>
           <div>Catalog: {this.props.spec.catalog_number}</div>
           <div>Main Photo</div>
-          <button>Edit</button>
+          <button type="button" onClick={this.edit.bind( this )}>Edit</button>
         </div>
         <table style={{ padding: 8, display: 'inline-block' }}>
-          <tr>
-            <th style={{ 'padding-right': 8 }}>Physical Dimensions</th>
-            <th style={{ 'padding-right': 8 }}>Species</th>
-            <th style={{ 'padding-right': 8 }}>Discovery Location</th>
-            <th style={{ 'padding-right': 8 }}>Analysis</th>
-            <th style={{ 'padding-right': 8 }}>Acquired</th>
-            <th style={{ 'padding-right': 8 }}>States</th>
-            <th style={{ 'padding-right': 8 }}>Storage Location</th>
-          </tr>
-          <tr>
-            <td style={{ 'padding-right': 8 }}>Weight: {this.props.spec.physical_dimensions.weight} (g)</td>
-            <td style={{ 'padding-right': 8 }}>Main: {this.props.spec.species.main}</td>
-            <td style={{ 'padding-right': 8 }}>Stope: {this.props.spec.discovery_location.stope}</td>
-            <td style={{ 'padding-right': 8 }}>Analyzed: {this.props.spec.analysis.analyzed}</td>
-            <td style={{ 'padding-right': 8 }}>Date: {this.props.spec.acquired.date}</td>
-            <td style={{ 'padding-right': 8 }}>Old Label: {this.props.spec.states.old_label}</td>
-            <td style={{ 'padding-right': 8 }}>Exhibit: {this.props.spec.storage_location.exhibit}</td>
-          </tr>
-          <tr>
-            <td style={{ 'padding-right': 8 }}>Length: {this.props.spec.physical_dimensions.length} (cm)</td>
-            <td
-              style={{ 'padding-right': 8 }}>Additional: {this.props.spec.species.additional.reduce( ( acc, val ) => acc + ' ' + val, '' )}</td>
-            <td style={{ 'padding-right': 8 }}>Level: {this.props.spec.discovery_location.level}</td>
-            <td style={{ 'padding-right': 8 }}>By: {this.props.spec.analysis.by}</td>
-            <td style={{ 'padding-right': 8 }}>Paid: {this.props.spec.acquired.paid} ($)</td>
-            <td style={{ 'padding-right': 8 }}>Repair: {this.props.spec.states.repair}</td>
-            <td style={{ 'padding-right': 8 }}>Inside: {this.props.spec.storage_location.inside}</td>
-          </tr>
-          <tr>
-            <td style={{ 'padding-right': 8 }}>Width: {this.props.spec.physical_dimensions.width} (cm)</td>
-            <td style={{ 'padding-right': 8 }}></td>
-            <td style={{ 'padding-right': 8 }}>Mine: {this.props.spec.discovery_location.mine}</td>
-            <td style={{ 'padding-right': 8 }}>Method: {this.props.spec.analysis.method}</td>
-            <td style={{ 'padding-right': 8 }}>From: {this.props.spec.acquired.from}</td>
-            <td style={{ 'padding-right': 8 }}>Story: {this.props.spec.states.story}</td>
-            <td style={{ 'padding-right': 8 }}>Outside: {this.props.spec.storage_location.outside}</td>
-          </tr>
-          <tr>
-            <td style={{ 'padding-right': 8 }}>Height: {this.props.spec.physical_dimensions.height} (cm)</td>
-            <td style={{ 'padding-right': 8 }}></td>
-            <td style={{ 'padding-right': 8 }}>District: {this.props.spec.discovery_location.district}</td>
-            <td style={{ 'padding-right': 8 }}></td>
-            <td style={{ 'padding-right': 8 }}>Where: {this.props.spec.acquired.where}</td>
-            <td style={{ 'padding-right': 8 }}>Figured: {this.props.spec.states.figured}</td>
-            <td style={{ 'padding-right': 8 }}>Loan: {this.props.spec.storage_location.loan}</td>
-          </tr>
-          <tr>
-            <td style={{ 'padding-right': 8 }}>Main Crystal: {this.props.spec.physical_dimensions.main_crystal} (cm)
-            </td>
-            <td style={{ 'padding-right': 8 }}></td>
-            <td style={{ 'padding-right': 8 }}>State: {this.props.spec.discovery_location.state}</td>
-            <td style={{ 'padding-right': 8 }}></td>
-            <td style={{ 'padding-right': 8 }}></td>
-            <td style={{ 'padding-right': 8 }}></td>
-            <td style={{ 'padding-right': 8 }}>Details: {this.props.spec.storage_location.details}</td>
-          </tr>
-          <tr>
-            <td style={{ 'padding-right': 8 }}></td>
-            <td style={{ 'padding-right': 8 }}></td>
-            <td style={{ 'padding-right': 8 }}>Country: {this.props.spec.discovery_location.country}</td>
-            <td style={{ 'padding-right': 8 }}></td>
-            <td style={{ 'padding-right': 8 }}></td>
-            <td style={{ 'padding-right': 8 }}></td>
-            <td style={{ 'padding-right': 8 }}></td>
-          </tr>
+          <tbody>
+            <tr>
+              <th style={{ 'padding-right': 8 }}>Physical Dimensions</th>
+              <th style={{ 'padding-right': 8 }}>Species</th>
+              <th style={{ 'padding-right': 8 }}>Discovery Location</th>
+              <th style={{ 'padding-right': 8 }}>Analysis</th>
+              <th style={{ 'padding-right': 8 }}>Acquired</th>
+              <th style={{ 'padding-right': 8 }}>States</th>
+              <th style={{ 'padding-right': 8 }}>Storage Location</th>
+            </tr>
+            <tr>
+              <td style={{ 'padding-right': 8 }}>Weight: {this.props.spec.physical_dimensions.weight} (g)</td>
+              <td style={{ 'padding-right': 8 }}>Main: {this.props.spec.species.main}</td>
+              <td style={{ 'padding-right': 8 }}>Stope: {this.props.spec.discovery_location.stope}</td>
+              <td style={{ 'padding-right': 8 }}>Analyzed: {this.props.spec.analysis.analyzed}</td>
+              <td style={{ 'padding-right': 8 }}>Date: {this.props.spec.acquired.date}</td>
+              <td style={{ 'padding-right': 8 }}>Old Label: {this.props.spec.states.old_label}</td>
+              <td style={{ 'padding-right': 8 }}>Exhibit: {this.props.spec.storage_location.exhibit}</td>
+            </tr>
+            <tr>
+              <td style={{ 'padding-right': 8 }}>Length: {this.props.spec.physical_dimensions.length} (cm)</td>
+              <td
+                style={{ 'padding-right': 8 }}>Additional: {this.props.spec.species.additional.reduce( ( acc, val ) => acc + ' ' + val, '' )}</td>
+              <td style={{ 'padding-right': 8 }}>Level: {this.props.spec.discovery_location.level}</td>
+              <td style={{ 'padding-right': 8 }}>By: {this.props.spec.analysis.by}</td>
+              <td style={{ 'padding-right': 8 }}>Paid: {this.props.spec.acquired.paid} ($)</td>
+              <td style={{ 'padding-right': 8 }}>Repair: {this.props.spec.states.repair}</td>
+              <td style={{ 'padding-right': 8 }}>Inside: {this.props.spec.storage_location.inside}</td>
+            </tr>
+            <tr>
+              <td style={{ 'padding-right': 8 }}>Width: {this.props.spec.physical_dimensions.width} (cm)</td>
+              <td style={{ 'padding-right': 8 }}></td>
+              <td style={{ 'padding-right': 8 }}>Mine: {this.props.spec.discovery_location.mine}</td>
+              <td style={{ 'padding-right': 8 }}>Method: {this.props.spec.analysis.method}</td>
+              <td style={{ 'padding-right': 8 }}>From: {this.props.spec.acquired.from}</td>
+              <td style={{ 'padding-right': 8 }}>Story: {this.props.spec.states.story}</td>
+              <td style={{ 'padding-right': 8 }}>Outside: {this.props.spec.storage_location.outside}</td>
+            </tr>
+            <tr>
+              <td style={{ 'padding-right': 8 }}>Height: {this.props.spec.physical_dimensions.height} (cm)</td>
+              <td style={{ 'padding-right': 8 }}></td>
+              <td style={{ 'padding-right': 8 }}>District: {this.props.spec.discovery_location.district}</td>
+              <td style={{ 'padding-right': 8 }}></td>
+              <td style={{ 'padding-right': 8 }}>Where: {this.props.spec.acquired.where}</td>
+              <td style={{ 'padding-right': 8 }}>Figured: {this.props.spec.states.figured}</td>
+              <td style={{ 'padding-right': 8 }}>Loan: {this.props.spec.storage_location.loan}</td>
+            </tr>
+            <tr>
+              <td style={{ 'padding-right': 8 }}>Main Crystal: {this.props.spec.physical_dimensions.main_crystal} (cm)
+              </td>
+              <td style={{ 'padding-right': 8 }}></td>
+              <td style={{ 'padding-right': 8 }}>State: {this.props.spec.discovery_location.state}</td>
+              <td style={{ 'padding-right': 8 }}></td>
+              <td style={{ 'padding-right': 8 }}></td>
+              <td style={{ 'padding-right': 8 }}></td>
+              <td style={{ 'padding-right': 8 }}>Details: {this.props.spec.storage_location.details}</td>
+            </tr>
+            <tr>
+              <td style={{ 'padding-right': 8 }}></td>
+              <td style={{ 'padding-right': 8 }}></td>
+              <td style={{ 'padding-right': 8 }}>Country: {this.props.spec.discovery_location.country}</td>
+              <td style={{ 'padding-right': 8 }}></td>
+              <td style={{ 'padding-right': 8 }}></td>
+              <td style={{ 'padding-right': 8 }}></td>
+              <td style={{ 'padding-right': 8 }}></td>
+            </tr>
+          </tbody>
         </table>
       </div>
     );
@@ -124,7 +130,7 @@ class Specimen extends React.Component {
 class Home extends React.Component {
   constructor( props ) {
     super( props );
-    this.state = { view: 'list' }
+    this.state = { view: 'list', spec: null }
   }
 
   logout() {
@@ -137,8 +143,12 @@ class Home extends React.Component {
     } );
   }
 
-  goEdit() {
-    this.setState( { view: 'edit' } );
+  edit() {
+    this.goEdit( null );
+  }
+
+  goEdit( spec ) {
+    this.setState( { view: 'edit', spec: spec || null } );
   }
 
   goList() {
@@ -149,11 +159,12 @@ class Home extends React.Component {
     return (
       <div>
         <div style={{ padding: 8 }}>
-          <button style={{ 'padding-right': 8 }} type="button" onClick={this.goEdit.bind( this )}>Add</button>
+          {this.state.view === 'edit' ? '' :
+            <button style={{ 'margin-right': 8 }} type="button" onClick={this.edit.bind( this )}>Add</button>}
           <button type="button" onClick={this.logout.bind( this )}>Logout</button>
         </div>
         <div>{this.state.view === 'list' ? <ListView goEdit={this.goEdit.bind( this )}/> :
-          <EditView goList={this.goList.bind( this )}/>}</div>
+          <EditView goList={this.goList.bind( this )} spec={this.state.spec}/>}</div>
       </div>
     );
   }
@@ -162,22 +173,46 @@ class Home extends React.Component {
 class EditView extends React.Component {
   constructor( props ) {
     super( props );
+
+    let mineral;
+    if ( props.spec ) {
+      props.spec.species.additional = props.spec.species.additional.join( ' ' );
+      mineral = flatten( props.spec );
+    } else {
+      mineral = JSON.parse( JSON.stringify( cleanMineral ) )
+    }
+
     this.state = Object.assign(
-      { loading: false },
-      JSON.parse( JSON.stringify( cleanMineral ) )
+      {
+        spec: true,
+        loading: false
+      },
+      mineral
     );
   }
 
   reset() {
     this.setState(
       Object.assign(
-        { loading: false },
+        {
+          spec: null,
+          loading: false
+        },
         JSON.parse( JSON.stringify( cleanMineral ) )
       )
     );
+
   }
 
   add() {
+    const done = ( err ) => {
+      this.setState( { loading: false } );
+      alert( err ? err.message : 'Success!' );
+      if ( !err ) {
+        this.reset();
+      }
+    };
+
     if ( this.state.loading ) {
       return;
     }
@@ -192,13 +227,11 @@ class EditView extends React.Component {
       'acquired.paid': parseInt( this.state[ 'acquired.paid' ] || '0' ),
     } );
 
-    API.specimen.add( { specimen: this.state }, ( err, result ) => {
-      this.setState( { loading: false } );
-      alert( err ? err.message : 'Success!' );
-      if ( !err ) {
-        this.reset();
-      }
-    } );
+    if ( !this.state.spec ) {
+      return API.specimen.add( { specimen: this.state }, done );
+    }
+
+    API.specimen.update( { specimen: { _id: this.state._id }, set: this.state }, done );
   }
 
   handleChange( e ) {
@@ -438,7 +471,7 @@ class EditView extends React.Component {
         </div>
 
         <button type="button" onClick={this.props.goList}>Cancel</button>
-        <button type="button" onClick={this.add.bind( this )}>Add!</button>
+        <button type="button" onClick={this.add.bind( this )}>{this.state.spec ? 'Update!' : 'Add!'}</button>
       </div>
     );
   }
@@ -472,12 +505,16 @@ class ListView extends React.Component {
       }
 
       this.setState( {
-        specimens: result.specimens.map( s => <Specimen key={s._id} spec={s}/> ),
+        specimens: result.specimens.map( s => <Specimen key={s._id} spec={s} edit={this.edit.bind( this )}/> ),
         page: Math.floor( result.offset / result.limit ),
         pages: Math.floor( result.total / result.limit )
       } );
 
     } );
+  }
+
+  edit( spec ) {
+    this.props.goEdit( spec );
   }
 
   first() {
@@ -561,7 +598,7 @@ class LoginView extends React.Component {
   render() {
     return (
       <div>
-        <input style={{ 'padding-right': 8 }} type="text" name="Password" value={this.state.password}
+        <input style={{ 'margin-right': 8 }} type="text" name="Password" value={this.state.password}
                onChange={this.handleChange.bind( this )}/>
         <button type="button" onClick={this.login.bind( this )}>Login</button>
       </div>

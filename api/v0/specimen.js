@@ -53,6 +53,11 @@ async function add( data ) {
 }
 
 async function download( req, res ) {
+
+  if ( !req.body.specimen ) {
+    req.body.specimen = {};
+  }
+
   res.status( 200 );
   res.attachment( `specimen_export_${Date.now()}.zip` );
   res.set( 'Content-Encoding', 'chunked' );
@@ -114,6 +119,35 @@ async function list( data ) {
 
   return await Specimen.list( data );
 
+}
+
+async function update( data ) {
+
+  data.set = flat.unflatten( data.set );
+  data.set.species.additional = data.set.species.additional.split( ' ' );
+
+  try {
+    const date = moment( data.set.acquired.date );
+    if ( !date.isValid() ) {
+      throw new Error( 'Bad date' );
+    }
+    data.set.acquired.date = date.toISOString();
+  } catch ( err ) {
+    throw {
+      code: 400,
+      reason: 'Unable to format acquired date provided.',
+      err: new Error( 'Unable to format acquired date provided.' )
+    }
+  }
+
+  //TMP OP FOR TESTING BEFORE PHOTOS ARE IMPLEMENTED
+  //TODO: REMOVE ONCE PHOTOS IMPLEMENTED
+  data.set.photos = {
+    main: '',
+    all: [ '' ]
+  };
+
+  return await Specimen.update( data );
 }
 
 function fmtReqRes( fn ) {

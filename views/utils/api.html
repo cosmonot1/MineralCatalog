@@ -108,7 +108,7 @@
         ajax( 'DELETE', '/api/v0/specimen', data, done ),
 
       update: ( data, done ) =>
-        ajax( 'PATCH', '/api/v0/specimen', data, done )
+        ajax( 'PATCH', `/api/v0/specimen/${data.specimen._id}`, data, done )
 
     };
 

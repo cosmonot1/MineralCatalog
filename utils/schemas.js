@@ -15,7 +15,7 @@ module.exports.specimen_add_ref = {
       main: { type: String, default: '' },
       all: { type: [ [ { type: String } ] ], default: [] },
     },
-    default:{}
+    default: {}
   },
   physical_dimensions: {
     type: {
@@ -25,14 +25,14 @@ module.exports.specimen_add_ref = {
       height: { type: Number, default: 0 },
       main_crystal: { type: Number, default: 0 },
     },
-    default:{}
+    default: {}
   },
   species: {
     type: {
       main: { type: String, default: '' },
       additional: { type: [ [ { type: String } ] ], default: [] },
     },
-    default:{}
+    default: {}
   },
   discovery_location: {
     type: {
@@ -43,7 +43,7 @@ module.exports.specimen_add_ref = {
       state: { type: String },
       country: { type: String }
     },
-    default:{}
+    default: {}
   },
   analysis: {
     type: {
@@ -51,7 +51,7 @@ module.exports.specimen_add_ref = {
       by: { type: String, default: '' },
       method: { type: String, default: '' }
     },
-    default:{}
+    default: {}
   },
   acquired: {
     type: {
@@ -60,7 +60,7 @@ module.exports.specimen_add_ref = {
       from: { type: String, default: '' },
       where: { type: String, default: '' }
     },
-    default:{}
+    default: {}
   },
   states: {
     type: {
@@ -69,7 +69,7 @@ module.exports.specimen_add_ref = {
       story: { type: Boolean, default: false },
       figured: { type: Boolean, default: false }
     },
-    default:{}
+    default: {}
   },
   storage_location: {
     type: {
@@ -79,7 +79,7 @@ module.exports.specimen_add_ref = {
       loan: { type: Boolean, deafult: false },
       details: { type: String, default: '' }
     },
-    default:{}
+    default: {}
   },
   comments: { type: String, default: '' },
   story: { type: String, default: '' },
@@ -182,4 +182,75 @@ module.exports.specimen_list_ref = {
 };
 
 // Don't allow change of catalog number
-module.exports.specimen_update_data = module.exports.specimen_list_ref;
+module.exports.specimen_update_data = {
+  physical_dimensions: {
+    type: {
+      weight: { type: Number },
+      length: { type: Number },
+      width: { type: Number },
+      height: { type: Number },
+      main_crystal: { type: Number },
+    },
+    flatten: true
+  },
+  species: {
+    type: {
+      main: { type: String },
+      additional: { type: [ [ { type: String } ] ] },
+    },
+    flatten: true
+  },
+  discovery_location: {
+    type: {
+      stope: { type: String },
+      level: { type: String },
+      mine: { type: String },
+      district: { type: String },
+      state: { type: String },
+      country: { type: String }
+    },
+    flatten: true
+  },
+  analysis: {
+    type: {
+      analyzed: { type: Boolean },
+      by: { type: String },
+      method: { type: String }
+    },
+    flatten: true
+  },
+  acquired: {
+    type: {
+      date: { format: 'date' },
+      paid: { type: Number },
+      from: { type: String },
+      where: { type: String }
+    },
+    flatten: true
+  },
+  states: {
+    type: {
+      old_label: { type: Boolean },
+      repair: { type: Boolean },
+      story: { type: Boolean },
+      figured: { type: Boolean }
+    },
+    flatten: true
+  },
+  storage_location: {
+    type: {
+      exhibit: { type: Boolean },
+      inside: { type: Boolean },
+      outside: { type: Boolean },
+      loan: { type: Boolean },
+      details: { type: String }
+    },
+    flatten: true
+  },
+  comments: { type: String },
+  story: { type: String },
+  figured: { type: String },
+  repair_history: { type: String },
+  analysis_history: { type: String },
+  specimen_location: { type: String }
+};
