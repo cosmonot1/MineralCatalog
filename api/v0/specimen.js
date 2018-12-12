@@ -11,13 +11,17 @@ const EXPORT_PAGE_STEP = 100;
 
 module.exports = {
   add: c( fmtBody( fmtReqRes( add ) ) ),
-  download: c( fmtBody( download ) ),
+  download: downloadC( fmtBody( download ) ),
   get: c( fmtBody( fmtReqRes( Specimen.get ) ) ),
   list: c( fmtBody( fmtReqRes( list ) ) ),
   remove: c( fmtBody( fmtReqRes( Specimen.remove ) ) ),
-  update: c( fmtBody( fmtReqRes( Specimen.update ) ) )
+  update: c( fmtBody( fmtReqRes( update ) ) )
 
 };
+
+function downloadC( fn ) {
+  return ( req, res, next ) => fn( req, res ).catch( next );
+}
 
 async function add( data ) {
 
@@ -139,7 +143,7 @@ async function __buildArchive( archive, query, type ) {
       }
     );
 
-    if ( !specimens.total ) {
+    if ( !specimens.length ) {
       return;
     }
 
@@ -163,25 +167,25 @@ async function __buildArchive( archive, query, type ) {
   }
 }
 
-async function __buildFiles( audio, type ) {
+async function __buildFiles( specimens, type ) {
 
   if ( type === 'json' ) {
-    return __buildJSON( audio );
+    return __buildJSON( specimens );
   }
   else if ( type === 'csv' ) {
-    return __buildCSV( audio );
+    return __buildCSV( specimens );
   }
 
   throw new Error( 'Invalid export type.' );
 
 }
 
-function __buildJSON( audio ) {
-  return audio.map( a => JSON.stringify( a ) );
+function __buildJSON( specimens ) {
+  return specimens.map( a => JSON.stringify( a ) );
 }
 
-function __buildCSV( audio ) {
+function __buildCSV( specimens ) {
   return Promise.all(
-    audio.map( a => json2csv( flatten( a ), { checkSchemaDifferences: false } ) )
+    specimens.map( a => json2csv( flat.flatten( a ), { checkSchemaDifferences: false } ) )
   );
 }

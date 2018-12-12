@@ -98,9 +98,6 @@
       add: ( data, done ) =>
         ajax( 'POST', '/api/v0/specimen', data, done ),
 
-      download: ( data, done ) =>
-        ajax( 'GET', `/api/v0/specimen/download/${data.type}`, data, done ),
-
       get: ( data, done ) =>
         ajax( 'GET', `/api/v0/specimen/${data.specimen._id}`, data, done ),
 

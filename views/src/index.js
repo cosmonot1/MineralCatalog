@@ -504,23 +504,6 @@ class ListView extends React.Component {
     }
   }
 
-  downloadJSON() {
-    this.download( 'json' )
-  }
-
-  downloadCSV() {
-    this.download( 'csv' )
-  }
-
-  download( type ) {
-    //TODO: Query
-    API.specimen.download( { type }, ( err, result ) => {
-      if ( err ) {
-        return alert( err.message );
-      }
-    } );
-  }
-
   render() {
     return (
       <div>
@@ -536,9 +519,13 @@ class ListView extends React.Component {
           <button style={{ 'margin-right': 8 }} type="button" onClick={this.previous.bind( this )}>&lt;</button>
           <span style={{ 'margin-right': 8 }}>{this.state.page + 1} of {this.state.pages + 1}</span>
           <button style={{ 'margin-right': 8 }} type="button" onClick={this.next.bind( this )}>&gt;</button>
-          <button type="button" onClick={this.last.bind( this )}>&gt;&gt;</button>
-          <button type="button" onClick={this.downloadJSON.bind( this )}>Download JSON</button>
-          <button type="button" onClick={this.downloadCSV.bind( this )}>Download CSV</button>
+          <button style={{ 'margin-right': 8 }} type="button" onClick={this.last.bind( this )}>&gt;&gt;</button>
+          <a target="_blank" href="/api/v0/specimen/download/json">
+            <button style={{ 'margin-right': 8 }} type="button">Download JSON</button>
+          </a>
+          <a target="_blank" href="/api/v0/specimen/download/csv">
+            <button type="button">Download CSV</button>
+          </a>
         </div>
       </div>
     );
