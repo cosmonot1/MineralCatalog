@@ -37,6 +37,7 @@ const cleanMineral = {
 };
 
 const searchCriteria = [
+  { name: 'catalog number', type: 'number', field: 'catalog_number' },
   { name: 'weight', type: 'number', field: 'physical_dimensions.weight' },
   { name: 'length', type: 'number', field: 'physical_dimensions.length' },
   { name: 'width', type: 'number', field: 'physical_dimensions.width' },
@@ -97,7 +98,7 @@ const searchOperators = {
   ],
   string: [
     {
-      operator: '$gt',
+      operator: '$eq',
       name: 'equal to'
     },
     {
@@ -105,7 +106,7 @@ const searchOperators = {
       name: 'not equal to'
     },
     {
-      operator: '$in',
+      operator: '$regex',
       name: 'contains'
     }
   ],
@@ -143,9 +144,11 @@ const cleanSearchItem = {
   metric: 'physical_dimensions.weight',
   operator: '$gt',
   operatorType: 'number',
-  value: 0,
+  value: '',
   checked: false
 };
+
+const preventDefault = ( e ) => {e.preventDefault()};
 
 class Specimen extends React.Component {
   constructor( props ) {
@@ -179,10 +182,19 @@ class Specimen extends React.Component {
               <td style={{ 'paddingRight': 8 }}>Weight: {this.props.spec.physical_dimensions.weight} (g)</td>
               <td style={{ 'paddingRight': 8 }}>Main: {this.props.spec.species.main}</td>
               <td style={{ 'paddingRight': 8 }}>Stope: {this.props.spec.discovery_location.stope}</td>
-              <td style={{ 'paddingRight': 8 }}>Analyzed: {this.props.spec.analysis.analyzed}</td>
+              <td style={{ 'paddingRight': 8 }}>Analyzed: <input type="checkbox" name="checked"
+                                                                 checked={this.props.spec.analysis.analyzed}
+                                                                 onClick={preventDefault}/>
+              </td>
               <td style={{ 'paddingRight': 8 }}>Date: {this.props.spec.acquired.date}</td>
-              <td style={{ 'paddingRight': 8 }}>Old Label: {this.props.spec.states.old_label}</td>
-              <td style={{ 'paddingRight': 8 }}>Exhibit: {this.props.spec.storage_location.exhibit}</td>
+              <td style={{ 'paddingRight': 8 }}>Old Label: <input type="checkbox" name="checked"
+                                                                  checked={this.props.spec.states.old_label}
+                                                                  onClick={preventDefault}/>
+              </td>
+              <td style={{ 'paddingRight': 8 }}>Exhibit: <input type="checkbox" name="checked"
+                                                                checked={this.props.spec.storage_location.exhibit}
+                                                                onClick={preventDefault}/>
+              </td>
             </tr>
             <tr>
               <td style={{ 'paddingRight': 8 }}>Length: {this.props.spec.physical_dimensions.length} (cm)</td>
@@ -191,8 +203,14 @@ class Specimen extends React.Component {
               <td style={{ 'paddingRight': 8 }}>Level: {this.props.spec.discovery_location.level}</td>
               <td style={{ 'paddingRight': 8 }}>By: {this.props.spec.analysis.by}</td>
               <td style={{ 'paddingRight': 8 }}>Paid: {this.props.spec.acquired.paid} ($)</td>
-              <td style={{ 'paddingRight': 8 }}>Repair: {this.props.spec.states.repair}</td>
-              <td style={{ 'paddingRight': 8 }}>Inside: {this.props.spec.storage_location.inside}</td>
+              <td style={{ 'paddingRight': 8 }}>Repair: <input type="checkbox" name="checked"
+                                                               checked={this.props.spec.states.repair}
+                                                               onClick={preventDefault}/>
+              </td>
+              <td style={{ 'paddingRight': 8 }}>Inside: <input type="checkbox" name="checked"
+                                                               checked={this.props.spec.storage_location.inside}
+                                                               onClick={preventDefault}/>
+              </td>
             </tr>
             <tr>
               <td style={{ 'paddingRight': 8 }}>Width: {this.props.spec.physical_dimensions.width} (cm)</td>
@@ -200,8 +218,13 @@ class Specimen extends React.Component {
               <td style={{ 'paddingRight': 8 }}>Mine: {this.props.spec.discovery_location.mine}</td>
               <td style={{ 'paddingRight': 8 }}>Method: {this.props.spec.analysis.method}</td>
               <td style={{ 'paddingRight': 8 }}>From: {this.props.spec.acquired.from}</td>
-              <td style={{ 'paddingRight': 8 }}>Story: {this.props.spec.states.story}</td>
-              <td style={{ 'paddingRight': 8 }}>Outside: {this.props.spec.storage_location.outside}</td>
+              <td style={{ 'paddingRight': 8 }}>Story: <input type="checkbox" name="checked"
+                                                              checked={this.props.spec.states.story}
+                                                              onClick={preventDefault}/>
+              </td>
+              <td style={{ 'paddingRight': 8 }}>Outside:<input type="checkbox" name="checked"
+                                                               checked={this.props.spec.storage_location.outside}
+                                                               onClick={preventDefault}/></td>
             </tr>
             <tr>
               <td style={{ 'paddingRight': 8 }}>Height: {this.props.spec.physical_dimensions.height} (cm)</td>
@@ -209,8 +232,14 @@ class Specimen extends React.Component {
               <td style={{ 'paddingRight': 8 }}>District: {this.props.spec.discovery_location.district}</td>
               <td style={{ 'paddingRight': 8 }}></td>
               <td style={{ 'paddingRight': 8 }}>Where: {this.props.spec.acquired.where}</td>
-              <td style={{ 'paddingRight': 8 }}>Figured: {this.props.spec.states.figured}</td>
-              <td style={{ 'paddingRight': 8 }}>Loan: {this.props.spec.storage_location.loan}</td>
+              <td style={{ 'paddingRight': 8 }}>Figured: <input type="checkbox" name="checked"
+                                                                checked={this.props.spec.states.figured}
+                                                                onClick={preventDefault}/>
+              </td>
+              <td style={{ 'paddingRight': 8 }}>Loan: <input type="checkbox" name="checked"
+                                                             checked={this.props.spec.storage_location.loan}
+                                                             onClick={preventDefault}/>
+              </td>
             </tr>
             <tr>
               <td style={{ 'paddingRight': 8 }}>Main Crystal: {this.props.spec.physical_dimensions.main_crystal} (cm)
@@ -267,7 +296,7 @@ class SearchItem extends React.Component {
 
   render() {
     return (
-      <div style={{ 'paddingLeft': 8, display: 'inline-block' }}>
+      <div style={{ paddingRight: 8, paddingBottom: 8, display: 'inline-block' }}>
         <div style={{ paddingBottom: 8 }}>
           <select name="metric" value={this.state.metric} onChange={this.handleChange.bind( this )}>
             {searchCriteria.map( c => <option key={uuidv4()} value={c.field}>{c.name}</option> )}
@@ -360,14 +389,14 @@ class SearchCriteria extends React.Component {
 
   render() {
     return (
-      <div>
+      <div style={{ padding: 8 }}>
         <div>
           {this.state.searchCriteria}
         </div>
-        <div style={{ padding: 8 }}>
-          <button style={{ 'paddingRight': 8 }} type="button" onClick={this.search.bind( this )}>Search</button>
-          <button style={{ 'paddingRight': 8 }} type="button" onClick={this.reset.bind( this )}>Reset</button>
-          <button style={{ 'paddingRight': 8 }} type="button" onClick={this.add.bind( this )}>Add</button>
+        <div>
+          <button style={{ 'marginRight': 8 }} type="button" onClick={this.search.bind( this )}>Search</button>
+          <button style={{ 'marginRight': 8 }} type="button" onClick={this.reset.bind( this )}>Reset</button>
+          <button style={{ 'marginRight': 8 }} type="button" onClick={this.add.bind( this )}>Add</button>
         </div>
       </div>
     );
@@ -432,7 +461,7 @@ class EditView extends React.Component {
 
     this.state = Object.assign(
       {
-        spec: true,
+        spec: !!props.spec,
         loading: false
       },
       mineral
@@ -723,8 +752,9 @@ class EditView extends React.Component {
           </div>
         </div>
 
-        <button type="button" onClick={this.goList.bind( this )}>Cancel</button>
-        <button type="button" onClick={this.add.bind( this )}>{this.state.spec ? 'Update!' : 'Add!'}</button>
+        <button style={{ 'marginRight': 8 }} type="button" onClick={this.goList.bind( this )}>Cancel</button>
+        <button style={{ 'marginRight': 8 }} type="button"
+                onClick={this.add.bind( this )}>{this.state.spec ? 'Update!' : 'Add!'}</button>
       </div>
     );
   }

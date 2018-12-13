@@ -18,7 +18,7 @@ module.exports.dateType = {
 
 module.exports.stringType = {
   '$eq': { type: String },
-  '$in': { type: [ [ { type: String } ] ] },
+  '$regex': { type: String },
   '$ne': { type: String }
 };
 
@@ -126,6 +126,7 @@ module.exports.specimen_get_ref = {
 };
 
 module.exports.specimen_list_fields = {
+  'catalog_number': { type: [ Number, module.exports.numericType ] },
   'physical_dimensions.weight': { type: [ Number, module.exports.numericType ] },
   'physical_dimensions.length': { type: [ Number, module.exports.numericType ] },
   'physical_dimensions.width': { type: [ Number, module.exports.numericType ] },
@@ -146,10 +147,10 @@ module.exports.specimen_list_fields = {
   'acquired.paid': { type: [ Number, module.exports.numericType ] },
   'acquired.from': { type: [ String, module.exports.stringType ] },
   'acquired.where': { type: [ String, module.exports.stringType ] },
-  'states.old_label': { type: [ String, module.exports.stringType ] },
-  'states.repair': { type: [ String, module.exports.stringType ] },
-  'states.story': { type: [ String, module.exports.stringType ] },
-  'states.figured': { type: [ String, module.exports.stringType ] },
+  'states.old_label': { type: [ Boolean, module.exports.booleanType ] },
+  'states.repair': { type: [ Boolean, module.exports.booleanType ] },
+  'states.story': { type: [ Boolean, module.exports.booleanType ] },
+  'states.figured': { type: [ Boolean, module.exports.booleanType ] },
   'storage_location.exhibit': { type: [ Boolean, module.exports.booleanType ] },
   'storage_location.inside': { type: [ Boolean, module.exports.booleanType ] },
   'storage_location.outside': { type: [ Boolean, module.exports.booleanType ] },
