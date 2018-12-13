@@ -343,7 +343,7 @@ class SearchCriteria extends React.Component {
   }
 
   getState( key, state ) {
-    this.setState( { [ key ]: state }, () => {console.log( this.state )} );
+    this.setState( { [ key ]: state } );
   }
 
   add() {
@@ -383,7 +383,7 @@ class SearchCriteria extends React.Component {
     const state = {};
     this.state.keys.forEach( k => state[ k ] = undefined );
     this.setState( Object.assign( state, { searchCriteria: [], keys: [] } ), () => {
-      console.log( this.state );
+      this.search( {} )
     } );
   }
 

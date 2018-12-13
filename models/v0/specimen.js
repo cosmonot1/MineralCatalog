@@ -28,7 +28,7 @@ async function add( data ) {
   const { specimen } = await validate(
     data,
     {
-      type: {
+      type: { 
         specimen: {
           type: Schemas.specimen_add_ref,
           required: true
@@ -113,7 +113,6 @@ async function get( data ) {
 }
 
 async function list( data ) {
-  console.log( JSON.stringify( data.specimen, null, 2 ) );
 
   if ( '$and' in data.specimen && !data.specimen.$and.length ) {
     delete data.specimen.$and;
