@@ -176,6 +176,13 @@ module.exports.specimen_list_ref = Object.assign(
 
 // Don't allow change of catalog number
 module.exports.specimen_update_data = {
+  photos: {
+    type: {
+      main: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
+      all: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ], default: [] },
+    },
+    flatten: true
+  },
   physical_dimensions: {
     type: {
       weight: { type: Number },
