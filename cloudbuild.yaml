@@ -1,6 +1,4 @@
 steps:
-- name: gcr.io/cloud-builders/gsutil
-  args: ['cp', 'gs://$PROJECT_ID/rc/.npmrc', '.npmrc']
 - name: gcr.io/cloud-builders/docker
   args: [ 'build', '--tag=gcr.io/$PROJECT_ID/$REPO_NAME:$TAG_NAME', '--file=Dockerfile', '.' ]
 images: [ 'gcr.io/$PROJECT_ID/$REPO_NAME:$TAG_NAME' ]

@@ -31,9 +31,11 @@ RUN apk add --no-cache git openssh
 # Install deps
 ENV GIT_DIR /home/app
 RUN npm install --unsafe-perm --quiet
+RUN npm install --unsafe-perm --quiet --only=dev
 
 # Add source files
 ADD views/src /home/app/views/src
+ADD .babelrc /home/app/.babelrc
 
 # Build app
 RUN npm run build
@@ -50,11 +52,10 @@ ADD . /home/app/
 
 # Copy npm deps and build artifacts
 COPY --from=installer /home/app/node_modules /home/app/node_modules
-COPY --from=builder /home/app/build /home/app/build
+COPY --from=builder /home/app/views/build /home/app/views/build
 
 # Cleanup
-RUN rm -rf .bowerrc \
-           package-lock.json \
+RUN rm -rf package-lock.json \
            views/src
 
 CMD npm --loglevel=silent start
