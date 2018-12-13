@@ -166,11 +166,31 @@ class Specimen extends React.Component {
   render() {
     return (
       <div>
-        <div style={{ padding: 8, display: 'inline-block' }}>
-          <div>Catalog: {this.props.spec.catalog_number}</div>
-          <div>Main Photo</div>
-          <button type="button" onClick={this.edit.bind( this )}>Edit</button>
-        </div>
+        <table style={{ padding: 8, display: 'inline-block' }}>
+          <tbody>
+            <tr>
+              <th>Main Photo</th>
+            </tr>
+            <tr>
+              <td>
+                <div style={{ height: 100, width: 100 }}>
+                  <img src={GCS_STORAGE_LINK + this.props.spec.photos.main}
+                       alt={this.props.spec.photos.main}
+                       height="100"
+                       width="100"/>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>Catalog: {this.props.spec.catalog_number}</td>
+            </tr>
+            <tr>
+              <td>
+                <button type="button" onClick={this.edit.bind( this )}>Edit</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
         <table style={{ padding: 8, display: 'inline-block' }}>
           <tbody>
             <tr>
