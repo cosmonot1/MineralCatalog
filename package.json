@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/cosmonot1/MineralCatalog#readme",
   "dependencies": {
+    "@google-cloud/storage": "^2.3.1",
     "archiver": "^3.0.0",
     "async-exit-hook": "^2.0.1",
     "babel-preset-react-app": "^6.1.0",
