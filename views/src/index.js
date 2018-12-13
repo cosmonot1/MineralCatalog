@@ -635,7 +635,7 @@ class EditView extends React.Component {
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             {this.state[ 'photos.all' ].map( photo => <img width="100" height="100" src={GCS_STORAGE_LINK + photo}
-                                                           alt={photo} key={photo}/> )}
+                                                           alt={photo} key={photo} style={{ marginRight: 8 }}/> )}
           </div>
         </div>
 
