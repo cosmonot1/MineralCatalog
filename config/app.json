@@ -23,10 +23,16 @@
   },
   "session": {
     "lifetime": 86400,
-    "login":"test-password",
+    "login": "test-password",
     "secret": "()*&YDF()&*#$N"
   },
   "services": {
+    "gcloud": {
+      "projectId": "mineral-storage",
+      "keyFile": "./gcloud.json",
+      "bucket": "mineral-catalog-images",
+      "image_base_link":"https://storage.googleapis.com/mineral-catalog-images/"
+    },
     "db": {
       "mongodb": {
         "uri": "localhost/mineralcatalog"
