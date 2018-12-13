@@ -17,9 +17,9 @@ module.exports.dateType = {
 };
 
 module.exports.stringType = {
-  '$eq': { type: String },
-  '$regex': { type: String },
-  '$ne': { type: String }
+  '$eq': { type: String, format: ( s ) => s.toLowerCase() },
+  '$regex': { type: String, format: ( s ) => s.toLowerCase() },
+  '$ne': { type: String, format: ( s ) => s.toLowerCase() }
 };
 
 module.exports.booleanType = {
@@ -37,8 +37,8 @@ module.exports.default_projection_field = {
 module.exports.specimen_add_ref = {
   photos: {
     type: {
-      main: { type: String, default: '' },
-      all: { type: [ [ { type: String } ] ], default: [] },
+      main: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
+      all: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ], default: [] },
     },
     default: {}
   },
@@ -54,27 +54,27 @@ module.exports.specimen_add_ref = {
   },
   species: {
     type: {
-      main: { type: String, default: '' },
-      additional: { type: [ [ { type: String } ] ], default: [] },
+      main: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
+      additional: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ], default: [] },
     },
     default: {}
   },
   discovery_location: {
     type: {
-      stope: { type: String },
-      level: { type: String },
-      mine: { type: String },
-      district: { type: String },
-      state: { type: String },
-      country: { type: String }
+      stope: { type: String, format: ( s ) => s.toLowerCase() },
+      level: { type: String, format: ( s ) => s.toLowerCase() },
+      mine: { type: String, format: ( s ) => s.toLowerCase() },
+      district: { type: String, format: ( s ) => s.toLowerCase() },
+      state: { type: String, format: ( s ) => s.toLowerCase() },
+      country: { type: String, format: ( s ) => s.toLowerCase() }
     },
     default: {}
   },
   analysis: {
     type: {
       analyzed: { type: Boolean, default: false },
-      by: { type: String, default: '' },
-      method: { type: String, default: '' }
+      by: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
+      method: { type: String, format: ( s ) => s.toLowerCase(), default: '' }
     },
     default: {}
   },
@@ -82,8 +82,8 @@ module.exports.specimen_add_ref = {
     type: {
       date: { format: 'date', default: 0 },
       paid: { type: Number, default: 0 },
-      from: { type: String, default: '' },
-      where: { type: String, default: '' }
+      from: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
+      where: { type: String, format: ( s ) => s.toLowerCase(), default: '' }
     },
     default: {}
   },
@@ -102,25 +102,25 @@ module.exports.specimen_add_ref = {
       inside: { type: Boolean, deafult: false },
       outside: { type: Boolean, deafult: false },
       loan: { type: Boolean, deafult: false },
-      details: { type: String, default: '' }
+      details: { type: String, format: ( s ) => s.toLowerCase(), default: '' }
     },
     default: {}
   },
-  comments: { type: String, default: '' },
-  story: { type: String, default: '' },
-  figured: { type: String, default: '' },
-  repair_history: { type: String, default: '' },
-  analysis_history: { type: String, default: '' },
-  specimen_location: { type: String, default: '' },
+  comments: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
+  story: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
+  figured: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
+  repair_history: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
+  analysis_history: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
+  specimen_location: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
 };
 
 module.exports.specimen_get_ref = {
   $anyOf: [
     {
-      _id: { type: String, required: true },
+      _id: { type: String, format: ( s ) => s.toLowerCase(), required: true },
     },
     {
-      catalog_number: { type: String, required: true }
+      catalog_number: { type: String, format: ( s ) => s.toLowerCase(), required: true }
     }
   ]
 };
@@ -190,27 +190,27 @@ module.exports.specimen_update_data = {
   },
   species: {
     type: {
-      main: { type: String },
-      additional: { type: [ [ { type: String } ] ] },
+      main: { type: String, format: ( s ) => s.toLowerCase() },
+      additional: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ] },
     },
     flatten: true
   },
   discovery_location: {
     type: {
-      stope: { type: String },
-      level: { type: String },
-      mine: { type: String },
-      district: { type: String },
-      state: { type: String },
-      country: { type: String }
+      stope: { type: String, format: ( s ) => s.toLowerCase() },
+      level: { type: String, format: ( s ) => s.toLowerCase() },
+      mine: { type: String, format: ( s ) => s.toLowerCase() },
+      district: { type: String, format: ( s ) => s.toLowerCase() },
+      state: { type: String, format: ( s ) => s.toLowerCase() },
+      country: { type: String, format: ( s ) => s.toLowerCase() }
     },
     flatten: true
   },
   analysis: {
     type: {
       analyzed: { type: Boolean },
-      by: { type: String },
-      method: { type: String }
+      by: { type: String, format: ( s ) => s.toLowerCase() },
+      method: { type: String, format: ( s ) => s.toLowerCase() }
     },
     flatten: true
   },
@@ -218,8 +218,8 @@ module.exports.specimen_update_data = {
     type: {
       date: { format: 'date' },
       paid: { type: Number },
-      from: { type: String },
-      where: { type: String }
+      from: { type: String, format: ( s ) => s.toLowerCase() },
+      where: { type: String, format: ( s ) => s.toLowerCase() }
     },
     flatten: true
   },
@@ -238,14 +238,14 @@ module.exports.specimen_update_data = {
       inside: { type: Boolean },
       outside: { type: Boolean },
       loan: { type: Boolean },
-      details: { type: String }
+      details: { type: String, format: ( s ) => s.toLowerCase() }
     },
     flatten: true
   },
-  comments: { type: String },
-  story: { type: String },
-  figured: { type: String },
-  repair_history: { type: String },
-  analysis_history: { type: String },
-  specimen_location: { type: String }
+  comments: { type: String, format: ( s ) => s.toLowerCase() },
+  story: { type: String, format: ( s ) => s.toLowerCase() },
+  figured: { type: String, format: ( s ) => s.toLowerCase() },
+  repair_history: { type: String, format: ( s ) => s.toLowerCase() },
+  analysis_history: { type: String, format: ( s ) => s.toLowerCase() },
+  specimen_location: { type: String, format: ( s ) => s.toLowerCase() }
 };
