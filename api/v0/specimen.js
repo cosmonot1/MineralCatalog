@@ -121,7 +121,7 @@ async function update( data ) {
   return await Specimen.update( data );
 }
 
-//TODO: handle different file extensions properly
+//TODO: handle different file extensions for images properly with content type
 async function uploadUri( data ) {
 
   const filename = uuid.v4();
