@@ -476,7 +476,7 @@ class EditView extends React.Component {
         spec: !!props.spec,
         loading: false,
         uploading: false,
-        files: {}
+        files: []
       },
       mineral
     );
@@ -489,7 +489,7 @@ class EditView extends React.Component {
           spec: null,
           loading: false,
           uploading: false,
-          files: {}
+          files: []
         },
         JSON.parse( JSON.stringify( cleanMineral ) )
       )
