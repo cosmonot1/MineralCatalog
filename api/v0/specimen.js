@@ -1,5 +1,7 @@
 'use strict';
 
+const pkg = require( '../../package' );
+const Config = require( '../../utils/config' )( pkg.name ).current;
 const flat = require( 'flat' );
 const Specimen = require( '../../models/v0/specimen' );
 const { callbackify: c, formatBody: fmtBody } = require( '../../utils/api' );
@@ -174,6 +176,13 @@ async function __buildArchive( archive, query, type ) {
     if ( !specimens.length ) {
       return;
     }
+
+    specimens.forEach( s => {
+      if ( s.photos.main ) {
+        s.photos.main = Config().services.gcloud.imageBaseLink + s.photos.main;
+      }
+      s.photos.all = s.photos.all.map( photo => Config().services.gcloud.imageBaseLink + photo );
+    } );
 
     const files = await __buildFiles( specimens, type );
 
