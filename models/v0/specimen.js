@@ -28,7 +28,7 @@ async function add( data ) {
   const { specimen } = await validate(
     data,
     {
-      type: { 
+      type: {
         specimen: {
           type: Schemas.specimen_add_ref,
           required: true
@@ -71,7 +71,6 @@ async function add( data ) {
 
 }
 
-// TODO: indexes for efficiency
 function createIndexes() {
   collection.createIndex( { catalog_number: 1 }, { unique: true } );
   collection.createIndex( { 'species.main': 1 } );

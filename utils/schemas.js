@@ -32,8 +32,6 @@ module.exports.default_projection_field = {
   default: {}
 };
 
-//TODO: Lower case formatting for all string in puts that aren't "other" type.
-
 module.exports.specimen_add_ref = {
   photos: {
     type: {

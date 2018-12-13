@@ -6,6 +6,11 @@ const { callbackify: c, formatBody: fmtBody } = require( '../../utils/api' );
 const moment = require( 'moment' );
 const archiver = require( 'archiver' );
 const json2csv = require( 'json-2-csv' ).json2csvPromisified;
+const uuid = require( 'uuid' );
+const { Storage } = require( '@google-cloud/storage' );
+
+const storage = new Storage();
+const bucket = storage.bucket( 'mineral-catalog-images' );
 
 const EXPORT_PAGE_STEP = 100;
 
@@ -15,7 +20,11 @@ module.exports = {
   get: c( fmtBody( fmtReqRes( Specimen.get ) ) ),
   list: c( fmtBody( fmtReqRes( Specimen.list ) ) ),
   remove: c( fmtBody( fmtReqRes( Specimen.remove ) ) ),
-  update: c( fmtBody( fmtReqRes( update ) ) )
+  update: c( fmtBody( fmtReqRes( update ) ) ),
+  photo: {
+    uploadUri: c( fmtBody( fmtReqRes( uploadUri ) ) )
+    // downloadUri: c( fmtBody( fmtReqRes( downloadUri ) ) )
+  },
 
 };
 
@@ -111,6 +120,42 @@ async function update( data ) {
 
   return await Specimen.update( data );
 }
+
+//TODO: handle different file extensions properly
+async function uploadUri( data ) {
+
+  const filename = uuid.v4();
+  const file = bucket.file( filename );
+  const [ url ] = await file.getSignedUrl( {
+    action: 'write',
+    contentType: 'application/json',
+    expires: moment().add( 30, 'd' ).toISOString()
+  } );
+
+  return { url, filename };
+
+}
+
+// async function downloadUri( data ) {
+//
+//   if ( !data.filename ) {
+//     throw {
+//       code: 400,
+//       type: 'validation',
+//       reason: 'Must provide GCS filename',
+//       err: new Error( 'Must provide filename' )
+//     };
+//   }
+//
+//   const file = bucket.file( data.filename );
+//   const [ url ] = await file.getSignedUrl( {
+//     action: 'read',
+//     expires: moment( 9999999999999 ).toISOString()
+//   } );
+//
+//   return { url };
+//
+// }
 
 function fmtReqRes( fn ) {
   return async req => {

@@ -23,6 +23,12 @@ module.exports = function () {
   router.route( '/specimen/download/:type' )
     .get( API.v0.specimen.download );
 
+  // router.route( '/specimen/photo/download/:filename' )
+  //   .get( API.v0.specimen.downloadUri );
+
+  router.route( '/specimen/photo/upload' )
+    .get( API.v0.specimen.photo.uploadUri );
+
   return router;
 
 };
