@@ -1,4 +1,8 @@
+const GCS_STORAGE_LINK = 'https://storage.googleapis.com/mineral-catalog-images/';
+
 const cleanMineral = {
+  'photos.main': '',
+  'photos.all': [],
   'physical_dimensions.weight': 0,
   'physical_dimensions.length': 0,
   'physical_dimensions.width': 0,
@@ -470,7 +474,9 @@ class EditView extends React.Component {
     this.state = Object.assign(
       {
         spec: !!props.spec,
-        loading: false
+        loading: false,
+        uploading: false,
+        files: {}
       },
       mineral
     );
@@ -481,47 +487,61 @@ class EditView extends React.Component {
       Object.assign(
         {
           spec: null,
-          loading: false
+          loading: false,
+          uploading: false,
+          files: {}
         },
         JSON.parse( JSON.stringify( cleanMineral ) )
       )
     );
 
+    this.fileInput.value = "";
+
+  }
+
+  checkDone() {
+    if ( this.state.loading || this.state.uploading ) {
+      return;
+    }
   }
 
   add() {
-    const done = ( err ) => {
-      this.setState( { loading: false } );
-      alert( err ? err.message : 'Success!' );
-      if ( !err ) {
-        this.reset();
-      }
-    };
+    this.uploadPhotos( () => {
+      const done = ( err ) => {
+        this.setState( { loading: false } );
+        alert( err ? err.message : "Success!" );
+        if ( !err ) {
+          this.reset();
+        }
+      };
 
-    if ( this.state.loading ) {
-      return;
-    }
+      console.log( this.state[ 'photos.all' ][ 0 ] );
 
-    this.setState( {
-      loading: true,
-      'physical_dimensions.weight': parseInt( this.state[ 'physical_dimensions.weight' ] || '0' ),
-      'physical_dimensions.length': parseInt( this.state[ 'physical_dimensions.length' ] || '0' ),
-      'physical_dimensions.width': parseInt( this.state[ 'physical_dimensions.width' ] || '0' ),
-      'physical_dimensions.height': parseInt( this.state[ 'physical_dimensions.height' ] || '0' ),
-      'physical_dimensions.main_crystal': parseInt( this.state[ 'physical_dimensions.main_crystal' ] || '0' ),
-      'acquired.paid': parseInt( this.state[ 'acquired.paid' ] || '0' ),
+      this.setState( {
+        'physical_dimensions.weight': parseInt( this.state[ 'physical_dimensions.weight' ] || '0' ),
+        'physical_dimensions.length': parseInt( this.state[ 'physical_dimensions.length' ] || '0' ),
+        'physical_dimensions.width': parseInt( this.state[ 'physical_dimensions.width' ] || '0' ),
+        'physical_dimensions.height': parseInt( this.state[ 'physical_dimensions.height' ] || '0' ),
+        'physical_dimensions.main_crystal': parseInt( this.state[ 'physical_dimensions.main_crystal' ] || '0' ),
+        'acquired.paid': parseInt( this.state[ 'acquired.paid' ] || '0' ),
+        'photos.main': this.state[ 'photos.all' ][ 0 ] || ''
+      }, () => {
+
+        console.log( this.state[ 'photos.main' ] );
+
+        if ( !this.state.spec ) {
+          return API.specimen.add( { specimen: this.state }, done );
+        }
+
+        API.specimen.update( { specimen: { _id: this.state._id }, set: this.state }, done );
+
+      } );
     } );
-
-    if ( !this.state.spec ) {
-      return API.specimen.add( { specimen: this.state }, done );
-    }
-
-    API.specimen.update( { specimen: { _id: this.state._id }, set: this.state }, done );
   }
 
   handleChange( e ) {
     const t = e.target;
-    this.setState( { [ t.name ]: t.type === 'checkbox' ? t.checked : t.value } );
+    this.setState( { [ t.name ]: t.type === 'file' ? t.files : ( t.type === 'checkbox' ? t.checked : t.value ) } );
   }
 
   goList() {
@@ -529,25 +549,56 @@ class EditView extends React.Component {
     this.props.goList();
   }
 
-  uploadPhoto() {
-    API.specimen.photo.upload( {}, ( err, result ) => {
-      if ( err ) {
-        throw err;
+  uploadPhotos( done ) {
+
+    if ( this.state.loading ) {
+      return;
+    }
+
+    this.setState( { loading: true } );
+
+    upload.call( this, this.state.files, 0 );
+
+    function upload( files, i ) {
+      if ( i >= files.length ) {
+        return done();
       }
 
-      const xhttp = new XMLHttpRequest();
-      xhttp.onreadystatechange = function () {
-        if ( this.readyState != 4 ) {
-          return
+      const file = files[ i ];
+
+      API.specimen.photo.upload( { 'content-type': file.type }, ( err, result ) => {
+        if ( err ) {
+          throw err;
         }
-        console.log( xhttp.request );
-      };
 
-      xhttp.open( "PUT", result.url, true );
-      xhttp.setRequestHeader( 'Content-Type', 'application/json' );
-      xhttp.send( JSON.stringify( this.state ) );
+        const that = this;
 
-    } );
+        const xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+          if ( this.readyState != 4 ) {
+            return;
+          }
+
+          if ( this.response.err ) {
+            throw this.response.err;
+          }
+
+          that.setState( {
+            'photos.all': [
+              ...that.state[ 'photos.all' ],
+              result.filename
+            ]
+          }, () => upload.call( that, files, ++i ) );
+
+        };
+
+        xhttp.open( "PUT", result.url, true );
+        xhttp.setRequestHeader( 'Content-Type', file.type );
+        xhttp.send( file );
+
+      } );
+    }
+
   }
 
   render() {
@@ -559,14 +610,12 @@ class EditView extends React.Component {
             <strong>Photos</strong>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <div>Main Photo</div>
-            {/*TODO: PHOTO INPUT*/}
-            <button style={{ 'marginRight': 8 }} type="button" onClick={this.uploadPhoto.bind( this )}>Upload</button>
+            <input type="file" name="files" onChange={this.handleChange.bind( this )} ref={ref => this.fileInput = ref}
+                   multiple/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <div>Additional Photos</div>
-            {/*TODO: plus and minus buttons to add and remove photos*/}
-            {/*TODO: PHOTO INPUT*/}
+            {this.state[ 'photos.all' ].map( photo => <img width="100" height="100" src={GCS_STORAGE_LINK + photo}
+                                                           alt={photo} key={photo}/> )}
           </div>
         </div>
 

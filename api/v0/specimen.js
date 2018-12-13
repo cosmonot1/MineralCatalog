@@ -51,13 +51,6 @@ async function add( data ) {
     }
   }
 
-  //TMP OP FOR TESTING BEFORE PHOTOS ARE IMPLEMENTED
-  //TODO: REMOVE ONCE PHOTOS IMPLEMENTED
-  data.specimen.photos = {
-    main: '',
-    all: [ '' ]
-  };
-
   return await Specimen.add( data );
 }
 
@@ -111,24 +104,18 @@ async function update( data ) {
     }
   }
 
-  //TMP OP FOR TESTING BEFORE PHOTOS ARE IMPLEMENTED
-  //TODO: REMOVE ONCE PHOTOS IMPLEMENTED
-  data.set.photos = {
-    main: '',
-    all: [ '' ]
-  };
-
   return await Specimen.update( data );
 }
 
-//TODO: handle different file extensions for images properly with content type
 async function uploadUri( data ) {
+
+  const type = data[ 'content-type' ] || 'application/json';
 
   const filename = uuid.v4();
   const file = bucket.file( filename );
   const [ url ] = await file.getSignedUrl( {
     action: 'write',
-    contentType: 'application/json',
+    contentType: type,
     expires: moment().add( 30, 'd' ).toISOString()
   } );
 
