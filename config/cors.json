@@ -1,0 +1,14 @@
+[
+  {
+    "origin": [
+      "*"
+    ],
+    "method": [
+      "PUT",
+      "GET"
+    ],
+    "responseHeader": [
+      "Content-Type"
+    ]
+  }
+]
