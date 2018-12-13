@@ -183,11 +183,13 @@ class Specimen extends React.Component {
               <td style={{ 'paddingRight': 8 }}>Main: {this.props.spec.species.main}</td>
               <td style={{ 'paddingRight': 8 }}>Stope: {this.props.spec.discovery_location.stope}</td>
               <td style={{ 'paddingRight': 8 }}>Analyzed: <input type="checkbox" name="checked"
+                                                                 readOnly
                                                                  checked={this.props.spec.analysis.analyzed}
                                                                  onClick={preventDefault}/>
               </td>
               <td style={{ 'paddingRight': 8 }}>Date: {this.props.spec.acquired.date}</td>
               <td style={{ 'paddingRight': 8 }}>Old Label: <input type="checkbox" name="checked"
+                                                                  readOnly
                                                                   checked={this.props.spec.states.old_label}
                                                                   onClick={preventDefault}/>
               </td>
@@ -204,10 +206,12 @@ class Specimen extends React.Component {
               <td style={{ 'paddingRight': 8 }}>By: {this.props.spec.analysis.by}</td>
               <td style={{ 'paddingRight': 8 }}>Paid: {this.props.spec.acquired.paid} ($)</td>
               <td style={{ 'paddingRight': 8 }}>Repair: <input type="checkbox" name="checked"
+                                                               readOnly
                                                                checked={this.props.spec.states.repair}
                                                                onClick={preventDefault}/>
               </td>
               <td style={{ 'paddingRight': 8 }}>Inside: <input type="checkbox" name="checked"
+                                                               readOnly
                                                                checked={this.props.spec.storage_location.inside}
                                                                onClick={preventDefault}/>
               </td>
@@ -219,10 +223,12 @@ class Specimen extends React.Component {
               <td style={{ 'paddingRight': 8 }}>Method: {this.props.spec.analysis.method}</td>
               <td style={{ 'paddingRight': 8 }}>From: {this.props.spec.acquired.from}</td>
               <td style={{ 'paddingRight': 8 }}>Story: <input type="checkbox" name="checked"
+                                                              readOnly
                                                               checked={this.props.spec.states.story}
                                                               onClick={preventDefault}/>
               </td>
               <td style={{ 'paddingRight': 8 }}>Outside:<input type="checkbox" name="checked"
+                                                               readOnly
                                                                checked={this.props.spec.storage_location.outside}
                                                                onClick={preventDefault}/></td>
             </tr>
@@ -233,10 +239,12 @@ class Specimen extends React.Component {
               <td style={{ 'paddingRight': 8 }}></td>
               <td style={{ 'paddingRight': 8 }}>Where: {this.props.spec.acquired.where}</td>
               <td style={{ 'paddingRight': 8 }}>Figured: <input type="checkbox" name="checked"
+                                                                readOnly
                                                                 checked={this.props.spec.states.figured}
                                                                 onClick={preventDefault}/>
               </td>
               <td style={{ 'paddingRight': 8 }}>Loan: <input type="checkbox" name="checked"
+                                                             readOnly
                                                              checked={this.props.spec.storage_location.loan}
                                                              onClick={preventDefault}/>
               </td>
@@ -521,9 +529,47 @@ class EditView extends React.Component {
     this.props.goList();
   }
 
+  uploadPhoto() {
+    API.specimen.photo.upload( {}, ( err, result ) => {
+      if ( err ) {
+        throw err;
+      }
+
+      const xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if ( this.readyState != 4 ) {
+          return
+        }
+        console.log( xhttp.request );
+      };
+
+      xhttp.open( "PUT", result.url, true );
+      xhttp.setRequestHeader( 'Content-Type', 'application/json' );
+      xhttp.send( JSON.stringify( this.state ) );
+
+    } );
+  }
+
   render() {
     return (
       <div>
+
+        <div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <strong>Photos</strong>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Main Photo</div>
+            {/*TODO: PHOTO INPUT*/}
+            <button style={{ 'marginRight': 8 }} type="button" onClick={this.uploadPhoto.bind( this )}>Upload</button>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Additional Photos</div>
+            {/*TODO: plus and minus buttons to add and remove photos*/}
+            {/*TODO: PHOTO INPUT*/}
+          </div>
+        </div>
+
         <div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <strong>Physical Dimensions</strong>
