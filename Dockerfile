@@ -11,8 +11,6 @@ RUN apk add --no-cache libc6-compat
 
 FROM base as installer
 
-RUN apk add --no-cache build-base python
-
 # Add source files
 ADD package.json package-lock.json /home/app/
 
@@ -30,7 +28,6 @@ RUN apk add --no-cache git openssh
 
 # Install deps
 ENV GIT_DIR /home/app
-RUN npm install --unsafe-perm --quiet
 RUN npm install --unsafe-perm --quiet --only=dev
 
 # Add source files
