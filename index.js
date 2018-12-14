@@ -47,8 +47,9 @@ function Server( config ) {
     objectPath.set( config, 'server.version', pkg.version );
     _Config.load( require( './config/app' ), config, pkg.name );
 
-    console.log(pkg.name);
-    console.log(JSON.stringify(config, null, 2));
+    console.log( '--------' );
+    console.log( _Config.current().services.db.mongodb );
+    console.log( '--------' );
 
     process.on( 'unhandledRejection', console.log );
 
@@ -90,8 +91,8 @@ function Server( config ) {
     app.use( require( 'compression' )( { level: 9, memLevel: 9 } ) );
     app.use( require( './middleware/cache' ).disallow );
 
-    const static1 = path.resolve( __dirname, 'views','build' );
-    const static2 = path.resolve( __dirname, 'views','utils' );
+    const static1 = path.resolve( __dirname, 'views', 'build' );
+    const static2 = path.resolve( __dirname, 'views', 'utils' );
 
     // Static
     app.use( express.static( static1, { index: false } ) );
