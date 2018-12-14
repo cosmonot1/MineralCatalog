@@ -24,7 +24,6 @@
     "@google-cloud/storage": "^2.3.1",
     "archiver": "^3.0.0",
     "async-exit-hook": "^2.0.1",
-    "babel-preset-react-app": "^6.1.0",
     "body-parser": "^1.18.3",
     "compression": "^1.7.3",
     "cookie-parser": "^1.4.3",
@@ -45,6 +44,7 @@
     "@babel/cli": "^7.1.0",
     "@babel/core": "^7.1.0",
     "@babel/preset-env": "^7.1.0",
-    "@babel/preset-react": "^7.0.0"
+    "@babel/preset-react": "^7.0.0",
+    "babel-preset-react-app": "^6.1.0"
   }
 }
