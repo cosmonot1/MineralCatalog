@@ -1,13 +1,13 @@
 kind: Service
 apiVersion: v1
 metadata:
-  name: app-qa
+  name: mineralcatalog
   labels:
-    app: app-qa
+    app: mineralcatalog
 spec:
   type: NodePort
   ports:
     - port: 80
       targetPort: 80
   selector:
-    app: app-qa
+    app: mineralcatalog

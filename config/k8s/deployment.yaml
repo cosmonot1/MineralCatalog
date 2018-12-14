@@ -1,24 +1,24 @@
 kind: Deployment
 apiVersion: apps/v1beta1
 metadata:
-  name: app-qa
+  name: mineralcatalog
   namespace: default
   labels:
-    app: app-qa
+    app: mineralcatalog
 spec:
   replicas: 0
   template:
     metadata:
       labels:
-        app: app-qa
+        app: mineralcatalog
     spec:
       volumes:
         - name: configs
           configMap:
-            name: app-qa
+            name: mineralcatalog
       containers:
-        - name: app-qa
-          image: gcr.io/simple-emotion-development/app-qa:v2.3.0-27
+        - name: mineralcatalog
+          image: gcr.io/mineral-catalog-225400/mineral-catalog:v0.0.2-0
           resources:
             requests:
               cpu: 200m
@@ -33,8 +33,8 @@ spec:
             - name: configs
               mountPath: /configs
           env:
-            - name: app_qa_configfile
-              value: /configs/app-qa.json
+            - name: mineralcatalog_configfile
+              value: /configs/mineralcatalog.json
             - name: GOOGLE_APPLICATION_CREDENTIALS
               value: /configs/gcloud.json
           readinessProbe:

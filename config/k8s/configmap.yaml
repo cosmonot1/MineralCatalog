@@ -1,9 +1,12 @@
 kind: ConfigMap
 apiVersion: v1
 metadata:
-  name: app-qa
+  name: mineralcatalog
   namespace: default
   labels:
-    app: app-qa
+    app: mineralcatalog
 data:
-  app-qa.json: {}
+  mineralcatalog.json: -|
+   {}
+  gcloud.json: -|
+   {}
