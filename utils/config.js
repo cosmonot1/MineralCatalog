@@ -60,6 +60,10 @@ function load( config_file, config_runtime, namespace ) {
 
     const env_var_configfile = process.env[ env_var_prefix + 'file' ];
 
+    console.log( env_var_prefix );
+    console.log( env_var_prefix + 'file' );
+    console.log( env_var_configfile );
+
     // Check if there is a config file
     if ( env_var_configfile ) {
       try {
@@ -69,6 +73,8 @@ function load( config_file, config_runtime, namespace ) {
         console.error( err );
       }
     }
+
+    console.log( JSON.stringify( config_env_file, null, 2 ) );
 
     // Get base64-encoded config string from environment variable
     config_env = process.env[ env_var_prefix ] || base64Encode( '{}' );

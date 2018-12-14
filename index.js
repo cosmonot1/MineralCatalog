@@ -47,6 +47,9 @@ function Server( config ) {
     objectPath.set( config, 'server.version', pkg.version );
     _Config.load( require( './config/app' ), config, pkg.name );
 
+    console.log(pkg.name);
+    console.log(JSON.stringify(config, null, 2));
+
     process.on( 'unhandledRejection', console.log );
 
     // Initialize http(s) server
