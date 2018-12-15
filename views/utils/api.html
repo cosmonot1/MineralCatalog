@@ -47,6 +47,7 @@
         }
 
         if ( !( xhr.response.err && ( xhr.response.err.code === 401 ) && cookie ) ) {
+          alert('Authentication session token expired. Please refresh the page and log in again.');
           return done( xhr.response.err || null, xhr.response.err ? null : xhr.response );
         }
 

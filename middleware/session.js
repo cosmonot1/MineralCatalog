@@ -1,8 +1,8 @@
 'use strict';
 
 const pkg = require( '../package' );
-const Config = require( '@simple-emotion/config' )( pkg.name ).current;
-const Session = require( '../models/session' );
+const Config = require( '../utils/config' )( pkg.name ).current;
+const Session = require( '../models/v0/session' );
 const jwt = require( 'jsonwebtoken' );
 
 module.exports = {
