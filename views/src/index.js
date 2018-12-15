@@ -208,18 +208,16 @@ class Specimen extends React.Component {
               <td style={{ 'paddingRight': 8 }}>Stope: {this.props.spec.discovery_location.stope}</td>
               <td style={{ 'paddingRight': 8 }}>Analyzed: <input type="checkbox" name="checked"
                                                                  readOnly
-                                                                 checked={this.props.spec.analysis.analyzed}
-                                                                 onClick={preventDefault}/>
+                                                                 checked={this.props.spec.analysis.analyzed}/>
               </td>
               <td style={{ 'paddingRight': 8 }}>Date: {this.props.spec.acquired.date}</td>
               <td style={{ 'paddingRight': 8 }}>Old Label: <input type="checkbox" name="checked"
                                                                   readOnly
-                                                                  checked={this.props.spec.states.old_label}
-                                                                  onClick={preventDefault}/>
+                                                                  checked={this.props.spec.states.old_label}/>
               </td>
               <td style={{ 'paddingRight': 8 }}>Exhibit: <input type="checkbox" name="checked"
-                                                                checked={this.props.spec.storage_location.exhibit}
-                                                                onClick={preventDefault}/>
+                                                                readOnly
+                                                                checked={this.props.spec.storage_location.exhibit}/>
               </td>
             </tr>
             <tr>
@@ -231,13 +229,11 @@ class Specimen extends React.Component {
               <td style={{ 'paddingRight': 8 }}>Paid: {this.props.spec.acquired.paid} ($)</td>
               <td style={{ 'paddingRight': 8 }}>Repair: <input type="checkbox" name="checked"
                                                                readOnly
-                                                               checked={this.props.spec.states.repair}
-                                                               onClick={preventDefault}/>
+                                                               checked={this.props.spec.states.repair}/>
               </td>
               <td style={{ 'paddingRight': 8 }}>Inside: <input type="checkbox" name="checked"
                                                                readOnly
-                                                               checked={this.props.spec.storage_location.inside}
-                                                               onClick={preventDefault}/>
+                                                               checked={this.props.spec.storage_location.inside}/>
               </td>
             </tr>
             <tr>
@@ -248,13 +244,11 @@ class Specimen extends React.Component {
               <td style={{ 'paddingRight': 8 }}>From: {this.props.spec.acquired.from}</td>
               <td style={{ 'paddingRight': 8 }}>Story: <input type="checkbox" name="checked"
                                                               readOnly
-                                                              checked={this.props.spec.states.story}
-                                                              onClick={preventDefault}/>
+                                                              checked={this.props.spec.states.story}/>
               </td>
               <td style={{ 'paddingRight': 8 }}>Outside:<input type="checkbox" name="checked"
                                                                readOnly
-                                                               checked={this.props.spec.storage_location.outside}
-                                                               onClick={preventDefault}/></td>
+                                                               checked={this.props.spec.storage_location.outside}/></td>
             </tr>
             <tr>
               <td style={{ 'paddingRight': 8 }}>Height: {this.props.spec.physical_dimensions.height} (cm)</td>
@@ -264,13 +258,11 @@ class Specimen extends React.Component {
               <td style={{ 'paddingRight': 8 }}>Where: {this.props.spec.acquired.where}</td>
               <td style={{ 'paddingRight': 8 }}>Figured: <input type="checkbox" name="checked"
                                                                 readOnly
-                                                                checked={this.props.spec.states.figured}
-                                                                onClick={preventDefault}/>
+                                                                checked={this.props.spec.states.figured}/>
               </td>
               <td style={{ 'paddingRight': 8 }}>Loan: <input type="checkbox" name="checked"
                                                              readOnly
-                                                             checked={this.props.spec.storage_location.loan}
-                                                             onClick={preventDefault}/>
+                                                             checked={this.props.spec.storage_location.loan}/>
               </td>
             </tr>
             <tr>
