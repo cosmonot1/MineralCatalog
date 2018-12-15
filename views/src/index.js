@@ -535,8 +535,6 @@ class EditView extends React.Component {
         }
       };
 
-      console.log( this.state[ 'photos.all' ][ 0 ] );
-
       this.setState( {
         'physical_dimensions.weight': parseInt( this.state[ 'physical_dimensions.weight' ] || '0' ),
         'physical_dimensions.length': parseInt( this.state[ 'physical_dimensions.length' ] || '0' ),
@@ -546,8 +544,6 @@ class EditView extends React.Component {
         'acquired.paid': parseInt( this.state[ 'acquired.paid' ] || '0' ),
         'photos.main': this.state[ 'photos.all' ][ 0 ] || ''
       }, () => {
-
-        console.log( this.state[ 'photos.main' ] );
 
         if ( !this.state.spec ) {
           return API.specimen.add( { specimen: this.state }, done );
@@ -980,9 +976,6 @@ class LoginView extends React.Component {
   }
 
   login() {
-    //TODO: DON"T SHORTUT THIS
-    return this.props.changeView( 'home' );
-
     const pw = this.state.password;
     this.setState( { password: '' } );
 
