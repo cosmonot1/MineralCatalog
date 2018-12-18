@@ -354,7 +354,7 @@ class SearchCriteria extends React.Component {
     this.state.keys.forEach( k => {
       const state = this.state[ k ];
       if ( state.operatorType === 'number' ) {
-        state.value = parseInt( state.value, 10 );
+        state.value = parseFloat( state.value );
       }
       query.push( {
         [ state.metric ]: {
@@ -528,12 +528,12 @@ class EditView extends React.Component {
       };
 
       this.setState( {
-        'physical_dimensions.weight': parseInt( this.state[ 'physical_dimensions.weight' ] || '0' ),
-        'physical_dimensions.length': parseInt( this.state[ 'physical_dimensions.length' ] || '0' ),
-        'physical_dimensions.width': parseInt( this.state[ 'physical_dimensions.width' ] || '0' ),
-        'physical_dimensions.height': parseInt( this.state[ 'physical_dimensions.height' ] || '0' ),
-        'physical_dimensions.main_crystal': parseInt( this.state[ 'physical_dimensions.main_crystal' ] || '0' ),
-        'acquired.paid': parseInt( this.state[ 'acquired.paid' ] || '0' ),
+        'physical_dimensions.weight': parseFloat( this.state[ 'physical_dimensions.weight' ] || '0' ),
+        'physical_dimensions.length': parseFloat( this.state[ 'physical_dimensions.length' ] || '0' ),
+        'physical_dimensions.width': parseFloat( this.state[ 'physical_dimensions.width' ] || '0' ),
+        'physical_dimensions.height': parseFloat( this.state[ 'physical_dimensions.height' ] || '0' ),
+        'physical_dimensions.main_crystal': parseFloat( this.state[ 'physical_dimensions.main_crystal' ] || '0' ),
+        'acquired.paid': parseFloat( this.state[ 'acquired.paid' ] || '0' ),
         'photos.main': this.state[ 'photos.all' ][ 0 ] || ''
       }, () => {
 

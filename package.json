@@ -1,6 +1,6 @@
 {
   "name": "mineralcatalog",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "description": "Basic mineral cataloging app.",
   "main": "index.js",
   "scripts": {
