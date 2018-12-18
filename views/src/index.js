@@ -557,6 +557,22 @@ class EditView extends React.Component {
     this.props.goList();
   }
 
+  makePDF() {
+    //docs https://rawgit.com/MrRio/jsPDF/master/docs/index.html
+    //examples https://rawgit.com/MrRio/jsPDF/master/
+    const doc = new jsPDF();
+    const test = document.getElementById( 'test' );
+    console.log( 'test',test );
+    doc.text( `Specimen ${this.state.catalog_number}`, 20, 20 );
+    doc.fromHTML( test, 50, 50, {
+      'width': 500,
+      'elementHandlers': {
+        button: () => true
+      }
+    } );
+    doc.save( 'a4.pdf' );
+  }
+
   uploadPhotos( done ) {
 
     if ( this.state.loading ) {
@@ -611,7 +627,7 @@ class EditView extends React.Component {
 
   render() {
     return (
-      <div>
+      <div id="test">
 
         <div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
@@ -858,6 +874,8 @@ class EditView extends React.Component {
         <button style={{ 'marginRight': 8 }} type="button" onClick={this.goList.bind( this )}>Cancel</button>
         <button style={{ 'marginRight': 8 }} type="button"
                 onClick={this.add.bind( this )}>{this.state.spec ? 'Update!' : 'Add!'}</button>
+        {this.state.spec ?
+          <button style={{ 'marginRight': 8 }} type="button" onClick={this.makePDF.bind( this )}>Download</button> : ''}
       </div>
     );
   }
@@ -1017,3 +1035,5 @@ ReactDOM.render(
   <App/>,
   document.getElementById( 'root' )
 );
+
+//TODO: IMAGE Size and aspect ratio maintaining http://www.frontcoded.com/javascript-fit-rectange-into-bounds.html
