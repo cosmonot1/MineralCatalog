@@ -41,35 +41,35 @@ const cleanMineral = {
 };
 
 const searchCriteria = [
-  { name: 'catalog number', type: 'number', field: 'catalog_number' },
-  { name: 'weight', type: 'number', field: 'physical_dimensions.weight' },
-  { name: 'length', type: 'number', field: 'physical_dimensions.length' },
-  { name: 'width', type: 'number', field: 'physical_dimensions.width' },
-  { name: 'height', type: 'number', field: 'physical_dimensions.height' },
-  { name: 'main crystal', type: 'number', field: 'physical_dimensions.main_crystal' },
-  { name: 'main species', type: 'string', field: 'species.main' },
-  { name: 'additional species', type: 'string', field: 'species.additional' },
-  { name: 'stope', type: 'string', field: 'discovery_location.stope' },
-  { name: 'level', type: 'string', field: 'discovery_location.level' },
-  { name: 'mine', type: 'string', field: 'discovery_location.mine' },
-  { name: 'district', type: 'string', field: 'discovery_location.district' },
-  { name: 'state', type: 'string', field: 'discovery_location.state' },
-  { name: 'country', type: 'string', field: 'discovery_location.country' },
-  { name: 'analyzed', type: 'boolean', field: 'analysis.analyzed' },
-  { name: 'analyzed by', type: 'string', field: 'analysis.by' },
-  { name: 'analysis method', type: 'string', field: 'analysis.method' },
-  { name: 'acquired date', type: 'date', field: 'acquired.date' },
-  { name: 'paid', type: 'number', field: 'acquired.paid' },
-  { name: 'acquired from', type: 'string', field: 'acquired.from' },
-  { name: 'acquired where', type: 'string', field: 'acquired.where' },
-  { name: 'old label', type: 'boolean', field: 'states.old_label' },
-  { name: 'repair', type: 'boolean', field: 'states.repair' },
-  { name: 'story', type: 'boolean', field: 'states.story' },
-  { name: 'figured', type: 'boolean', field: 'states.figured' },
-  { name: 'exhibit', type: 'boolean', field: 'storage_location.exhibit' },
-  { name: 'inside', type: 'boolean', field: 'storage_location.inside' },
-  { name: 'outside', type: 'boolean', field: 'storage_location.outside' },
-  { name: 'loan', type: 'boolean', field: 'storage_location.loan' },
+  { name: 'catalog number', type: 'number', field: 'catalog_number', print_col: 0 },
+  { name: 'weight', type: 'number', field: 'physical_dimensions.weight', print_col: 0, unit: 'g' },
+  { name: 'length', type: 'number', field: 'physical_dimensions.length', print_col: 0, unit: 'cm' },
+  { name: 'width', type: 'number', field: 'physical_dimensions.width', print_col: 0, unit: 'cm' },
+  { name: 'height', type: 'number', field: 'physical_dimensions.height', print_col: 0, unit: 'cm' },
+  { name: 'main crystal', type: 'number', field: 'physical_dimensions.main_crystal', print_col: 0, unit: 'cm' },
+  { name: 'main species', type: 'string', field: 'species.main', print_col: 1 },
+  { name: 'additional species', type: 'string', field: 'species.additional', print_col: 1 },
+  { name: 'stope', type: 'string', field: 'discovery_location.stope', print_col: 1 },
+  { name: 'level', type: 'string', field: 'discovery_location.level', print_col: 1 },
+  { name: 'mine', type: 'string', field: 'discovery_location.mine', print_col: 1 },
+  { name: 'district', type: 'string', field: 'discovery_location.district', print_col: 1 },
+  { name: 'state', type: 'string', field: 'discovery_location.state', print_col: 1 },
+  { name: 'country', type: 'string', field: 'discovery_location.country', print_col: 1 },
+  { name: 'analyzed', type: 'boolean', field: 'analysis.analyzed', print_col: 1 },
+  { name: 'analyzed by', type: 'string', field: 'analysis.by', print_col: 1 },
+  { name: 'analysis method', type: 'string', field: 'analysis.method', print_col: 1 },
+  { name: 'acquired date', type: 'date', field: 'acquired.date', print_col: 2 },
+  { name: 'paid', type: 'number', field: 'acquired.paid', print_col: 2, unit: '$' },
+  { name: 'acquired from', type: 'string', field: 'acquired.from', print_col: 2 },
+  { name: 'acquired where', type: 'string', field: 'acquired.where', print_col: 2 },
+  { name: 'old label', type: 'boolean', field: 'states.old_label', print_col: 2 },
+  { name: 'repair', type: 'boolean', field: 'states.repair', print_col: 2 },
+  { name: 'story', type: 'boolean', field: 'states.story', print_col: 2 },
+  { name: 'figured', type: 'boolean', field: 'states.figured', print_col: 2 },
+  { name: 'exhibit', type: 'boolean', field: 'storage_location.exhibit', print_col: 2 },
+  { name: 'inside', type: 'boolean', field: 'storage_location.inside', print_col: 2 },
+  { name: 'outside', type: 'boolean', field: 'storage_location.outside', print_col: 2 },
+  { name: 'loan', type: 'boolean', field: 'storage_location.loan', print_col: 2 },
   { name: 'storage details', type: 'string', field: 'storage_location.details' },
   { name: 'comments', type: 'string', field: 'comments' },
   { name: 'story', type: 'string', field: 'story' },
@@ -182,7 +182,7 @@ class Specimen extends React.Component {
               </td>
             </tr>
             <tr>
-              <td>Catalog: {this.props.spec.catalog_number}</td>
+              <td>Catalog: {( "00000" + this.props.spec.catalog_number ).substr( -5, 5 )}</td>
             </tr>
             <tr>
               <td>
@@ -557,21 +557,59 @@ class EditView extends React.Component {
     this.props.goList();
   }
 
-  makePDF() {
+  makePDF( download ) {
+    const w = 203.2, h = 127, margin = 4;
+    const colW = ( w - 2 * margin ) / 3;
+    const contentW = colW - 2 * margin;
+
     //docs https://rawgit.com/MrRio/jsPDF/master/docs/index.html
     //examples https://rawgit.com/MrRio/jsPDF/master/
-    const doc = new jsPDF();
-    const test = document.getElementById( 'test' );
-    console.log( 'test',test );
-    doc.text( `Specimen ${this.state.catalog_number}`, 20, 20 );
-    doc.fromHTML( test, 50, 50, {
-      'width': 500,
-      'elementHandlers': {
-        button: () => true
-      }
+
+    const doc = new jsPDF( {
+      orientation: 'l',
+      unit: 'mm',
+      format: [ w, h ],
+      lineHeight: 1
     } );
-    doc.save( 'a4.pdf' );
+
+    if ( !this.state[ 'photos.main' ] ) {
+      doc.text( 'No Image', 2 * margin, 3 * margin )
+    } else {
+      doc.addImage( GCS_STORAGE_LINK + this.state[ 'photos.main' ], '', 2 * margin, 2 * margin, contentW, contentW );
+    }
+
+    //TODO: put in catalog number
+    doc.setFontSize( 12 )
+      .text( this.buildPrintColumn( doc, 0, contentW ), 2 * margin, contentW + 4 * margin )
+      .text( this.buildPrintColumn( doc, 1, contentW ), colW + 2 * margin, 3 * margin )
+      .text( this.buildPrintColumn( doc, 2, contentW ), 2 * colW + 2 * margin, 3 * margin );
+
+    //TODO: download or auto print?
+    // if(download)
+    //   return
+    doc.save( ( "00000" + this.state.catalog_number ).substr( -5, 5 ) + '.pdf' );
   }
+
+  buildPrintColumn( doc, col, width ) {
+    return doc.splitTextToSize(
+      searchCriteria
+        .filter( c => c.print_col === col )
+        .map( c => `${capitalize( c.name )}: ${checkFmtBool( c, this.state[ c.field ] )} ${c.unit ? `(${c.unit})` : ``}` )
+        .join( '\n\n' )
+      , width
+    );
+
+    function checkFmtBool( c, v ) {
+      switch ( c.type ) {
+        case 'boolean':
+          return v ? 'Yes' : 'No';
+        case 'date':
+          return v.split( 'T' )[ 0 ];
+        default:
+          return v;
+      }
+    }
+  };
 
   uploadPhotos( done ) {
 
@@ -757,7 +795,7 @@ class EditView extends React.Component {
             <strong>Acquired</strong>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <div>Date (DD-MM-YYYY ex: 09-23-1994)</div>
+            <div>Date (YYYY-MM-DD ex: Sep 23 1994 = 1994-09-23)</div>
             <input type="text" name="acquired.date" value={this.state[ 'acquired.date' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
@@ -1037,3 +1075,7 @@ ReactDOM.render(
 );
 
 //TODO: IMAGE Size and aspect ratio maintaining http://www.frontcoded.com/javascript-fit-rectange-into-bounds.html
+
+function capitalize( a ) {
+  return a.charAt( 0 ).toUpperCase() + a.slice( 1 );
+}
