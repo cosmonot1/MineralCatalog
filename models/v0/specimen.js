@@ -74,7 +74,7 @@ async function add( data ) {
 function createIndexes() {
   collection.createIndex( { catalog_number: 1 }, { unique: true } );
   collection.createIndex( { 'species.main': 1 } );
-  collection.createIndex( { 'species.additional': 1 } );
+  collection.createIndex( { 'species.additional.species': 1 } );
 }
 
 async function get( data ) {
