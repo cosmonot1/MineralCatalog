@@ -50,7 +50,7 @@ const searchCriteria = [
   { name: 'height', type: 'number', field: 'physical_dimensions.height', print_col: 0, unit: 'cm' },
   { name: 'main crystal', type: 'number', field: 'physical_dimensions.main_crystal', print_col: 0, unit: 'cm' },
   { name: 'main species', type: 'string', field: 'species.main', print_col: 1 },
-  { name: 'additional species', type: 'string', field: 'species.additional', print_col: 1 },
+  { name: 'additional species', type: 'string', field: 'species.additional.species', print_col: 1 },
   { name: 'stope', type: 'string', field: 'discovery_location.stope', print_col: 1 },
   { name: 'level', type: 'string', field: 'discovery_location.level', print_col: 1 },
   { name: 'mine', type: 'string', field: 'discovery_location.mine', print_col: 1 },
@@ -433,6 +433,7 @@ class SearchCriteria extends React.Component {
 class SpeciesAdder extends React.Component {
   constructor( props ) {
     super( props );
+
     this.state = {
       species: this.props.species
     };
@@ -456,15 +457,13 @@ class SpeciesAdder extends React.Component {
         state,
         ...this.state.species.slice( idx + 1 )
       ]
-    }, () => {
-      this.props.loadSpecies( this.state.species );
-    } );
+    }, this.notifySpecies.bind( this ) );
   }
 
   removeSpecies() {
     this.setState( {
       species: this.state.species.slice( 0, -1 )
-    } );
+    }, this.notifySpecies.bind( this ) );
   }
 
   addSpecies() {
@@ -473,13 +472,22 @@ class SpeciesAdder extends React.Component {
         ...this.state.species,
         { species: '', modifier: 'on' }
       ]
-    } );
+    }, this.notifySpecies.bind( this ) );
+  }
+
+  notifySpecies() {
+    this.props.loadSpecies( this.state.species );
+  }
+
+  reset() {
+    this.setState( { species: [] } );
   }
 
   buildSpecies( s, i ) {
     return (
-      <div key={i}>
-        <select key={`select_${i}`} editidx={i} name="modifier" value={this.state.species[ i ].modifier}
+      <div key={i} style={{ display: 'inline-block' }}>
+        <select style={{ 'marginRight': 8 }} key={`select_${i}`} editidx={i} name="modifier"
+                value={this.state.species[ i ].modifier}
                 onChange={this.handleChange.bind( this )}>
           {this.options.map( o => <option key={uuidv4()} value={o}>{o}</option> )}
         </select>
@@ -589,6 +597,7 @@ class EditView extends React.Component {
 
     this.photoFileInput.value = "";
     this.analysisFileInput.value = "";
+    this.speciesAdder.reset();
   }
 
   checkDone() {
@@ -616,7 +625,8 @@ class EditView extends React.Component {
           'physical_dimensions.height': parseFloat( this.state[ 'physical_dimensions.height' ] || '0' ),
           'physical_dimensions.main_crystal': parseFloat( this.state[ 'physical_dimensions.main_crystal' ] || '0' ),
           'acquired.paid': parseFloat( this.state[ 'acquired.paid' ] || '0' ),
-          'photos.main': this.state[ 'photos.all' ][ 0 ] || ''
+          'photos.main': this.state[ 'photos.all' ][ 0 ] || '',
+          'species.additional': this.state[ 'species.additional' ].filter( s => s.species )
         }, () => {
 
           if ( !this.state.spec ) {
@@ -755,7 +765,6 @@ class EditView extends React.Component {
     upload.call( this, this.state.analysis_files, 0 );
 
     function upload( files, i ) {
-      console.log( 'uploading file ', i, ' of ', files.length );
 
       if ( i >= files.length ) {
         return done();
@@ -866,7 +875,8 @@ class EditView extends React.Component {
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <SpeciesAdder species={this.state[ 'species.additional' ] || []}
-                          loadSpecies={this.loadSpecies.bind( this )}/>
+                          loadSpecies={this.loadSpecies.bind( this )}
+                          ref={ref => this.speciesAdder = ref}/>
           </div>
         </div>
 
