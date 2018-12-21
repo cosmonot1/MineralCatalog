@@ -26,8 +26,8 @@ module.exports = function () {
   // router.route( '/specimen/photo/download/:filename' )
   //   .get( API.v0.specimen.downloadUri );
 
-  router.route( '/specimen/photo/upload' )
-    .get( API.v0.specimen.photo.uploadUri );
+  router.route( '/specimen/upload/:type' )
+    .get( API.v0.specimen.upload );
 
   return router;
 
