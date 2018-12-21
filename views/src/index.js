@@ -1,4 +1,5 @@
-const GCS_STORAGE_LINK = 'https://storage.googleapis.com/mineral-catalog-images/';
+const GCS_IMAGE_LINK = 'https://storage.googleapis.com/mineral-catalog-images/';
+const GCS_ANALYSIS_LINK = 'https://storage.googleapis.com/mineral-catalog-analysis-documents/';
 
 const cleanMineral = {
   'photos.main': '',
@@ -37,7 +38,8 @@ const cleanMineral = {
   figured: '',
   repair_history: '',
   analysis_history: '',
-  specimen_location: ''
+  specimen_location: '',
+  documents: []
 };
 
 const searchCriteria = [
@@ -174,7 +176,7 @@ class Specimen extends React.Component {
             <tr>
               <td>
                 <div style={{ height: 100, width: 100 }}>
-                  <img src={GCS_STORAGE_LINK + this.props.spec.photos.main}
+                  <img src={GCS_IMAGE_LINK + this.props.spec.photos.main}
                        alt={this.props.spec.photos.main}
                        height="100"
                        width="100"/>
@@ -564,7 +566,8 @@ class EditView extends React.Component {
         spec: !!props.spec,
         loading: false,
         uploading: false,
-        files: []
+        photo_files: [],
+        analysis_files: []
       },
       mineral
     );
@@ -577,14 +580,15 @@ class EditView extends React.Component {
           spec: null,
           loading: false,
           uploading: false,
-          files: []
+          photo_files: [],
+          analysis_files: []
         },
         JSON.parse( JSON.stringify( cleanMineral ) )
       )
     );
 
-    this.fileInput.value = "";
-
+    this.photoFileInput.value = "";
+    this.analysisFileInput.value = "";
   }
 
   checkDone() {
@@ -595,30 +599,33 @@ class EditView extends React.Component {
 
   add() {
     this.uploadPhotos( () => {
-      const done = ( err ) => {
-        this.setState( { loading: false } );
-        alert( err ? err.message : "Success!" );
-        if ( !err ) {
-          this.reset();
-        }
-      };
+      this.uploadDocuments( () => {
 
-      this.setState( {
-        'physical_dimensions.weight': parseFloat( this.state[ 'physical_dimensions.weight' ] || '0' ),
-        'physical_dimensions.length': parseFloat( this.state[ 'physical_dimensions.length' ] || '0' ),
-        'physical_dimensions.width': parseFloat( this.state[ 'physical_dimensions.width' ] || '0' ),
-        'physical_dimensions.height': parseFloat( this.state[ 'physical_dimensions.height' ] || '0' ),
-        'physical_dimensions.main_crystal': parseFloat( this.state[ 'physical_dimensions.main_crystal' ] || '0' ),
-        'acquired.paid': parseFloat( this.state[ 'acquired.paid' ] || '0' ),
-        'photos.main': this.state[ 'photos.all' ][ 0 ] || ''
-      }, () => {
+        const done = ( err ) => {
+          this.setState( { loading: false } );
+          alert( err ? err.message : "Success!" );
+          if ( !err ) {
+            this.reset();
+          }
+        };
 
-        if ( !this.state.spec ) {
-          return API.specimen.add( { specimen: this.state }, done );
-        }
+        this.setState( {
+          'physical_dimensions.weight': parseFloat( this.state[ 'physical_dimensions.weight' ] || '0' ),
+          'physical_dimensions.length': parseFloat( this.state[ 'physical_dimensions.length' ] || '0' ),
+          'physical_dimensions.width': parseFloat( this.state[ 'physical_dimensions.width' ] || '0' ),
+          'physical_dimensions.height': parseFloat( this.state[ 'physical_dimensions.height' ] || '0' ),
+          'physical_dimensions.main_crystal': parseFloat( this.state[ 'physical_dimensions.main_crystal' ] || '0' ),
+          'acquired.paid': parseFloat( this.state[ 'acquired.paid' ] || '0' ),
+          'photos.main': this.state[ 'photos.all' ][ 0 ] || ''
+        }, () => {
 
-        API.specimen.update( { specimen: { _id: this.state._id }, set: this.state }, done );
+          if ( !this.state.spec ) {
+            return API.specimen.add( { specimen: this.state }, done );
+          }
 
+          API.specimen.update( { specimen: { _id: this.state._id }, set: this.state }, done );
+
+        } );
       } );
     } );
   }
@@ -651,7 +658,7 @@ class EditView extends React.Component {
     if ( !this.state[ 'photos.main' ] ) {
       doc.text( 'No Image', 2 * margin, 3 * margin )
     } else {
-      doc.addImage( GCS_STORAGE_LINK + this.state[ 'photos.main' ], '', 2 * margin, 2 * margin, contentW, contentW );
+      doc.addImage( GCS_IMAGE_LINK + this.state[ 'photos.main' ], '', 2 * margin, 2 * margin, contentW, contentW );
     }
 
     //TODO: put in catalog number
@@ -694,7 +701,7 @@ class EditView extends React.Component {
 
     this.setState( { loading: true } );
 
-    upload.call( this, this.state.files, 0 );
+    upload.call( this, this.state.photo_files, 0 );
 
     function upload( files, i ) {
       if ( i >= files.length ) {
@@ -703,7 +710,7 @@ class EditView extends React.Component {
 
       const file = files[ i ];
 
-      API.specimen.photo.upload( { 'content-type': file.type }, ( err, result ) => {
+      API.specimen.upload( { type: 'photo', 'content-type': file.type }, ( err, result ) => {
         if ( err ) {
           throw err;
         }
@@ -745,7 +752,49 @@ class EditView extends React.Component {
   }
 
   uploadDocuments( done ) {
-    //TODO: update
+    upload.call( this, this.state.analysis_files, 0 );
+
+    function upload( files, i ) {
+      console.log( 'uploading file ', i, ' of ', files.length );
+
+      if ( i >= files.length ) {
+        return done();
+      }
+
+      const file = files[ i ];
+
+      API.specimen.upload( { type: 'analysis', 'content-type': file.type }, ( err, result ) => {
+        if ( err ) {
+          throw err;
+        }
+
+        const that = this;
+
+        const xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+          if ( this.readyState != 4 ) {
+            return;
+          }
+
+          if ( this.response.err ) {
+            throw this.response.err;
+          }
+
+          that.setState( {
+            'documents': [
+              ...that.state[ 'documents' ],
+              result.filename
+            ]
+          }, () => upload.call( that, files, ++i ) );
+
+        };
+
+        xhttp.open( "PUT", result.url, true );
+        xhttp.setRequestHeader( 'Content-Type', file.type );
+        xhttp.send( file );
+
+      } );
+    }
   }
 
   render() {
@@ -757,12 +806,16 @@ class EditView extends React.Component {
             <strong>Photos</strong>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <input type="file" name="files" onChange={this.handleChange.bind( this )} ref={ref => this.fileInput = ref}
+            <input type="file" name="photo_files" onChange={this.handleChange.bind( this )}
+                   ref={ref => this.photoFileInput = ref}
                    multiple/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            {this.state[ 'photos.all' ].map( photo => <img width="100" height="100" src={GCS_STORAGE_LINK + photo}
-                                                           alt={photo} key={photo} style={{ marginRight: 8 }}/> )}
+            {this.state[ 'photos.all' ].map( photo => (
+              <a key={photo} href={GCS_IMAGE_LINK + photo} target='_blank' style={{ marginRight: 8 }}>
+                <img width="100" height="100" src={GCS_IMAGE_LINK + photo} alt={photo}/>
+              </a>
+            ) )}
           </div>
         </div>
 
@@ -871,6 +924,16 @@ class EditView extends React.Component {
             <div>Method</div>
             <input type="text" name="analysis.method" value={this.state[ 'analysis.method' ]}
                    onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Analysis Files</div>
+            <input type="file" name="analysis_files" onChange={this.handleChange.bind( this )}
+                   ref={ref => this.analysisFileInput = ref}
+                   multiple/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            {this.state[ 'documents' ].map( doc => <a key={doc} href={GCS_ANALYSIS_LINK + doc} target='_blank'
+                                                      style={{ marginRight: 8 }}>{doc}</a> )}
           </div>
         </div>
 
