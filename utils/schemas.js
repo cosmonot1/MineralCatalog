@@ -53,7 +53,14 @@ module.exports.specimen_add_ref = {
   species: {
     type: {
       main: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
-      additional: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ], default: [] },
+      additional: {
+        type: [ [ {
+          type: {
+            modifier: { type: String, required: true, format: ( s ) => s.toLowerCase() },
+            species: { type: String, required: true, format: ( s ) => s.toLowerCase() }
+          }
+        } ] ], default: []
+      },
     },
     default: {}
   },
@@ -132,7 +139,7 @@ module.exports.specimen_list_fields = {
   'physical_dimensions.height': { type: [ Number, module.exports.numericType ] },
   'physical_dimensions.main_crystal': { type: [ Number, module.exports.numericType ] },
   'species.main': { type: [ String, module.exports.stringType ] },
-  'species.additional': { type: [ String, module.exports.stringType ] },
+  'species.additional.species': { type: [ String, module.exports.stringType ] },
   'discovery_location.stope': { type: [ String, module.exports.stringType ] },
   'discovery_location.level': { type: [ String, module.exports.stringType ] },
   'discovery_location.mine': { type: [ String, module.exports.stringType ] },
@@ -197,7 +204,14 @@ module.exports.specimen_update_data = {
   species: {
     type: {
       main: { type: String, format: ( s ) => s.toLowerCase() },
-      additional: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ] },
+      additional: {
+        type: [ [ {
+          type: {
+            modifier: { type: String, required: true, format: ( s ) => s.toLowerCase() },
+            species: { type: String, required: true, format: ( s ) => s.toLowerCase() }
+          }
+        } ] ], default: []
+      }
     },
     flatten: true
   },

@@ -34,7 +34,6 @@ function downloadC( fn ) {
 async function add( data ) {
 
   data.specimen = flat.unflatten( data.specimen );
-  data.specimen.species.additional = data.specimen.species.additional.split( ' ' );
 
   try {
     const date = moment( data.specimen.acquired.date );
@@ -87,7 +86,6 @@ async function download( req, res ) {
 async function update( data ) {
 
   data.set = flat.unflatten( data.set );
-  data.set.species.additional = data.set.species.additional.split( ' ' );
 
   try {
     const date = moment( data.set.acquired.date );
