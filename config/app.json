@@ -31,7 +31,8 @@
       "projectId": "mineral-storage",
       "keyFile": "./gcloud.json",
       "bucket": "mineral-catalog-images",
-      "imageBaseLink":"https://storage.googleapis.com/mineral-catalog-images/"
+      "imageBaseLink": "https://storage.googleapis.com/mineral-catalog-images/",
+      "analysisDocBaseLink": "https://storage.googleapis.com/mineral-catalog-analysis-documents/"
     },
     "db": {
       "mongodb": {
