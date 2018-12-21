@@ -9,7 +9,7 @@ const cleanMineral = {
   'physical_dimensions.height': 0,
   'physical_dimensions.main_crystal': 0,
   'species.main': '',
-  'species.additional': '',
+  'species.additional': [],
   'discovery_location.stope': '',
   'discovery_location.level': '',
   'discovery_location.mine': '',
@@ -223,7 +223,7 @@ class Specimen extends React.Component {
             <tr>
               <td style={{ 'paddingRight': 8 }}>Length: {this.props.spec.physical_dimensions.length} (cm)</td>
               <td
-                style={{ 'paddingRight': 8 }}>Additional: {this.props.spec.species.additional.reduce( ( acc, val ) => acc + ' ' + val, '' )}</td>
+                style={{ 'paddingRight': 8 }}>Additional: {this.props.spec.species.additional.reduce( ( acc, val ) => acc + ' ' + val.modifier + ' ' + val.species, '' )}</td>
               <td style={{ 'paddingRight': 8 }}>Level: {this.props.spec.discovery_location.level}</td>
               <td style={{ 'paddingRight': 8 }}>By: {this.props.spec.analysis.by}</td>
               <td style={{ 'paddingRight': 8 }}>Paid: {this.props.spec.acquired.paid} ($)</td>
@@ -428,6 +428,81 @@ class SearchCriteria extends React.Component {
 
 }
 
+class SpeciesAdder extends React.Component {
+  constructor( props ) {
+    super( props );
+    this.state = {
+      species: this.props.species
+    };
+    this.options = [
+      'on',
+      'in',
+      'with',
+      'variety',
+      'pseudo.',
+      'epi.'
+    ];
+  }
+
+  handleChange( e ) {
+    const idx = parseInt( e.target.getAttribute( 'editidx' ) );
+    const state = Object.assign( {}, this.state.species[ idx ], { [ e.target.name ]: e.target.value } );
+
+    this.setState( {
+      species: [
+        ...this.state.species.slice( 0, idx ),
+        state,
+        ...this.state.species.slice( idx + 1 )
+      ]
+    }, () => {
+      this.props.loadSpecies( this.state.species );
+    } );
+  }
+
+  removeSpecies() {
+    this.setState( {
+      species: this.state.species.slice( 0, -1 )
+    } );
+  }
+
+  addSpecies() {
+    this.setState( {
+      species: [
+        ...this.state.species,
+        { species: '', modifier: 'on' }
+      ]
+    } );
+  }
+
+  buildSpecies( s, i ) {
+    return (
+      <div key={i}>
+        <select key={`select_${i}`} editidx={i} name="modifier" value={this.state.species[ i ].modifier}
+                onChange={this.handleChange.bind( this )}>
+          {this.options.map( o => <option key={uuidv4()} value={o}>{o}</option> )}
+        </select>
+        <input key={`input_${i}`} editidx={i} style={{ 'marginRight': 8 }} type="text" name="species"
+               value={this.state.species[ i ][ 'species' ]}
+               onChange={this.handleChange.bind( this )}/>
+      </div>
+    );
+  }
+
+
+  render() {
+    return (
+      <div>
+        <div>Additional</div>
+        {this.state.species.map( this.buildSpecies.bind( this ) )}
+        {this.state.species.length ?
+          <button style={{ 'marginRight': 8 }} type="button" onClick={this.removeSpecies.bind( this )}>-</button> : ''}
+        <button style={{ 'marginRight': 8 }} type="button" onClick={this.addSpecies.bind( this )}>+</button>
+      </div>
+    );
+  }
+
+}
+
 class Home extends React.Component {
   constructor( props ) {
     super( props );
@@ -477,8 +552,9 @@ class EditView extends React.Component {
 
     let mineral;
     if ( props.spec ) {
-      props.spec.species.additional = props.spec.species.additional.join( ' ' );
+      const additional = props.spec.species.additional;
       mineral = flatten( props.spec );
+      mineral[ 'species.additional' ] = additional;
     } else {
       mineral = JSON.parse( JSON.stringify( cleanMineral ) )
     }
@@ -557,7 +633,7 @@ class EditView extends React.Component {
     this.props.goList();
   }
 
-  makePDF( download ) {
+  makePDF() {
     const w = 203.2, h = 127, margin = 4;
     const colW = ( w - 2 * margin ) / 3;
     const contentW = colW - 2 * margin;
@@ -584,9 +660,8 @@ class EditView extends React.Component {
       .text( this.buildPrintColumn( doc, 1, contentW ), colW + 2 * margin, 3 * margin )
       .text( this.buildPrintColumn( doc, 2, contentW ), 2 * colW + 2 * margin, 3 * margin );
 
-    //TODO: download or auto print?
-    // if(download)
-    //   return
+    doc.addPage( [ w, h ], 'l' );
+
     doc.save( ( "00000" + this.state.catalog_number ).substr( -5, 5 ) + '.pdf' );
   }
 
@@ -663,6 +738,16 @@ class EditView extends React.Component {
 
   }
 
+  loadSpecies( species ) {
+    this.setState( {
+      'species.additional': species
+    } );
+  }
+
+  uploadDocuments( done ) {
+    //TODO: update
+  }
+
   render() {
     return (
       <div id="test">
@@ -727,9 +812,8 @@ class EditView extends React.Component {
                    onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <div>Additional</div>
-            <input type="text" name="species.additional" value={this.state[ 'species.additional' ]}
-                   onChange={this.handleChange.bind( this )}/>
+            <SpeciesAdder species={this.state[ 'species.additional' ] || []}
+                          loadSpecies={this.loadSpecies.bind( this )}/>
           </div>
         </div>
 
