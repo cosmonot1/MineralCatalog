@@ -110,6 +110,7 @@ module.exports.specimen_add_ref = {
   repair_history: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
   analysis_history: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
   specimen_location: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
+  documents: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ], default: [] }
 };
 
 module.exports.specimen_get_ref = {
@@ -178,8 +179,8 @@ module.exports.specimen_list_ref = Object.assign(
 module.exports.specimen_update_data = {
   photos: {
     type: {
-      main: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
-      all: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ], default: [] },
+      main: { type: String, format: ( s ) => s.toLowerCase() },
+      all: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ] },
     },
     flatten: true
   },
@@ -252,5 +253,6 @@ module.exports.specimen_update_data = {
   figured: { type: String, format: ( s ) => s.toLowerCase() },
   repair_history: { type: String, format: ( s ) => s.toLowerCase() },
   analysis_history: { type: String, format: ( s ) => s.toLowerCase() },
-  specimen_location: { type: String, format: ( s ) => s.toLowerCase() }
+  specimen_location: { type: String, format: ( s ) => s.toLowerCase() },
+  documents: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ] }
 };
