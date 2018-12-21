@@ -651,9 +651,9 @@ class EditView extends React.Component {
   }
 
   makePDF() {
-    const w = 203.2, h = 127, margin = 4;
-    const colW = ( w - 2 * margin ) / 3;
-    const contentW = colW - 2 * margin;
+    //Everything is in mm
+    const w = 203.2, h = 127, margin = 3.175;
+    const imgH = 96.52, imgW = 72.39;
 
     //docs https://rawgit.com/MrRio/jsPDF/master/docs/index.html
     //examples https://rawgit.com/MrRio/jsPDF/master/
@@ -662,24 +662,79 @@ class EditView extends React.Component {
       orientation: 'l',
       unit: 'mm',
       format: [ w, h ],
-      lineHeight: 1
+      // lineHeight: 1
     } );
 
+    const done = () => {
+
+      // Handle catalog #
+      doc.rect( w - margin - 63.5, h - margin, 63.5, 12.7 )
+        .setFontStyle( 'italic' )
+        .text( `Catalog #${( "00000" + this.state.catalog_number ).substr( -5, 5 )}`, w - 63.5, h - 12.7 + margin )
+        .setFontStyle( 'normal' );
+
+      //TODO: put in catalog number
+      // doc.setFontSize( 12 )
+      //   .text( this.buildPrintColumn( doc, 0, contentW ), 2 * margin, contentW + 4 * margin )
+      //   .text( this.buildPrintColumn( doc, 1, contentW ), colW + 2 * margin, 3 * margin )
+      //   .text( this.buildPrintColumn( doc, 2, contentW ), 2 * colW + 2 * margin, 3 * margin );
+
+      // doc.addPage( [ w, h ], 'l' );
+
+      doc.save( ( "00000" + this.state.catalog_number ).substr( -5, 5 ) + '.pdf' );
+
+    };
+
+    // Handle image
     if ( !this.state[ 'photos.main' ] ) {
-      doc.text( 'No Image', 2 * margin, 3 * margin )
-    } else {
-      doc.addImage( GCS_IMAGE_LINK + this.state[ 'photos.main' ], '', 2 * margin, 2 * margin, contentW, contentW );
+      doc.rect( margin, margin, imgW, imgH )
+        .text( 'No Image', margin + imgW / 2, margin + imgH / 2, null, null, 'center' );
+      return done();
     }
+    // const img = document.createElement( "IMG" );
+    // console.log( this.mainImage );
+    // img.setAttribute( 'src', GCS_IMAGE_LINK + this.state[ 'photos.main' ] );
+    // doc.addImage( this.mainImage, '', margin, margin, imgW, imgH );
 
-    //TODO: put in catalog number
-    doc.setFontSize( 12 )
-      .text( this.buildPrintColumn( doc, 0, contentW ), 2 * margin, contentW + 4 * margin )
-      .text( this.buildPrintColumn( doc, 1, contentW ), colW + 2 * margin, 3 * margin )
-      .text( this.buildPrintColumn( doc, 2, contentW ), 2 * colW + 2 * margin, 3 * margin );
+    const that = this;
+    const xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function () {
+      if ( this.readyState != 4 ) {
+        return;
+      }
 
-    doc.addPage( [ w, h ], 'l' );
+      if ( this.response.err ) {
+        throw this.response.err;
+      }
 
-    doc.save( ( "00000" + this.state.catalog_number ).substr( -5, 5 ) + '.pdf' );
+      const arr = new Uint8Array(this.response);
+      let raw = '';
+      let i,j,subArray,chunk = 5000;
+      for (i=0,j=arr.length; i<j; i+=chunk) {
+        subArray = arr.subarray(i,i+chunk);
+        raw += String.fromCharCode.apply(null, subArray);
+      }
+
+      // This works!!!
+      const b64=btoa(raw);
+      const dataURL="data:image/jpeg;base64,"+b64;
+      console.log(dataURL);
+
+      // var blb = new Blob( [ this.response ], { type: 'image/png' } );
+      // var url = ( window.URL || window.webkitURL ).createObjectURL( blb );
+      // console.log( url );
+
+      // image.src = url;
+      // console.log( btoa( this.response ) );
+      // doc.addImage( btoa( this.response ), '', margin, margin, imgW, imgH );
+
+      done.call( that );
+    };
+
+    xhttp.open( "GET", GCS_IMAGE_LINK + this.state[ 'photos.main' ], true );
+    xhttp.responseType='arraybuffer';
+    xhttp.send();
+
   }
 
   buildPrintColumn( doc, col, width ) {
