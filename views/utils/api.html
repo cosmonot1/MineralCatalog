@@ -50,7 +50,7 @@
           return done( xhr.response.err || null, xhr.response.err ? null : xhr.response );
         }
 
-        alert('Authentication session token expired. Please refresh the page and log in again.');
+        alert( 'Authentication session token expired. Please refresh the page and log in again.' );
 
         const query = {
           redirect: window.location.href
@@ -87,13 +87,8 @@
       list: ( data, done ) =>
         ajax( 'POST', '/api/v0/specimen/list', data, done ),
 
-      photo: {
-        // download: ( data, done ) =>
-        //   ajax( 'GET', `/api/v0/specimen/photo/download/${data.filename}`, data, done ),
-
-        upload: ( data, done ) =>
-          ajax( 'GET', '/api/v0/specimen/photo/upload', data, done )
-      },
+      upload: ( data, done ) =>
+        ajax( 'GET', `/api/v0/specimen/upload/${data.type}`, data, done ),
 
       remove: ( data, done ) =>
         ajax( 'DELETE', '/api/v0/specimen', data, done ),

@@ -12,7 +12,8 @@ const uuid = require( 'uuid' );
 const { Storage } = require( '@google-cloud/storage' );
 
 const storage = new Storage();
-const bucket = storage.bucket( 'mineral-catalog-images' );
+const image_bucket = storage.bucket( 'mineral-catalog-images' );
+const analysis_bucket = storage.bucket( 'mineral-catalog-analysis-documents' );
 
 const EXPORT_PAGE_STEP = 100;
 
@@ -23,11 +24,7 @@ module.exports = {
   list: c( fmtBody( fmtReqRes( Specimen.list ) ) ),
   remove: c( fmtBody( fmtReqRes( Specimen.remove ) ) ),
   update: c( fmtBody( fmtReqRes( update ) ) ),
-  photo: {
-    uploadUri: c( fmtBody( fmtReqRes( uploadUri ) ) )
-    // downloadUri: c( fmtBody( fmtReqRes( downloadUri ) ) )
-  },
-
+  upload: c( fmtBody( fmtReqRes( uploadUri ) ) )
 };
 
 function downloadC( fn ) {
@@ -111,6 +108,24 @@ async function update( data ) {
 
 async function uploadUri( data ) {
 
+  console.log( data );
+
+  let bucket;
+  if ( data.type === 'photo' ) {
+    bucket = image_bucket;
+  } else if ( data.type === 'analysis' ) {
+    console.log( 'analysis bucket' );
+    bucket = analysis_bucket;
+  } else {
+    throw {
+      code: 400,
+      type: 'validation',
+      field: 'req.params.type',
+      reason: 'Invalid upload URI type',
+      err: new Error( 'Validation error.' )
+    }
+  }
+
   const type = data[ 'content-type' ] || 'application/json';
 
   const filename = uuid.v4();
@@ -121,30 +136,11 @@ async function uploadUri( data ) {
     expires: moment().add( 30, 'd' ).toISOString()
   } );
 
+  console.log( 'filename:', filename, '\nurl:', url );
+
   return { url, filename };
 
 }
-
-// async function downloadUri( data ) {
-//
-//   if ( !data.filename ) {
-//     throw {
-//       code: 400,
-//       type: 'validation',
-//       reason: 'Must provide GCS filename',
-//       err: new Error( 'Must provide filename' )
-//     };
-//   }
-//
-//   const file = bucket.file( data.filename );
-//   const [ url ] = await file.getSignedUrl( {
-//     action: 'read',
-//     expires: moment( 9999999999999 ).toISOString()
-//   } );
-//
-//   return { url };
-//
-// }
 
 function fmtReqRes( fn ) {
   return async req => {
@@ -182,6 +178,7 @@ async function __buildArchive( archive, query, type ) {
         s.photos.main = Config().services.gcloud.imageBaseLink + s.photos.main;
       }
       s.photos.all = s.photos.all.map( photo => Config().services.gcloud.imageBaseLink + photo );
+      s.documents = s.documents.map( doc => Config().services.gcloud.analysisDocBaseLink + doc );
     } );
 
     const files = await __buildFiles( specimens, type );
