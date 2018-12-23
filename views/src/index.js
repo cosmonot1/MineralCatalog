@@ -1182,7 +1182,9 @@ class LoginView extends React.Component {
 
   login() {
     const pw = this.state.password;
-    this.setState( { password: '' } );
+    this.setState( { password: '' } )
+
+    console.log('ass');
 
     //If successful change state
     API.user.authorize( { password: pw }, ( err ) => {
@@ -1198,7 +1200,7 @@ class LoginView extends React.Component {
       <div>
         <input style={{ 'marginRight': 8 }} type="text" name="Password" value={this.state.password}
                onChange={this.handleChange.bind( this )}/>
-        <button type="button" style={{cursor:'pointer'}} onClick={this.login.bind( this )}>Login</button>
+        <button type="button" style={{cursor:'pointer'}} onClick={this.login.bind( this )} onTouchEnd={this.login.bind( this )}>Login</button>
       </div>
     )
   }
