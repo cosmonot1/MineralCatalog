@@ -1184,8 +1184,6 @@ class LoginView extends React.Component {
     const pw = this.state.password;
     this.setState( { password: '' });
 
-    alert('ass');
-
     try {
 
       //If successful change state
