@@ -1182,7 +1182,7 @@ class LoginView extends React.Component {
 
   login() {
     const pw = this.state.password;
-    this.setState( { password: '' }
+    this.setState( { password: '' });
 
     alert('ass');
 
