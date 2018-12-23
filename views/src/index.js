@@ -188,7 +188,7 @@ class Specimen extends React.Component {
             </tr>
             <tr>
               <td>
-                <button type="button" onClick={this.edit.bind( this )}>Edit</button>
+                <button type="button" onTouchStart={this.edit.bind( this )}>Edit</button>
               </td>
             </tr>
           </tbody>
@@ -420,9 +420,9 @@ class SearchCriteria extends React.Component {
           {this.state.searchCriteria}
         </div>
         <div>
-          <button style={{ 'marginRight': 8 }} type="button" onClick={this.search.bind( this )}>Search</button>
-          <button style={{ 'marginRight': 8 }} type="button" onClick={this.reset.bind( this )}>Reset</button>
-          <button style={{ 'marginRight': 8 }} type="button" onClick={this.add.bind( this )}>Add</button>
+          <button style={{ 'marginRight': 8 }} type="button" onTouchStart={this.search.bind( this )}>Search</button>
+          <button style={{ 'marginRight': 8 }} type="button" onTouchStart={this.reset.bind( this )}>Reset</button>
+          <button style={{ 'marginRight': 8 }} type="button" onTouchStart={this.add.bind( this )}>Add</button>
         </div>
       </div>
     );
@@ -505,8 +505,8 @@ class SpeciesAdder extends React.Component {
         <div>Additional</div>
         {this.state.species.map( this.buildSpecies.bind( this ) )}
         {this.state.species.length ?
-          <button style={{ 'marginRight': 8 }} type="button" onClick={this.removeSpecies.bind( this )}>-</button> : ''}
-        <button style={{ 'marginRight': 8 }} type="button" onClick={this.addSpecies.bind( this )}>+</button>
+          <button style={{ 'marginRight': 8 }} type="button" onTouchStart={this.removeSpecies.bind( this )}>-</button> : ''}
+        <button style={{ 'marginRight': 8 }} type="button" onTouchStart={this.addSpecies.bind( this )}>+</button>
       </div>
     );
   }
@@ -546,8 +546,8 @@ class Home extends React.Component {
       <div>
         <div style={{ padding: 8 }}>
           {this.state.view === 'edit' ? '' :
-            <button style={{ 'marginRight': 8 }} type="button" onClick={this.edit.bind( this )}>Add</button>}
-          <button type="button" onClick={this.logout.bind( this )}>Logout</button>
+            <button style={{ 'marginRight': 8 }} type="button" onTouchStart={this.edit.bind( this )}>Add</button>}
+          <button type="button" onTouchStart={this.logout.bind( this )}>Logout</button>
         </div>
         <div>{this.state.view === 'list' ? <ListView goEdit={this.goEdit.bind( this )}/> :
           <EditView goList={this.goList.bind( this )} spec={this.state.spec}/>}</div>
@@ -1066,11 +1066,11 @@ class EditView extends React.Component {
           </div>
         </div>
 
-        <button style={{ 'marginRight': 8 }} type="button" onClick={this.goList.bind( this )}>Cancel</button>
+        <button style={{ 'marginRight': 8 }} type="button" onTouchStart={this.goList.bind( this )}>Cancel</button>
         <button style={{ 'marginRight': 8 }} type="button"
-                onClick={this.add.bind( this )}>{this.state.spec ? 'Update!' : 'Add!'}</button>
+                onTouchStart={this.add.bind( this )}>{this.state.spec ? 'Update!' : 'Add!'}</button>
         {this.state.spec ?
-          <button style={{ 'marginRight': 8 }} type="button" onClick={this.makePDF.bind( this )}>Download</button> : ''}
+          <button style={{ 'marginRight': 8 }} type="button" onTouchStart={this.makePDF.bind( this )}>Download</button> : ''}
       </div>
     );
   }
@@ -1153,11 +1153,11 @@ class ListView extends React.Component {
           {this.state.specimens}
         </div>
         <div style={{ padding: 8 }}>
-          <button style={{ 'marginRight': 8 }} type="button" onClick={this.first.bind( this )}>&lt;&lt;</button>
-          <button style={{ 'marginRight': 8 }} type="button" onClick={this.previous.bind( this )}>&lt;</button>
+          <button style={{ 'marginRight': 8 }} type="button" onTouchStart={this.first.bind( this )}>&lt;&lt;</button>
+          <button style={{ 'marginRight': 8 }} type="button" onTouchStart={this.previous.bind( this )}>&lt;</button>
           <span style={{ 'marginRight': 8 }}>{this.state.page + 1} of {this.state.pages + 1}</span>
-          <button style={{ 'marginRight': 8 }} type="button" onClick={this.next.bind( this )}>&gt;</button>
-          <button style={{ 'marginRight': 8 }} type="button" onClick={this.last.bind( this )}>&gt;&gt;</button>
+          <button style={{ 'marginRight': 8 }} type="button" onTouchStart={this.next.bind( this )}>&gt;</button>
+          <button style={{ 'marginRight': 8 }} type="button" onTouchStart={this.last.bind( this )}>&gt;&gt;</button>
           <a target="_blank" href="/api/v0/specimen/download/json">
             <button style={{ 'marginRight': 8 }} type="button">Download JSON</button>
           </a>
@@ -1198,7 +1198,7 @@ class LoginView extends React.Component {
       <div>
         <input style={{ 'marginRight': 8 }} type="text" name="Password" value={this.state.password}
                onChange={this.handleChange.bind( this )}/>
-        <button type="button" onClick={this.login.bind( this )}>Login</button>
+        <button type="button" onTouchStart={this.login.bind( this )}>Login</button>
       </div>
     )
   }
