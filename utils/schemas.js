@@ -27,6 +27,12 @@ module.exports.booleanType = {
   '$ne': { type: Boolean }
 };
 
+module.exports.addString = { type: String, format: ( s ) => s.toLowerCase(), default: '' };
+
+module.exports.addBoolean = { type: Boolean, default: false };
+
+module.exports.addNumber = { type: Number, default: 0 };
+
 module.exports.default_projection_field = {
   type: Object,
   default: {}
@@ -35,24 +41,24 @@ module.exports.default_projection_field = {
 module.exports.specimen_add_ref = {
   photos: {
     type: {
-      main: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
+      main: module.exports.addString,
       all: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ], default: [] },
     },
     default: {}
   },
   physical_dimensions: {
     type: {
-      weight: { type: Number, default: 0 },
-      length: { type: Number, default: 0 },
-      width: { type: Number, default: 0 },
-      height: { type: Number, default: 0 },
-      main_crystal: { type: Number, default: 0 },
+      weight: module.exports.addNumber,
+      length: module.exports.addNumber,
+      width: module.exports.addNumber,
+      height: module.exports.addNumber,
+      main_crystal: module.exports.addNumber,
     },
     default: {}
   },
   species: {
     type: {
-      main: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
+      main: module.exports.addString,
       additional: {
         type: [ [ {
           type: {
@@ -77,46 +83,90 @@ module.exports.specimen_add_ref = {
   },
   analysis: {
     type: {
-      analyzed: { type: Boolean, default: false },
-      by: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
-      method: { type: String, format: ( s ) => s.toLowerCase(), default: '' }
+      analyzed: module.exports.addBoolean,
+      by: module.exports.addString,
+      method: module.exports.addString
     },
     default: {}
   },
   acquired: {
     type: {
       date: { format: 'date', default: 0 },
-      paid: { type: Number, default: 0 },
-      from: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
-      where: { type: String, format: ( s ) => s.toLowerCase(), default: '' }
+      paid: module.exports.addNumber,
+      from: module.exports.addString,
+      where: module.exports.addString
     },
     default: {}
   },
   states: {
     type: {
-      old_label: { type: Boolean, default: false },
-      repair: { type: Boolean, default: false },
-      story: { type: Boolean, default: false },
-      figured: { type: Boolean, default: false }
+      old_label: module.exports.addBoolean,
+      repair: module.exports.addBoolean,
+      story: module.exports.addBoolean,
+      figured: module.exports.addBoolean
     },
     default: {}
   },
   storage_location: {
     type: {
-      exhibit: { type: Boolean, deafult: false },
-      inside: { type: Boolean, deafult: false },
-      outside: { type: Boolean, deafult: false },
-      loan: { type: Boolean, deafult: false },
-      details: { type: String, format: ( s ) => s.toLowerCase(), default: '' }
+      exhibit: module.exports.addBoolean,
+      inside: module.exports.addBoolean,
+      outside: module.exports.addBoolean,
+      loan: module.exports.addBoolean,
+      details: module.exports.addString
     },
     default: {}
   },
-  comments: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
-  story: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
-  figured: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
-  repair_history: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
-  analysis_history: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
-  specimen_location: { type: String, format: ( s ) => s.toLowerCase(), default: '' },
+  geology: {
+    type: {
+      metamorphic: module.exports.addBoolean,
+      pegmatite: module.exports.addBoolean,
+      porphyry: module.exports.addBoolean,
+      crd_skarn: module.exports.addBoolean,
+      epithermal_vein: module.exports.addBoolean,
+      volcanic_related: module.exports.addBoolean,
+      exhalite: module.exports.addBoolean,
+      mvt: module.exports.addBoolean,
+      evaporite: module.exports.addBoolean,
+      other: module.exports.addString,
+    },
+    default: {}
+  },
+  exhibit_history: {
+    type: [ [ {
+      type: {
+        show: module.exports.addString,
+        year: module.exports.addNumber,
+        comp: module.exports.addString,
+        award: module.exports.addString
+      }
+    } ] ],
+    default: []
+  },
+  features: {
+    type: {
+      twinned: module.exports.addBoolean,
+      pseudomorph: module.exports.addBoolean,
+      inclusions: module.exports.addBoolean,
+      photosensitive: module.exports.addBoolean
+    },
+    default: {}
+  },
+  fluorescence: {
+    type: {
+      sw: module.exports.addBoolean,
+      sw_details: module.exports.addString,
+      lw: module.exports.addBoolean,
+      lw_details: module.exports.addString
+    },
+    default: {}
+  },
+  comments: module.exports.addString,
+  story: module.exports.addString,
+  figured: module.exports.addString,
+  repair_history: module.exports.addString,
+  analysis_history: module.exports.addString,
+  specimen_location: module.exports.addString,
   documents: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ], default: [] }
 };
 
@@ -169,7 +219,29 @@ module.exports.specimen_list_fields = {
   'analysis_history': { type: [ String, module.exports.stringType ] },
   'specimen_location': { type: [ String, module.exports.stringType ] },
   'timestamps.created': { type: module.exports.dateType },
-  'timestamps.modified': { type: module.exports.dateType }
+  'timestamps.modified': { type: module.exports.dateType },
+  'exhibit_history.show': { type: module.exports.stringType },
+  'exhibit_history.year': { type: module.exports.numericType },
+  'exhibit_history.comp': { type: module.exports.stringType },
+  'exhibit_history.award': { type: module.exports.stringType },
+  'geology.metamorphic': { type: module.exports.booleanType },
+  'geology.pegmatite': { type: module.exports.booleanType },
+  'geology.porphyry': { type: module.exports.booleanType },
+  'geology.crd_skarn': { type: module.exports.booleanType },
+  'geology.epithermal_vein': { type: module.exports.booleanType },
+  'geology.volcanic_related': { type: module.exports.booleanType },
+  'geology.exhalite': { type: module.exports.booleanType },
+  'geology.mvt': { type: module.exports.booleanType },
+  'geology.evaporite': { type: module.exports.booleanType },
+  'geology.other': { type: module.exports.booleanType },
+  'features.twinned': { type: module.exports.booleanType },
+  'features.pseudomorph': { type: module.exports.booleanType },
+  'features.inclusions': { type: module.exports.booleanType },
+  'features.photosensitive': { type: module.exports.booleanType },
+  'fluorescence.sw': { type: module.exports.booleanType },
+  'fluorescence.sw_details': { type: module.exports.stringType },
+  'fluorescence.lw': { type: module.exports.booleanType },
+  'fluorescence.lw_details': { type: module.exports.stringType }
 };
 
 module.exports.specimen_list_ref = Object.assign(
@@ -261,6 +333,51 @@ module.exports.specimen_update_data = {
       details: { type: String, format: ( s ) => s.toLowerCase() }
     },
     flatten: true
+  },
+  geology: {
+    type: {
+      metamorphic: { type: Boolean },
+      pegmatite: { type: Boolean },
+      porphyry: { type: Boolean },
+      crd_skarn: { type: Boolean },
+      epithermal_vein: { type: Boolean },
+      volcanic_related: { type: Boolean },
+      exhalite: { type: Boolean },
+      mvt: { type: Boolean },
+      evaporite: { type: Boolean },
+      other: { type: String, format: ( s ) => s.toLowerCase() },
+    }
+  },
+  exhibit_history: {
+    type: [ [ {
+      type: {
+        show: { type: String, format: ( s ) => s.toLowerCase() },
+        year: { type: Number },
+        comp: { type: String, format: ( s ) => s.toLowerCase() },
+        award: { type: String, format: ( s ) => s.toLowerCase() }
+      }
+    } ] ]
+  },
+  features: {
+    type: {
+      twinned: { type: Boolean },
+      pseudomorph: { type: Boolean },
+      inclusions: { type: Boolean },
+      photosensitive: { type: Boolean }
+    }
+  },
+  fluorescence: {
+    type: {
+      sw: { type: Boolean },
+      sw_details: { type: String },
+      lw: { type: Boolean },
+      lw_details: { type: String }
+    }
+  },
+  quality:{
+    type:{
+//TODO: finish
+    }
   },
   comments: { type: String, format: ( s ) => s.toLowerCase() },
   story: { type: String, format: ( s ) => s.toLowerCase() },

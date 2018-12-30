@@ -441,6 +441,7 @@ class SpeciesAdder extends React.Component {
       'on',
       'in',
       'with',
+      'after',
       'variety',
       'pseudo.',
       'epi.'
