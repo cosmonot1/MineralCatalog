@@ -576,9 +576,14 @@ class EditView extends React.Component {
       mineral = JSON.parse( JSON.stringify( cleanMineral ) )
     }
 
+    if ( props.mode === 'duplicate' ) {
+      mineral[ 'photos.main' ] = '';
+      mineral[ 'photos.all' ] = [];
+      mineral[ 'documents' ] = [];
+    }
+
     this.state = Object.assign(
       {
-        spec: !!props.spec,
         loading: false,
         uploading: false,
         photo_files: [],
@@ -1091,7 +1096,7 @@ class EditView extends React.Component {
         <button style={{ 'marginRight': 8 }} type="button" onClick={this.goList.bind( this )}>Cancel</button>
         <button style={{ 'marginRight': 8 }} type="button"
                 onClick={this.add.bind( this )}>{this.state.mode === 'edit' ? 'Update!' : 'Add!'}</button>
-        {this.state.spec ?
+        {this.state.mode === 'edit' ?
           <button style={{ 'marginRight': 8 }} type="button" onClick={this.makePDF.bind( this )}>Download</button> : ''}
       </div>
     );
