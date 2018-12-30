@@ -1241,6 +1241,9 @@ function capitalize( a ) {
   return a.charAt( 0 ).toUpperCase() + a.slice( 1 );
 }
 
+// TODO: push these back into the utils files. figure out why they aren't being served properly
+// Or get a toolchain builder and have them built into the index file for prod
+
 window.API = ( function API() {
 
   // Detect browser support for CORS
