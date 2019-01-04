@@ -8,7 +8,8 @@
     "docker-build": "docker build --compress --squash --file=Dockerfile --tag mineralcatalog .",
     "test": "echo \"Error: no test specified\" && exit 1",
     "ensure-catalog-number": "node ./services/ensure-catalog-number.js",
-    "start": "npm run ensure-catalog-number & node ./index.js"
+    "start": "npm run ensure-catalog-number & node ./index.js",
+    "excel-import": "node ./scripts/import-excel.js"
   },
   "repository": {
     "type": "git",
@@ -38,7 +39,8 @@
     "mongodb": "^3.1.10",
     "mongojs": "^2.6.0",
     "object-path": "^0.11.4",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "xlsx": "^0.14.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",
