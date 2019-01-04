@@ -72,12 +72,13 @@ module.exports.specimen_add_ref = {
   },
   discovery_location: {
     type: {
-      stope: { type: String, format: ( s ) => s.toLowerCase() },
-      level: { type: String, format: ( s ) => s.toLowerCase() },
-      mine: { type: String, format: ( s ) => s.toLowerCase() },
-      district: { type: String, format: ( s ) => s.toLowerCase() },
-      state: { type: String, format: ( s ) => s.toLowerCase() },
-      country: { type: String, format: ( s ) => s.toLowerCase() }
+      stope: module.exports.addString,
+      level: module.exports.addString,
+      mine: module.exports.addString,
+      district: module.exports.addString,
+      state: module.exports.addString,
+      country: module.exports.addString,
+
     },
     default: {}
   },
@@ -161,6 +162,31 @@ module.exports.specimen_add_ref = {
     },
     default: {}
   },
+  quality: {
+    type: {
+      exceptional: module.exports.addBoolean,
+      exhibit: module.exports.addBoolean,
+      locality: module.exports.addBoolean,
+      study: module.exports.addBoolean,
+    },
+    default: {}
+  },
+  // add_to_locality: { //TODO: finish this one
+  //   type: {
+  //     type_locality: module.exports.addBoolean,
+  //     self_collected: module.exports.addBoolean,
+  //     when: { format: 'date' }
+  //   },
+  //   default: {}
+  // },
+  // photographed: { //TODO: finish this one
+  //   type: {
+  //     photographed: module.exports.addBoolean,
+  //     by: module.exports.addString,
+  //     photo_file_number: module.exports.addString
+  //   },
+  //   default: {}
+  // },
   comments: module.exports.addString,
   story: module.exports.addString,
   figured: module.exports.addString,
@@ -241,7 +267,11 @@ module.exports.specimen_list_fields = {
   'fluorescence.sw': { type: module.exports.booleanType },
   'fluorescence.sw_details': { type: module.exports.stringType },
   'fluorescence.lw': { type: module.exports.booleanType },
-  'fluorescence.lw_details': { type: module.exports.stringType }
+  'fluorescence.lw_details': { type: module.exports.stringType },
+  'quality.exceptional': { type: module.exports.booleanType },
+  'quality.exhibit': { type: module.exports.booleanType },
+  'quality.locality': { type: module.exports.booleanType },
+  'quality.study': { type: module.exports.booleanType }
 };
 
 module.exports.specimen_list_ref = Object.assign(
@@ -374,9 +404,12 @@ module.exports.specimen_update_data = {
       lw_details: { type: String }
     }
   },
-  quality:{
-    type:{
-//TODO: finish
+  quality: {
+    type: {
+      exceptional: { type: Boolean },
+      exhibit: { type: Boolean },
+      locality: { type: Boolean },
+      study: { type: Boolean }
     }
   },
   comments: { type: String, format: ( s ) => s.toLowerCase() },
