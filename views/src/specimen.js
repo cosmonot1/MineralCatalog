@@ -1,8 +1,6 @@
 import React from 'react';
 import { GCS_IMAGE_LINK } from './utils.js';
 
-export default Specimen;
-
 class Specimen extends React.Component {
   constructor ( props ) {
     super( props );
@@ -144,3 +142,5 @@ class Specimen extends React.Component {
     );
   }
 }
+
+export default Specimen;

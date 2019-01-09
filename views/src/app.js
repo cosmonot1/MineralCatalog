@@ -2,8 +2,6 @@ import React from 'react';
 import LoginView from './login-view.js';
 import Home from './home.js';
 
-export default App;
-
 class App extends React.Component {
   constructor( props ) {
     super( props );
@@ -25,3 +23,5 @@ class App extends React.Component {
     );
   }
 }
+
+export default App;

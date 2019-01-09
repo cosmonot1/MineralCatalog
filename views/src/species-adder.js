@@ -1,7 +1,5 @@
 import React from 'react';
 
-export default SpeciesAdder;
-
 class SpeciesAdder extends React.Component {
   constructor ( props ) {
     super( props );
@@ -84,3 +82,5 @@ class SpeciesAdder extends React.Component {
   }
 
 }
+
+export default SpeciesAdder;

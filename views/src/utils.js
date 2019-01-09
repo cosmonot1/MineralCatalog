@@ -1,14 +1,3 @@
-export {
-  cleanMineral,
-  GCS_IMAGE_LINK,
-  GCS_ANALYSIS_LINK,
-  searchCriteria,
-  searchOperators,
-  cleanSearchItem,
-  preventDefault,
-  capitalize
-};
-
 const cleanMineral = {
   'photos.main': '',
   'photos.all': [],
@@ -173,3 +162,14 @@ function preventDefault( e ) {
 function capitalize( a ) {
   return a.charAt( 0 ).toUpperCase() + a.slice( 1 );
 }
+
+export {
+  cleanMineral,
+  GCS_IMAGE_LINK,
+  GCS_ANALYSIS_LINK,
+  searchCriteria,
+  searchOperators,
+  cleanSearchItem,
+  preventDefault,
+  capitalize
+};

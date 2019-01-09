@@ -2,8 +2,6 @@ import React from 'react';
 import EditView from './edit-view';
 import ListView from './list-view';
 
-export default Home;
-
 class Home extends React.Component {
   constructor ( props ) {
     super( props );
@@ -46,3 +44,5 @@ class Home extends React.Component {
     );
   }
 }
+
+export default Home;

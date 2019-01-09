@@ -2,8 +2,6 @@ import React from 'react';
 import SearchCriteria from './search-criteria.js';
 import Specimen from './specimen.js';
 
-export default ListView;
-
 //TODO: IMAGE Size and aspect ratio maintaining http://www.frontcoded.com/javascript-fit-rectange-into-bounds.html
 
 class ListView extends React.Component {
@@ -99,3 +97,5 @@ class ListView extends React.Component {
     );
   }
 }
+
+export default ListView;

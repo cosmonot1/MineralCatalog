@@ -1,7 +1,5 @@
 import React from 'react';
 
-export default LoginView
-
 class LoginView extends React.Component {
   constructor ( props ) {
     super( props );
@@ -40,3 +38,5 @@ class LoginView extends React.Component {
     )
   }
 }
+
+export default LoginView;

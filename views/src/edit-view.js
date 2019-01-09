@@ -2,8 +2,6 @@ import React from 'react';
 import SpeciesAdder from './species-adder.js';
 import { cleanMineral, GCS_IMAGE_LINK, GCS_ANALYSIS_LINK, searchCriteria, capitalize } from './utils.js';
 
-export default EditView;
-
 class EditView extends React.Component {
   constructor( props ) {
     super( props );
@@ -543,3 +541,5 @@ class EditView extends React.Component {
     );
   }
 }
+
+export default EditView;

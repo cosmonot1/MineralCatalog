@@ -2,8 +2,6 @@ import React from 'react';
 import SearchItem from './search-item';
 import { cleanSearchItem } from './utils.js';
 
-export default SearchCriteria
-
 class SearchCriteria extends React.Component {
   constructor( props ) {
     super( props );
@@ -91,3 +89,5 @@ class SearchCriteria extends React.Component {
   }
 
 }
+
+export default SearchCriteria

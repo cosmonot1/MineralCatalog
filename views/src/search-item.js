@@ -1,8 +1,6 @@
 import React from 'react';
 import { searchCriteria,searchOperators,cleanSearchItem } from './utils.js';
 
-export default SearchItem;
-
 class SearchItem extends React.Component {
   constructor ( props ) {
     super( props );
@@ -51,3 +49,5 @@ class SearchItem extends React.Component {
     );
   }
 }
+
+export default SearchItem;
