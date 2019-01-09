@@ -154,138 +154,145 @@ const cleanSearchItem = {
   checked: false
 };
 
-const preventDefault = ( e ) => {e.preventDefault()};
+const preventDefault = ( e ) => {
+  e.preventDefault()
+};
 
 class Specimen extends React.Component {
-  constructor( props ) {
+  constructor ( props ) {
     super( props );
   }
 
-  edit() {
-    this.props.edit( this.props.spec );
+  edit ( e ) {
+    this.props.edit( this.props.spec, e.target.name );
   }
 
-  render() {
+  render () {
     return (
       <div>
         <table style={{ padding: 8, display: 'inline-block' }}>
           <tbody>
-            <tr>
-              <th>Main Photo</th>
-            </tr>
-            <tr>
-              <td>
-                <div style={{ height: 100, width: 100 }}>
-                  <img src={GCS_IMAGE_LINK + this.props.spec.photos.main}
-                       alt={this.props.spec.photos.main}
-                       height="100"
-                       width="100"/>
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <td>Catalog: {( "00000" + this.props.spec.catalog_number ).substr( -5, 5 )}</td>
-            </tr>
-            <tr>
-              <td>
-                <button type="button" onClick={this.edit.bind( this )}>Edit</button>
-              </td>
-            </tr>
+          <tr>
+            <th>Main Photo</th>
+          </tr>
+          <tr>
+            <td>
+              <div style={{ height: 100, width: 100 }}>
+                <img src={GCS_IMAGE_LINK + this.props.spec.photos.main}
+                     alt={this.props.spec.photos.main}
+                     height="100"
+                     width="100"/>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <td>Catalog: {( "00000" + this.props.spec.catalog_number ).substr( -5, 5 )}</td>
+          </tr>
+          <tr>
+            <td>
+              <button type="button" name="edit" onClick={this.edit.bind( this )}>Edit</button>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <button type="button" name="duplicate" onClick={this.edit.bind( this )}>Duplicate</button>
+            </td>
+          </tr>
           </tbody>
         </table>
         <table style={{ padding: 8, display: 'inline-block' }}>
           <tbody>
-            <tr>
-              <th style={{ 'paddingRight': 8 }}>Physical Dimensions</th>
-              <th style={{ 'paddingRight': 8 }}>Species</th>
-              <th style={{ 'paddingRight': 8 }}>Discovery Location</th>
-              <th style={{ 'paddingRight': 8 }}>Analysis</th>
-              <th style={{ 'paddingRight': 8 }}>Acquired</th>
-              <th style={{ 'paddingRight': 8 }}>States</th>
-              <th style={{ 'paddingRight': 8 }}>Storage Location</th>
-            </tr>
-            <tr>
-              <td style={{ 'paddingRight': 8 }}>Weight: {this.props.spec.physical_dimensions.weight} (g)</td>
-              <td style={{ 'paddingRight': 8 }}>Main: {this.props.spec.species.main}</td>
-              <td style={{ 'paddingRight': 8 }}>Stope: {this.props.spec.discovery_location.stope}</td>
-              <td style={{ 'paddingRight': 8 }}>Analyzed: <input type="checkbox" name="checked"
-                                                                 readOnly
-                                                                 checked={this.props.spec.analysis.analyzed}/>
-              </td>
-              <td style={{ 'paddingRight': 8 }}>Date: {this.props.spec.acquired.date}</td>
-              <td style={{ 'paddingRight': 8 }}>Old Label: <input type="checkbox" name="checked"
-                                                                  readOnly
-                                                                  checked={this.props.spec.states.old_label}/>
-              </td>
-              <td style={{ 'paddingRight': 8 }}>Exhibit: <input type="checkbox" name="checked"
+          <tr>
+            <th style={{ 'paddingRight': 8 }}>Physical Dimensions</th>
+            <th style={{ 'paddingRight': 8 }}>Species</th>
+            <th style={{ 'paddingRight': 8 }}>Discovery Location</th>
+            <th style={{ 'paddingRight': 8 }}>Analysis</th>
+            <th style={{ 'paddingRight': 8 }}>Acquired</th>
+            <th style={{ 'paddingRight': 8 }}>States</th>
+            <th style={{ 'paddingRight': 8 }}>Storage Location</th>
+          </tr>
+          <tr>
+            <td style={{ 'paddingRight': 8 }}>Weight: {this.props.spec.physical_dimensions.weight} (g)</td>
+            <td style={{ 'paddingRight': 8 }}>Main: {this.props.spec.species.main}</td>
+            <td style={{ 'paddingRight': 8 }}>Stope: {this.props.spec.discovery_location.stope}</td>
+            <td style={{ 'paddingRight': 8 }}>Analyzed: <input type="checkbox" name="checked"
+                                                               readOnly
+                                                               checked={this.props.spec.analysis.analyzed}/>
+            </td>
+            <td style={{ 'paddingRight': 8 }}>Date: {this.props.spec.acquired.date}</td>
+            <td style={{ 'paddingRight': 8 }}>Old Label: <input type="checkbox" name="checked"
                                                                 readOnly
-                                                                checked={this.props.spec.storage_location.exhibit}/>
-              </td>
-            </tr>
-            <tr>
-              <td style={{ 'paddingRight': 8 }}>Length: {this.props.spec.physical_dimensions.length} (cm)</td>
-              <td
-                style={{ 'paddingRight': 8 }}>Additional: {this.props.spec.species.additional.reduce( ( acc, val ) => acc + ' ' + val.modifier + ' ' + val.species, '' )}</td>
-              <td style={{ 'paddingRight': 8 }}>Level: {this.props.spec.discovery_location.level}</td>
-              <td style={{ 'paddingRight': 8 }}>By: {this.props.spec.analysis.by}</td>
-              <td style={{ 'paddingRight': 8 }}>Paid: {this.props.spec.acquired.paid} ($)</td>
-              <td style={{ 'paddingRight': 8 }}>Repair: <input type="checkbox" name="checked"
-                                                               readOnly
-                                                               checked={this.props.spec.states.repair}/>
-              </td>
-              <td style={{ 'paddingRight': 8 }}>Inside: <input type="checkbox" name="checked"
-                                                               readOnly
-                                                               checked={this.props.spec.storage_location.inside}/>
-              </td>
-            </tr>
-            <tr>
-              <td style={{ 'paddingRight': 8 }}>Width: {this.props.spec.physical_dimensions.width} (cm)</td>
-              <td style={{ 'paddingRight': 8 }}></td>
-              <td style={{ 'paddingRight': 8 }}>Mine: {this.props.spec.discovery_location.mine}</td>
-              <td style={{ 'paddingRight': 8 }}>Method: {this.props.spec.analysis.method}</td>
-              <td style={{ 'paddingRight': 8 }}>From: {this.props.spec.acquired.from}</td>
-              <td style={{ 'paddingRight': 8 }}>Story: <input type="checkbox" name="checked"
+                                                                checked={this.props.spec.states.old_label}/>
+            </td>
+            <td style={{ 'paddingRight': 8 }}>Exhibit: <input type="checkbox" name="checked"
                                                               readOnly
-                                                              checked={this.props.spec.states.story}/>
-              </td>
-              <td style={{ 'paddingRight': 8 }}>Outside:<input type="checkbox" name="checked"
-                                                               readOnly
-                                                               checked={this.props.spec.storage_location.outside}/></td>
-            </tr>
-            <tr>
-              <td style={{ 'paddingRight': 8 }}>Height: {this.props.spec.physical_dimensions.height} (cm)</td>
-              <td style={{ 'paddingRight': 8 }}></td>
-              <td style={{ 'paddingRight': 8 }}>District: {this.props.spec.discovery_location.district}</td>
-              <td style={{ 'paddingRight': 8 }}></td>
-              <td style={{ 'paddingRight': 8 }}>Where: {this.props.spec.acquired.where}</td>
-              <td style={{ 'paddingRight': 8 }}>Figured: <input type="checkbox" name="checked"
-                                                                readOnly
-                                                                checked={this.props.spec.states.figured}/>
-              </td>
-              <td style={{ 'paddingRight': 8 }}>Loan: <input type="checkbox" name="checked"
+                                                              checked={this.props.spec.storage_location.exhibit}/>
+            </td>
+          </tr>
+          <tr>
+            <td style={{ 'paddingRight': 8 }}>Length: {this.props.spec.physical_dimensions.length} (cm)</td>
+            <td
+              style={{ 'paddingRight': 8 }}>Additional: {this.props.spec.species.additional.reduce( ( acc, val ) => acc + ' ' + val.modifier + ' ' + val.species, '' )}</td>
+            <td style={{ 'paddingRight': 8 }}>Level: {this.props.spec.discovery_location.level}</td>
+            <td style={{ 'paddingRight': 8 }}>By: {this.props.spec.analysis.by}</td>
+            <td style={{ 'paddingRight': 8 }}>Paid: {this.props.spec.acquired.paid} ($)</td>
+            <td style={{ 'paddingRight': 8 }}>Repair: <input type="checkbox" name="checked"
                                                              readOnly
-                                                             checked={this.props.spec.storage_location.loan}/>
-              </td>
-            </tr>
-            <tr>
-              <td style={{ 'paddingRight': 8 }}>Main Crystal: {this.props.spec.physical_dimensions.main_crystal} (cm)
-              </td>
-              <td style={{ 'paddingRight': 8 }}></td>
-              <td style={{ 'paddingRight': 8 }}>State: {this.props.spec.discovery_location.state}</td>
-              <td style={{ 'paddingRight': 8 }}></td>
-              <td style={{ 'paddingRight': 8 }}></td>
-              <td style={{ 'paddingRight': 8 }}></td>
-              <td style={{ 'paddingRight': 8 }}>Details: {this.props.spec.storage_location.details}</td>
-            </tr>
-            <tr>
-              <td style={{ 'paddingRight': 8 }}></td>
-              <td style={{ 'paddingRight': 8 }}></td>
-              <td style={{ 'paddingRight': 8 }}>Country: {this.props.spec.discovery_location.country}</td>
-              <td style={{ 'paddingRight': 8 }}></td>
-              <td style={{ 'paddingRight': 8 }}></td>
-              <td style={{ 'paddingRight': 8 }}></td>
-              <td style={{ 'paddingRight': 8 }}></td>
-            </tr>
+                                                             checked={this.props.spec.states.repair}/>
+            </td>
+            <td style={{ 'paddingRight': 8 }}>Inside: <input type="checkbox" name="checked"
+                                                             readOnly
+                                                             checked={this.props.spec.storage_location.inside}/>
+            </td>
+          </tr>
+          <tr>
+            <td style={{ 'paddingRight': 8 }}>Width: {this.props.spec.physical_dimensions.width} (cm)</td>
+            <td style={{ 'paddingRight': 8 }}></td>
+            <td style={{ 'paddingRight': 8 }}>Mine: {this.props.spec.discovery_location.mine}</td>
+            <td style={{ 'paddingRight': 8 }}>Method: {this.props.spec.analysis.method}</td>
+            <td style={{ 'paddingRight': 8 }}>From: {this.props.spec.acquired.from}</td>
+            <td style={{ 'paddingRight': 8 }}>Story: <input type="checkbox" name="checked"
+                                                            readOnly
+                                                            checked={this.props.spec.states.story}/>
+            </td>
+            <td style={{ 'paddingRight': 8 }}>Outside:<input type="checkbox" name="checked"
+                                                             readOnly
+                                                             checked={this.props.spec.storage_location.outside}/></td>
+          </tr>
+          <tr>
+            <td style={{ 'paddingRight': 8 }}>Height: {this.props.spec.physical_dimensions.height} (cm)</td>
+            <td style={{ 'paddingRight': 8 }}></td>
+            <td style={{ 'paddingRight': 8 }}>District: {this.props.spec.discovery_location.district}</td>
+            <td style={{ 'paddingRight': 8 }}></td>
+            <td style={{ 'paddingRight': 8 }}>Where: {this.props.spec.acquired.where}</td>
+            <td style={{ 'paddingRight': 8 }}>Figured: <input type="checkbox" name="checked"
+                                                              readOnly
+                                                              checked={this.props.spec.states.figured}/>
+            </td>
+            <td style={{ 'paddingRight': 8 }}>Loan: <input type="checkbox" name="checked"
+                                                           readOnly
+                                                           checked={this.props.spec.storage_location.loan}/>
+            </td>
+          </tr>
+          <tr>
+            <td style={{ 'paddingRight': 8 }}>Main Crystal: {this.props.spec.physical_dimensions.main_crystal} (cm)
+            </td>
+            <td style={{ 'paddingRight': 8 }}></td>
+            <td style={{ 'paddingRight': 8 }}>State: {this.props.spec.discovery_location.state}</td>
+            <td style={{ 'paddingRight': 8 }}></td>
+            <td style={{ 'paddingRight': 8 }}></td>
+            <td style={{ 'paddingRight': 8 }}></td>
+            <td style={{ 'paddingRight': 8 }}>Details: {this.props.spec.storage_location.details}</td>
+          </tr>
+          <tr>
+            <td style={{ 'paddingRight': 8 }}></td>
+            <td style={{ 'paddingRight': 8 }}></td>
+            <td style={{ 'paddingRight': 8 }}>Country: {this.props.spec.discovery_location.country}</td>
+            <td style={{ 'paddingRight': 8 }}></td>
+            <td style={{ 'paddingRight': 8 }}></td>
+            <td style={{ 'paddingRight': 8 }}></td>
+            <td style={{ 'paddingRight': 8 }}></td>
+          </tr>
           </tbody>
         </table>
       </div>
@@ -294,12 +301,12 @@ class Specimen extends React.Component {
 }
 
 class SearchItem extends React.Component {
-  constructor( props ) {
+  constructor ( props ) {
     super( props );
     this.state = cleanSearchItem;
   }
 
-  handleChange( e ) {
+  handleChange ( e ) {
     const state = { [ e.target.name ]: e.target.type === 'checkbox' ? e.target.checked : e.target.value };
     if ( e.target.name === 'metric' ) {
       state.operatorType = ( searchCriteria.find( sc => sc.field === e.target.value ) || { type: 'numeric' } ).type;
@@ -311,7 +318,7 @@ class SearchItem extends React.Component {
     } );
   }
 
-  decideInput( type ) {
+  decideInput ( type ) {
     if ( type === 'boolean' ) {
       return <input type="checkbox" name="checked" checked={this.state.checked}
                     onChange={this.handleChange.bind( this )}/>
@@ -320,7 +327,7 @@ class SearchItem extends React.Component {
                   onChange={this.handleChange.bind( this )}/>
   }
 
-  render() {
+  render () {
     return (
       <div style={{ paddingRight: 8, paddingBottom: 8, display: 'inline-block' }}>
         <div style={{ paddingBottom: 8 }}>
@@ -343,7 +350,7 @@ class SearchItem extends React.Component {
 }
 
 class SearchCriteria extends React.Component {
-  constructor( props ) {
+  constructor ( props ) {
     super( props );
     this.state = {
       searchCriteria: [],
@@ -351,7 +358,7 @@ class SearchCriteria extends React.Component {
     };
   }
 
-  search() {
+  search () {
     const query = [];
     this.state.keys.forEach( k => {
       const state = this.state[ k ];
@@ -368,11 +375,11 @@ class SearchCriteria extends React.Component {
     this.props.search( { $and: query } );
   }
 
-  getState( key, state ) {
+  getState ( key, state ) {
     this.setState( { [ key ]: state } );
   }
 
-  add() {
+  add () {
     const key = uuidv4();
     this.setState( {
       searchCriteria: [ ...this.state.searchCriteria,
@@ -405,7 +412,7 @@ class SearchCriteria extends React.Component {
   //
   // }
 
-  reset() {
+  reset () {
     const state = {};
     this.state.keys.forEach( k => state[ k ] = undefined );
     this.setState( Object.assign( state, { searchCriteria: [], keys: [] } ), () => {
@@ -413,7 +420,7 @@ class SearchCriteria extends React.Component {
     } );
   }
 
-  render() {
+  render () {
     return (
       <div style={{ padding: 8 }}>
         <div>
@@ -431,7 +438,7 @@ class SearchCriteria extends React.Component {
 }
 
 class SpeciesAdder extends React.Component {
-  constructor( props ) {
+  constructor ( props ) {
     super( props );
 
     this.state = {
@@ -448,7 +455,7 @@ class SpeciesAdder extends React.Component {
     ];
   }
 
-  handleChange( e ) {
+  handleChange ( e ) {
     const idx = parseInt( e.target.getAttribute( 'editidx' ) );
     const state = Object.assign( {}, this.state.species[ idx ], { [ e.target.name ]: e.target.value } );
 
@@ -461,13 +468,13 @@ class SpeciesAdder extends React.Component {
     }, this.notifySpecies.bind( this ) );
   }
 
-  removeSpecies() {
+  removeSpecies () {
     this.setState( {
       species: this.state.species.slice( 0, -1 )
     }, this.notifySpecies.bind( this ) );
   }
 
-  addSpecies() {
+  addSpecies () {
     this.setState( {
       species: [
         ...this.state.species,
@@ -476,15 +483,15 @@ class SpeciesAdder extends React.Component {
     }, this.notifySpecies.bind( this ) );
   }
 
-  notifySpecies() {
+  notifySpecies () {
     this.props.loadSpecies( this.state.species );
   }
 
-  reset() {
+  reset () {
     this.setState( { species: [] } );
   }
 
-  buildSpecies( s, i ) {
+  buildSpecies ( s, i ) {
     return (
       <div key={i} style={{ display: 'inline-block' }}>
         <select style={{ 'marginRight': 8 }} key={`select_${i}`} editidx={i} name="modifier"
@@ -500,7 +507,7 @@ class SpeciesAdder extends React.Component {
   }
 
 
-  render() {
+  render () {
     return (
       <div>
         <div>Additional</div>
@@ -515,12 +522,12 @@ class SpeciesAdder extends React.Component {
 }
 
 class Home extends React.Component {
-  constructor( props ) {
+  constructor ( props ) {
     super( props );
-    this.state = { view: 'list', spec: null }
+    this.state = { view: 'list', spec: null, mode: 'add' }
   }
 
-  logout() {
+  logout () {
     this.props.changeView( 'login' );
     this.state = { view: 'list' };
     API.user.logout( {}, ( err ) => {
@@ -530,19 +537,19 @@ class Home extends React.Component {
     } );
   }
 
-  edit() {
-    this.goEdit( null );
+  edit () {
+    this.goEdit( null, 'add' );
   }
 
-  goEdit( spec ) {
-    this.setState( { view: 'edit', spec: spec || null } );
+  goEdit ( spec, mode ) {
+    this.setState( { view: 'edit', spec: spec || null, mode: mode || 'add' } );
   }
 
-  goList() {
+  goList () {
     this.setState( { view: 'list', selected: '' } );
   }
 
-  render() {
+  render () {
     return (
       <div>
         <div style={{ padding: 8 }}>
@@ -551,14 +558,14 @@ class Home extends React.Component {
           <button type="button" onClick={this.logout.bind( this )}>Logout</button>
         </div>
         <div>{this.state.view === 'list' ? <ListView goEdit={this.goEdit.bind( this )}/> :
-          <EditView goList={this.goList.bind( this )} spec={this.state.spec}/>}</div>
+          <EditView goList={this.goList.bind( this )} mode={this.state.mode} spec={this.state.spec}/>}</div>
       </div>
     );
   }
 }
 
 class EditView extends React.Component {
-  constructor( props ) {
+  constructor ( props ) {
     super( props );
 
     let mineral;
@@ -570,19 +577,39 @@ class EditView extends React.Component {
       mineral = JSON.parse( JSON.stringify( cleanMineral ) )
     }
 
+    if ( props.mode === 'duplicate' ) {
+      mineral[ 'photos.main' ] = '';
+      mineral[ 'photos.all' ] = [];
+      mineral[ 'documents' ] = [];
+    }
+
     this.state = Object.assign(
       {
-        spec: !!props.spec,
         loading: false,
         uploading: false,
         photo_files: [],
-        analysis_files: []
+        analysis_files: [],
+        mode: props.mode
       },
       mineral
     );
   }
 
-  reset() {
+  reset () {
+    if ( this.state.mode === 'duplicate' ) {
+      this.setState( {
+        loading: false,
+        uploading: false,
+        photo_files: [],
+        analysis_files: [],
+        'photos.main': '',
+        'photos.all': [],
+        documents: []
+      } );
+      this.photoFileInput.value = "";
+      return this.analysisFileInput.value = "";
+    }
+
     this.setState(
       Object.assign(
         {
@@ -601,13 +628,13 @@ class EditView extends React.Component {
     this.speciesAdder.reset();
   }
 
-  checkDone() {
+  checkDone () {
     if ( this.state.loading || this.state.uploading ) {
       return;
     }
   }
 
-  add() {
+  add () {
     this.uploadPhotos( () => {
       this.uploadDocuments( () => {
 
@@ -630,7 +657,7 @@ class EditView extends React.Component {
           'species.additional': this.state[ 'species.additional' ].filter( s => s.species )
         }, () => {
 
-          if ( !this.state.spec ) {
+          if ( this.state.mode !== 'edit' ) {
             return API.specimen.add( { specimen: this.state }, done );
           }
 
@@ -641,17 +668,17 @@ class EditView extends React.Component {
     } );
   }
 
-  handleChange( e ) {
+  handleChange ( e ) {
     const t = e.target;
     this.setState( { [ t.name ]: t.type === 'file' ? t.files : ( t.type === 'checkbox' ? t.checked : t.value ) } );
   }
 
-  goList() {
+  goList () {
     this.reset();
     this.props.goList();
   }
 
-  makePDF() {
+  makePDF () {
     const w = 203.2, h = 127, margin = 4;
     const colW = ( w - 2 * margin ) / 3;
     const contentW = colW - 2 * margin;
@@ -683,7 +710,7 @@ class EditView extends React.Component {
     doc.save( ( "00000" + this.state.catalog_number ).substr( -5, 5 ) + '.pdf' );
   }
 
-  buildPrintColumn( doc, col, width ) {
+  buildPrintColumn ( doc, col, width ) {
     return doc.splitTextToSize(
       searchCriteria
         .filter( c => c.print_col === col )
@@ -692,7 +719,7 @@ class EditView extends React.Component {
       , width
     );
 
-    function checkFmtBool( c, v ) {
+    function checkFmtBool ( c, v ) {
       switch ( c.type ) {
         case 'boolean':
           return v ? 'Yes' : 'No';
@@ -704,7 +731,7 @@ class EditView extends React.Component {
     }
   };
 
-  uploadPhotos( done ) {
+  uploadPhotos ( done ) {
 
     if ( this.state.loading ) {
       return;
@@ -714,7 +741,7 @@ class EditView extends React.Component {
 
     upload.call( this, this.state.photo_files, 0 );
 
-    function upload( files, i ) {
+    function upload ( files, i ) {
       if ( i >= files.length ) {
         return done();
       }
@@ -756,16 +783,16 @@ class EditView extends React.Component {
 
   }
 
-  loadSpecies( species ) {
+  loadSpecies ( species ) {
     this.setState( {
       'species.additional': species
     } );
   }
 
-  uploadDocuments( done ) {
+  uploadDocuments ( done ) {
     upload.call( this, this.state.analysis_files, 0 );
 
-    function upload( files, i ) {
+    function upload ( files, i ) {
 
       if ( i >= files.length ) {
         return done();
@@ -807,7 +834,7 @@ class EditView extends React.Component {
     }
   }
 
-  render() {
+  render () {
     return (
       <div id="test">
 
@@ -1069,8 +1096,8 @@ class EditView extends React.Component {
 
         <button style={{ 'marginRight': 8 }} type="button" onClick={this.goList.bind( this )}>Cancel</button>
         <button style={{ 'marginRight': 8 }} type="button"
-                onClick={this.add.bind( this )}>{this.state.spec ? 'Update!' : 'Add!'}</button>
-        {this.state.spec ?
+                onClick={this.add.bind( this )}>{this.state.mode === 'edit' ? 'Update!' : 'Add!'}</button>
+        {this.state.mode === 'edit' ?
           <button style={{ 'marginRight': 8 }} type="button" onClick={this.makePDF.bind( this )}>Download</button> : ''}
       </div>
     );
@@ -1078,7 +1105,7 @@ class EditView extends React.Component {
 }
 
 class ListView extends React.Component {
-  constructor( props ) {
+  constructor ( props ) {
     super( props );
     this.state = {
       loading: true,
@@ -1090,7 +1117,7 @@ class ListView extends React.Component {
     this.__search( {} );
   }
 
-  search( query ) {
+  search ( query ) {
     if ( this.state.loading ) {
       return;
     }
@@ -1098,7 +1125,7 @@ class ListView extends React.Component {
     this.__search( query );
   }
 
-  __search( query ) {
+  __search ( query ) {
     API.specimen.list( {
       limit: this.state.limit,
       offset: this.state.page * this.state.limit,
@@ -1118,35 +1145,35 @@ class ListView extends React.Component {
     } );
   }
 
-  edit( spec ) {
-    this.props.goEdit( spec );
+  edit ( ...spec ) {
+    this.props.goEdit( ...spec );
   }
 
-  first() {
+  first () {
     this.setState( { page: 0 } );
     setTimeout( this.search.bind( this ), 0 );
   }
 
-  last() {
+  last () {
     this.setState( { page: this.state.pages } );
     setTimeout( this.search.bind( this ), 0 );
   }
 
-  next() {
+  next () {
     if ( this.state.page < this.state.pages ) {
       this.setState( { page: this.state.page + 1 } );
       setTimeout( this.search.bind( this ), 0 );
     }
   }
 
-  previous() {
+  previous () {
     if ( this.state.page > 0 ) {
       this.setState( { page: this.state.page - 1 } );
       setTimeout( this.search.bind( this ), 0 );
     }
   }
 
-  render() {
+  render () {
     return (
       <div>
         <SearchCriteria search={this.search.bind( this )}/>
@@ -1172,18 +1199,18 @@ class ListView extends React.Component {
 }
 
 class LoginView extends React.Component {
-  constructor( props ) {
+  constructor ( props ) {
     super( props );
     this.state = { password: '' };
   }
 
-  handleChange( e ) {
+  handleChange ( e ) {
     this.setState( { password: e.target.value } );
   }
 
-  login() {
+  login () {
     const pw = this.state.password;
-    this.setState( { password: '' });
+    this.setState( { password: '' } );
 
     try {
 
@@ -1194,33 +1221,34 @@ class LoginView extends React.Component {
         }
         this.props.changeView( 'home' );
       } );
-    } catch(err){
-      alert(err.message);
+    } catch ( err ) {
+      alert( err.message );
     }
   }
 
-  render() {
+  render () {
     return (
       <div>
-        <input style={{ 'marginRight': 8 }} type="text" name="Password" value={this.state.password} onChange={this.handleChange.bind( this )}/>
-        <button type="button" style={{cursor:'pointer'}} onClick={this.login.bind( this )}>Login</button>
+        <input style={{ 'marginRight': 8 }} type="text" name="Password" value={this.state.password}
+               onChange={this.handleChange.bind( this )}/>
+        <button type="button" style={{ cursor: 'pointer' }} onClick={this.login.bind( this )}>Login</button>
       </div>
     )
   }
 }
 
 class App extends React.Component {
-  constructor( props ) {
+  constructor ( props ) {
     super( props );
     this.state = { view: 'login' };
     this.changeView = this.changeView.bind( this );
   }
 
-  changeView( view ) {
+  changeView ( view ) {
     this.setState( { view } )
   }
 
-  render() {
+  render () {
     return (
       <div>
         <h1 style={{ padding: 8 }}>Mineral Catalog</h1>
@@ -1238,14 +1266,14 @@ ReactDOM.render(
 
 //TODO: IMAGE Size and aspect ratio maintaining http://www.frontcoded.com/javascript-fit-rectange-into-bounds.html
 
-function capitalize( a ) {
+function capitalize ( a ) {
   return a.charAt( 0 ).toUpperCase() + a.slice( 1 );
 }
 
 // TODO: push these back into the utils files. figure out why they aren't being served properly
 // Or get a toolchain builder and have them built into the index file for prod
 
-window.API = ( function API() {
+window.API = ( function API () {
 
   // Detect browser support for CORS
   if ( !( 'withCredentials' in new XMLHttpRequest() ) && typeof XDomainRequest === 'undefined' ) {
@@ -1377,7 +1405,7 @@ window.flatten = ( object, prefix = '' ) =>
 
 class QueryString {
 
-  static encode( q ) {
+  static encode ( q ) {
 
     let qs = Object.keys( q ).reduce( ( qs, k ) => {
 
@@ -1400,7 +1428,7 @@ class QueryString {
 
   }
 
-  static decode( qs ) {
+  static decode ( qs ) {
 
     // Remove leading `?`
     qs = qs.substring( 1 );
@@ -1422,11 +1450,11 @@ class QueryString {
 
 }
 
-function uuidv4( options, buf, offset ) {
+function uuidv4 ( options, buf, offset ) {
 
   var byteToHex = [];
   for ( var i = 0; i < 256; ++i ) {
-    byteToHex[ i ] = (i + 0x100).toString( 16 ).substr( 1 );
+    byteToHex[ i ] = ( i + 0x100 ).toString( 16 ).substr( 1 );
   }
 
   var bytesToUuid = function ( buf, offset ) {
@@ -1448,7 +1476,7 @@ function uuidv4( options, buf, offset ) {
   if ( crypto && crypto.getRandomValues ) {
     // WHATWG crypto RNG - http://wiki.whatwg.org/wiki/Crypto
     var rnds8 = new Uint8Array( 16 ); // eslint-disable-line no-undef
-    rng = function whatwgRNG() {
+    rng = function whatwgRNG () {
       crypto.getRandomValues( rnds8 );
       return rnds8;
     };
@@ -1462,8 +1490,8 @@ function uuidv4( options, buf, offset ) {
     var rnds = new Array( 16 );
     rng = function () {
       for ( var i = 0, r; i < 16; i++ ) {
-        if ( (i & 0x03) === 0 ) r = Math.random() * 0x100000000;
-        rnds[ i ] = r >>> ((i & 0x03) << 3) & 0xff;
+        if ( ( i & 0x03 ) === 0 ) r = Math.random() * 0x100000000;
+        rnds[ i ] = r >>> ( ( i & 0x03 ) << 3 ) & 0xff;
       }
 
       return rnds;
@@ -1472,17 +1500,17 @@ function uuidv4( options, buf, offset ) {
 
   var i = buf && offset || 0;
 
-  if ( typeof(options) == 'string' ) {
+  if ( typeof( options ) == 'string' ) {
     buf = options == 'binary' ? new Array( 16 ) : null;
     options = null;
   }
   options = options || {};
 
-  var rnds = options.random || (options.rng || rng)();
+  var rnds = options.random || ( options.rng || rng )();
 
   // Per 4.4, set bits for version and `clock_seq_hi_and_reserved`
-  rnds[ 6 ] = (rnds[ 6 ] & 0x0f) | 0x40;
-  rnds[ 8 ] = (rnds[ 8 ] & 0x3f) | 0x80;
+  rnds[ 6 ] = ( rnds[ 6 ] & 0x0f ) | 0x40;
+  rnds[ 8 ] = ( rnds[ 8 ] & 0x3f ) | 0x80;
 
   // Copy bytes to buffer, if provided
   if ( buf ) {
