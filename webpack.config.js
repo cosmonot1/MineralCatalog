@@ -1,4 +1,4 @@
-const path = require("path");
+const path = require( "path" );
 
 module.exports = {
   entry: './views/src/index.js',
@@ -8,17 +8,17 @@ module.exports = {
         test: /\.(js|jsx)$/,
         exclude: /(node_modules|bower_components)/,
         loader: "babel-loader",
-        options: { presets: ["@babel/env"] }
+        options: { presets: [ "@babel/env" ] }
       },
       {
         test: /\.css$/,
-        use: ["style-loader", "css-loader"]
+        use: [ "style-loader", "css-loader" ]
       }
     ]
   },
-  resolve: { extensions: ["*", ".js", ".jsx"] },
+  resolve: { extensions: [ "*", ".js", ".jsx" ] },
   output: {
-    path: path.resolve(__dirname, "./view/build/"),
+    path: path.resolve( __dirname, "./view/build/" ),
     filename: 'index.js',
   }
 };
