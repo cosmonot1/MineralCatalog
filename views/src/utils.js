@@ -247,12 +247,12 @@ function capitalize( a ) {
 export {
   cleanMineral,
   GCS_IMAGE_LINK,
+  GCS_LABEL_LINK,
   GCS_ANALYSIS_LINK,
+  GCS_PROFESSIONAL_PHOTO_LINK,
   searchCriteria,
   searchOperators,
   cleanSearchItem,
-  GCS_ANALYSIS_LINK,
-  GCS_LABEL_LINK,
   preventDefault,
   capitalize
 };
