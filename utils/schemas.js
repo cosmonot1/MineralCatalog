@@ -171,22 +171,42 @@ module.exports.specimen_add_ref = {
     },
     default: {}
   },
-  // add_to_locality: { //TODO: finish this one
-  //   type: {
-  //     type_locality: module.exports.addBoolean,
-  //     self_collected: module.exports.addBoolean,
-  //     when: { format: 'date' }
-  //   },
-  //   default: {}
-  // },
-  // photographed: { //TODO: finish this one
-  //   type: {
-  //     photographed: module.exports.addBoolean,
-  //     by: module.exports.addString,
-  //     photo_file_number: module.exports.addString
-  //   },
-  //   default: {}
-  // },
+  locality: {
+    type: {
+      type_locality: module.exports.addBoolean,
+      self_collected: module.exports.addBoolean,
+      when: { format: 'date' }
+    },
+    default: {}
+  },
+  photographed: {
+    type: {
+      photographed: module.exports.addBoolean,
+      by: module.exports.addString,
+      photo_file_number: module.exports.addString
+    },
+    default: {}
+  },
+  provenance: {
+    type: {
+      old_labels: module.exports.addBoolean,
+      prior_labels: module.exports.addBoolean,
+      former_owners: {
+        type: [ [ {
+          type: {
+            owner: module.exports.addString,
+            year_acquired: { format: 'date' }
+          }
+        } ] ]
+      },
+      prior_catalog_number: module.exports.addNumber,
+      label: module.exports.addBoolean,
+      label_files: module.exports.addString,
+      miguel_romero: module.exports.addBoolean,
+      miguel_romero_number: module.exports.addNumber
+    },
+    default: {}
+  },
   comments: module.exports.addString,
   story: module.exports.addString,
   figured: module.exports.addString,
@@ -246,32 +266,47 @@ module.exports.specimen_list_fields = {
   'specimen_location': { type: [ String, module.exports.stringType ] },
   'timestamps.created': { type: module.exports.dateType },
   'timestamps.modified': { type: module.exports.dateType },
-  'exhibit_history.show': { type: module.exports.stringType },
-  'exhibit_history.year': { type: module.exports.numericType },
-  'exhibit_history.comp': { type: module.exports.stringType },
-  'exhibit_history.award': { type: module.exports.stringType },
-  'geology.metamorphic': { type: module.exports.booleanType },
-  'geology.pegmatite': { type: module.exports.booleanType },
-  'geology.porphyry': { type: module.exports.booleanType },
-  'geology.crd_skarn': { type: module.exports.booleanType },
-  'geology.epithermal_vein': { type: module.exports.booleanType },
-  'geology.volcanic_related': { type: module.exports.booleanType },
-  'geology.exhalite': { type: module.exports.booleanType },
-  'geology.mvt': { type: module.exports.booleanType },
-  'geology.evaporite': { type: module.exports.booleanType },
-  'geology.other': { type: module.exports.booleanType },
-  'features.twinned': { type: module.exports.booleanType },
-  'features.pseudomorph': { type: module.exports.booleanType },
-  'features.inclusions': { type: module.exports.booleanType },
-  'features.photosensitive': { type: module.exports.booleanType },
-  'fluorescence.sw': { type: module.exports.booleanType },
-  'fluorescence.sw_details': { type: module.exports.stringType },
-  'fluorescence.lw': { type: module.exports.booleanType },
-  'fluorescence.lw_details': { type: module.exports.stringType },
-  'quality.exceptional': { type: module.exports.booleanType },
-  'quality.exhibit': { type: module.exports.booleanType },
-  'quality.locality': { type: module.exports.booleanType },
-  'quality.study': { type: module.exports.booleanType }
+  'exhibit_history.show': { type: [ String, module.exports.stringType ] },
+  'exhibit_history.year': { type: [ Number, module.exports.numericType ] },
+  'exhibit_history.comp': { type: [ String, module.exports.stringType ] },
+  'exhibit_history.award': { type: [ String, module.exports.stringType ] },
+  'geology.metamorphic': { type: [ Boolean, module.exports.booleanType ] },
+  'geology.pegmatite': { type: [ Boolean, module.exports.booleanType ] },
+  'geology.porphyry': { type: [ Boolean, module.exports.booleanType ] },
+  'geology.crd_skarn': { type: [ Boolean, module.exports.booleanType ] },
+  'geology.epithermal_vein': { type: [ Boolean, module.exports.booleanType ] },
+  'geology.volcanic_related': { type: [ Boolean, module.exports.booleanType ] },
+  'geology.exhalite': { type: [ Boolean, module.exports.booleanType ] },
+  'geology.mvt': { type: [ Boolean, module.exports.booleanType ] },
+  'geology.evaporite': { type: [ Boolean, module.exports.booleanType ] },
+  'geology.other': { type: [ Boolean, module.exports.booleanType ] },
+  'features.twinned': { type: [ Boolean, module.exports.booleanType ] },
+  'features.pseudomorph': { type: [ Boolean, module.exports.booleanType ] },
+  'features.inclusions': { type: [ Boolean, module.exports.booleanType ] },
+  'features.photosensitive': { type: [ Boolean, module.exports.booleanType ] },
+  'fluorescence.sw': { type: [ Boolean, module.exports.booleanType ] },
+  'fluorescence.sw_details': { type: [ String, module.exports.stringType ] },
+  'fluorescence.lw': { type: [ Boolean, module.exports.booleanType ] },
+  'fluorescence.lw_details': { type: [ String, module.exports.stringType ] },
+  'quality.exceptional': { type: [ Boolean, module.exports.booleanType ] },
+  'quality.exhibit': { type: [ Boolean, module.exports.booleanType ] },
+  'quality.locality': { type: [ Boolean, module.exports.booleanType ] },
+  'quality.study': { type: [ Boolean, module.exports.booleanType ] },
+  'locality.type_locality': { type: [ Boolean, module.exports.booleanType ] },
+  'locality.self_collected': { type: [ Boolean, module.exports.booleanType ] },
+  'locality.when': { type: module.exports.dateType },
+  'photographed.photographed': { type: [ Boolean, module.exports.booleanType ] },
+  'photographed.by': { type: [ String, module.exports.stringType ] },
+  'photographed.photo_file_number': { type: [ String, module.exports.stringType ] },
+  'provenance.old_labels': { type: [ Boolean, module.exports.booleanType ] },
+  'provenance.prior_labels': { type: [ Boolean, module.exports.booleanType ] },
+  'provenance.former_owners.owner': { type: [ String, module.exports.stringType ] },
+  'provenance.former_owners.year_acquired': { type: module.exports.dateType },
+  'provenance.prior_catalog_number': { type: [ Number, module.exports.numericType ] },
+  'provenance.label': { type: [ Boolean, module.exports.booleanType ] },
+  'provenance.label_files': { type: [ String, module.exports.stringType ] },
+  'provenance.miguel_romero': { type: [ Boolean, module.exports.booleanType ] },
+  'provenance.miguel_romero_number': { type: [ Number, module.exports.numericType ] },
 };
 
 module.exports.specimen_list_ref = Object.assign(
@@ -410,6 +445,39 @@ module.exports.specimen_update_data = {
       exhibit: { type: Boolean },
       locality: { type: Boolean },
       study: { type: Boolean }
+    }
+  },
+  locality: {
+    type: {
+      type_locality: { type: Boolean },
+      self_collected: { type: Boolean },
+      when: { format: 'date' }
+    }
+  },
+  photographed: {
+    type: {
+      photographed: { type: Boolean },
+      by: { type: String, format: ( s ) => s.toLowerCase() },
+      photo_file_number: { type: String, format: ( s ) => s.toLowerCase() }
+    }
+  },
+  provenance: {
+    type: {
+      old_labels: { type: Boolean },
+      prior_labels: { type: Boolean },
+      former_owners: {
+        type: [ [ {
+          type: {
+            owner: { type: String, format: ( s ) => s.toLowerCase() },
+            year_acquired: { format: 'date' }
+          }
+        } ] ]
+      },
+      prior_catalog_number: { type: Number },
+      label: { type: Boolean },
+      label_files: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ] },
+      miguel_romero: { type: Boolean },
+      miguel_romero_number: { type: Number },
     }
   },
   comments: { type: String, format: ( s ) => s.toLowerCase() },
