@@ -14,8 +14,14 @@ class EditView extends React.Component {
     let mineral;
     if ( props.spec ) {
       const additional = props.spec.species.additional;
+      const exhibitHistory = props.spec.species.exhibit_history;
+      const formerOwners = props.spec.provenance.former_owners;
+
       mineral = flatten( props.spec );
+
       mineral[ 'species.additional' ] = additional;
+      mineral[ 'exhibit_history' ] = exhibitHistory;
+      mineral[ 'provenance.former_owners' ] = formerOwners;
     } else {
       mineral = JSON.parse( JSON.stringify( cleanMineral ) )
     }
@@ -24,6 +30,8 @@ class EditView extends React.Component {
       mineral[ 'photos.main' ] = '';
       mineral[ 'photos.all' ] = [];
       mineral[ 'documents' ] = [];
+      mineral[ 'photographed.files' ] = [];
+      mineral[ 'provenance.label_files' ] = [];
     }
 
     this.state = Object.assign(
@@ -32,6 +40,8 @@ class EditView extends React.Component {
         uploading: false,
         photo_files: [],
         analysis_files: [],
+        label_files: [],
+        professional_photo_files: [],
         mode: props.mode
       },
       mineral
@@ -47,9 +57,15 @@ class EditView extends React.Component {
         analysis_files: [],
         'photos.main': '',
         'photos.all': [],
+        'photographed.file': [],
+        'provenance.label_files': [],
+        label_files: [],
+        professional_photo_files: [],
         documents: []
       } );
       this.photoFileInput.value = "";
+      this.labelFileInput.value = "";
+      this.professionalPhotoFileInput.value = "";
       return this.analysisFileInput.value = "";
     }
 
@@ -60,6 +76,8 @@ class EditView extends React.Component {
           loading: false,
           uploading: false,
           photo_files: [],
+          label_files: [],
+          professional_photo_files: [],
           analysis_files: []
         },
         JSON.parse( JSON.stringify( cleanMineral ) )
@@ -68,44 +86,48 @@ class EditView extends React.Component {
 
     this.photoFileInput.value = "";
     this.analysisFileInput.value = "";
+    this.labelFileInput.value = "";
+    this.professionalPhotoFileInput.value = "";
     this.speciesAdder.reset();
-  }
-
-  checkDone() {
-    if ( this.state.loading || this.state.uploading ) {
-      return;
-    }
+    this.exhibitAdder.reset();
+    this.formerOwnerAdder.reset();
   }
 
   add() {
+    return console.log( this.state );
+
     this.uploadPhotos( () => {
       this.uploadDocuments( () => {
+        this.uploadLabels( () => {
+          this.uploadProfessionalPhotos( () => {
 
-        const done = ( err ) => {
-          this.setState( { loading: false } );
-          alert( err ? err.message : "Success!" );
-          if ( !err ) {
-            this.reset();
-          }
-        };
+            const done = ( err ) => {
+              this.setState( { loading: false } );
+              alert( err ? err.message : "Success!" );
+              if ( !err ) {
+                this.reset();
+              }
+            };
 
-        this.setState( {
-          'physical_dimensions.weight': parseFloat( this.state[ 'physical_dimensions.weight' ] || '0' ),
-          'physical_dimensions.length': parseFloat( this.state[ 'physical_dimensions.length' ] || '0' ),
-          'physical_dimensions.width': parseFloat( this.state[ 'physical_dimensions.width' ] || '0' ),
-          'physical_dimensions.height': parseFloat( this.state[ 'physical_dimensions.height' ] || '0' ),
-          'physical_dimensions.main_crystal': parseFloat( this.state[ 'physical_dimensions.main_crystal' ] || '0' ),
-          'acquired.paid': parseFloat( this.state[ 'acquired.paid' ] || '0' ),
-          'photos.main': this.state[ 'photos.all' ][ 0 ] || '',
-          'species.additional': this.state[ 'species.additional' ].filter( s => s.species )
-        }, () => {
+            this.setState( {
+              'physical_dimensions.weight': parseFloat( this.state[ 'physical_dimensions.weight' ] || '0' ),
+              'physical_dimensions.length': parseFloat( this.state[ 'physical_dimensions.length' ] || '0' ),
+              'physical_dimensions.width': parseFloat( this.state[ 'physical_dimensions.width' ] || '0' ),
+              'physical_dimensions.height': parseFloat( this.state[ 'physical_dimensions.height' ] || '0' ),
+              'physical_dimensions.main_crystal': parseFloat( this.state[ 'physical_dimensions.main_crystal' ] || '0' ),
+              'acquired.paid': parseFloat( this.state[ 'acquired.paid' ] || '0' ),
+              'photos.main': this.state[ 'photos.all' ][ 0 ] || '',
+              'species.additional': this.state[ 'species.additional' ].filter( s => s.species )
+            }, () => {
 
-          if ( this.state.mode !== 'edit' ) {
-            return API.specimen.add( { specimen: this.state }, done );
-          }
+              if ( this.state.mode !== 'edit' ) {
+                return API.specimen.add( { specimen: this.state }, done );
+              }
 
-          API.specimen.update( { specimen: { _id: this.state._id }, set: this.state }, done );
+              API.specimen.update( { specimen: { _id: this.state._id }, set: this.state }, done );
 
+            } );
+          } );
         } );
       } );
     } );
