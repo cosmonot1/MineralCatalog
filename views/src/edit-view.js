@@ -204,48 +204,61 @@ class EditView extends React.Component {
 
     this.setState( { loading: true } );
 
-    upload.call( this, this.state.photo_files, 0 );
+    this.upload.call( this, this.state.photo_files, 0, 'photo', 'photos.all', done );
 
-    function upload( files, i ) {
-      if ( i >= files.length ) {
-        return done();
-      }
+  }
 
-      const file = files[ i ];
+  uploadDocuments( done ) {
+    this.upload.call( this, this.state.analysis_files, 0, 'analysis', 'documents', done );
+  }
 
-      API.specimen.upload( { type: 'photo', 'content-type': file.type }, ( err, result ) => {
-        if ( err ) {
-          throw err;
-        }
+  uploadLabels( done ) {
+    this.upload.call( this, this.state.analysis_files, 0, 'label', 'provenance.label_files', done );
+  }
 
-        const that = this;
+  uploadProfessionalPhotos( done ) {
+    this.upload.call( this, this.state.analysis_files, 0, 'professional_photo', 'photographed.files', done );
+  }
 
-        const xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-          if ( this.readyState != 4 ) {
-            return;
-          }
+  upload( files, i, type, state_field, done ) {
 
-          if ( this.response.err ) {
-            throw this.response.err;
-          }
-
-          that.setState( {
-            'photos.all': [
-              ...that.state[ 'photos.all' ],
-              result.filename
-            ]
-          }, () => upload.call( that, files, ++i ) );
-
-        };
-
-        xhttp.open( "PUT", result.url, true );
-        xhttp.setRequestHeader( 'Content-Type', file.type );
-        xhttp.send( file );
-
-      } );
+    if ( i >= files.length ) {
+      return done();
     }
 
+    const file = files[ i ];
+
+    API.specimen.upload( { type: type, 'content-type': file.type }, ( err, result ) => {
+      if ( err ) {
+        throw err;
+      }
+
+      const that = this;
+
+      const xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if ( this.readyState != 4 ) {
+          return;
+        }
+
+        if ( this.response.err ) {
+          throw this.response.err;
+        }
+
+        that.setState( {
+          state_field: [
+            ...that.state[ state_field ],
+            result.filename
+          ]
+        }, () => that.upload.call( that, files, ++i ) );
+
+      };
+
+      xhttp.open( "PUT", result.url, true );
+      xhttp.setRequestHeader( 'Content-Type', file.type );
+      xhttp.send( file );
+
+    } );
   }
 
   loadSpecies( species ) {
@@ -254,49 +267,16 @@ class EditView extends React.Component {
     } );
   }
 
-  uploadDocuments( done ) {
-    upload.call( this, this.state.analysis_files, 0 );
+  loadExhibitHistory( exhibits ) {
+    this.setState( {
+      'exhibit_history': exhibits
+    } );
+  }
 
-    function upload( files, i ) {
-
-      if ( i >= files.length ) {
-        return done();
-      }
-
-      const file = files[ i ];
-
-      API.specimen.upload( { type: 'analysis', 'content-type': file.type }, ( err, result ) => {
-        if ( err ) {
-          throw err;
-        }
-
-        const that = this;
-
-        const xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-          if ( this.readyState != 4 ) {
-            return;
-          }
-
-          if ( this.response.err ) {
-            throw this.response.err;
-          }
-
-          that.setState( {
-            'documents': [
-              ...that.state[ 'documents' ],
-              result.filename
-            ]
-          }, () => upload.call( that, files, ++i ) );
-
-        };
-
-        xhttp.open( "PUT", result.url, true );
-        xhttp.setRequestHeader( 'Content-Type', file.type );
-        xhttp.send( file );
-
-      } );
-    }
+  loadFormerOwners( owners ) {
+    this.setState( {
+      'provenance.former_owners': owners
+    } );
   }
 
   render() {
