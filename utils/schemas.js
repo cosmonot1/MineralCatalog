@@ -183,7 +183,8 @@ module.exports.specimen_add_ref = {
     type: {
       photographed: module.exports.addBoolean,
       by: module.exports.addString,
-      photo_file_number: module.exports.addString
+      photo_file_number: module.exports.addString,
+      files: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ], default: [] }
     },
     default: {}
   },
@@ -201,7 +202,7 @@ module.exports.specimen_add_ref = {
       },
       prior_catalog_number: module.exports.addNumber,
       label: module.exports.addBoolean,
-      label_files: module.exports.addString,
+      label_files: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ], default: [] },
       miguel_romero: module.exports.addBoolean,
       miguel_romero_number: module.exports.addNumber
     },
@@ -279,7 +280,7 @@ module.exports.specimen_list_fields = {
   'geology.exhalite': { type: [ Boolean, module.exports.booleanType ] },
   'geology.mvt': { type: [ Boolean, module.exports.booleanType ] },
   'geology.evaporite': { type: [ Boolean, module.exports.booleanType ] },
-  'geology.other': { type: [ Boolean, module.exports.booleanType ] },
+  'geology.other': { type: [ String, module.exports.stringType ] },
   'features.twinned': { type: [ Boolean, module.exports.booleanType ] },
   'features.pseudomorph': { type: [ Boolean, module.exports.booleanType ] },
   'features.inclusions': { type: [ Boolean, module.exports.booleanType ] },
@@ -458,7 +459,8 @@ module.exports.specimen_update_data = {
     type: {
       photographed: { type: Boolean },
       by: { type: String, format: ( s ) => s.toLowerCase() },
-      photo_file_number: { type: String, format: ( s ) => s.toLowerCase() }
+      photo_file_number: { type: String, format: ( s ) => s.toLowerCase() },
+      files: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ] }
     }
   },
   provenance: {
