@@ -1,6 +1,11 @@
 import React from 'react';
 import SpeciesAdder from './species-adder.js';
-import { cleanMineral, GCS_IMAGE_LINK, GCS_ANALYSIS_LINK, searchCriteria, capitalize } from './utils.js';
+import ExhibitAdder from './exhibit-adder.js';
+import FormerOwnerAdder from './former-owner-adder.js';
+import {
+  cleanMineral, GCS_IMAGE_LINK, GCS_ANALYSIS_LINK, searchCriteria, GCS_LABEL_LINK,
+  GCS_PROFESSIONAL_PHOTO_LINK, capitalize
+} from './utils.js';
 
 class EditView extends React.Component {
   constructor( props ) {
