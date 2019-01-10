@@ -14,6 +14,8 @@ const { Storage } = require( '@google-cloud/storage' );
 const storage = new Storage();
 const image_bucket = storage.bucket( 'mineral-catalog-images' );
 const analysis_bucket = storage.bucket( 'mineral-catalog-analysis-documents' );
+const label_bucket = storage.bucket( 'mineral-catalog-labels' );
+const professional_photo_bucket = storage.bucket( 'mineral-catalog-professional-photos' );
 
 const EXPORT_PAGE_STEP = 100;
 
@@ -36,6 +38,7 @@ async function add( data ) {
   data.specimen = flat.unflatten( data.specimen );
 
   try {
+    //todo: dates should be checked if exist. if date exists validate it, otherwise save as a null date
     const date = moment( data.specimen.acquired.date );
     if ( !date.isValid() ) {
       throw new Error( 'Bad date' );
@@ -88,6 +91,7 @@ async function update( data ) {
   data.set = flat.unflatten( data.set );
 
   try {
+    //todo: dates should be checked if exist. if date exists validate it, otherwise save as a null date
     const date = moment( data.set.acquired.date );
     if ( !date.isValid() ) {
       throw new Error( 'Bad date' );
@@ -106,14 +110,15 @@ async function update( data ) {
 
 async function uploadUri( data ) {
 
-  console.log( data );
-
   let bucket;
   if ( data.type === 'photo' ) {
     bucket = image_bucket;
   } else if ( data.type === 'analysis' ) {
-    console.log( 'analysis bucket' );
     bucket = analysis_bucket;
+  } else if ( data.type === 'label' ) {
+    bucket = label_bucket;
+  } else if ( data.type === 'professional_photo' ) {
+    bucket = professional_photo_bucket;
   } else {
     throw {
       code: 400,
@@ -133,8 +138,6 @@ async function uploadUri( data ) {
     contentType: type,
     expires: moment().add( 30, 'd' ).toISOString()
   } );
-
-  console.log( 'filename:', filename, '\nurl:', url );
 
   return { url, filename };
 
@@ -177,6 +180,8 @@ async function __buildArchive( archive, query, type ) {
       }
       s.photos.all = s.photos.all.map( photo => Config().services.gcloud.imageBaseLink + photo );
       s.documents = s.documents.map( doc => Config().services.gcloud.analysisDocBaseLink + doc );
+      s.provenance.label_files = s.documents.map( doc => Config().services.gcloud.labelBaseLink + doc );
+      s.photographed.files = s.documents.map( doc => Config().services.gcloud.professionalPhotoBaseLink + doc );
     } );
 
     const files = await __buildFiles( specimens, type );
