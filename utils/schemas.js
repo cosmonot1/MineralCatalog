@@ -473,7 +473,7 @@ module.exports.specimen_update_data = {
         type: [ [ {
           type: {
             owner: { type: String, format: ( s ) => s.trim().toLowerCase() },
-            year_acquired: { format: 'date-null' }
+            year_acquired: { type: Number }
           }
         } ] ]
       },
