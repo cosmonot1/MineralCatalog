@@ -612,7 +612,7 @@ class EditView extends React.Component {
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>LW</div>
-            <input type="checkbox" name="fluorescence.sw" checked={this.state[ 'fluorescence.sw' ]}
+            <input type="checkbox" name="fluorescence.lw" checked={this.state[ 'fluorescence.lw' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
@@ -642,7 +642,7 @@ class EditView extends React.Component {
                    onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <div>study</div>
+            <div>Study</div>
             <input type="checkbox" name="quality.study" checked={this.state[ 'quality.study' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
@@ -756,27 +756,27 @@ class EditView extends React.Component {
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Comments</div>
-            <input type="text" name="comments" value={this.state[ 'comments' ]}
+            <textarea type="text" name="comments" value={this.state[ 'comments' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Story</div>
-            <input type="text" name="story" value={this.state[ 'story' ]}
+            <textarea type="text" name="story" value={this.state[ 'story' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Figured</div>
-            <input type="text" name="figured" value={this.state[ 'figured' ]}
+            <textarea type="text" name="figured" value={this.state[ 'figured' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Repair History</div>
-            <input type="text" name="repair_history" value={this.state[ 'repair_history' ]}
+            <textarea type="text" name="repair_history" value={this.state[ 'repair_history' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Analysis History</div>
-            <input type="text" name="analysis_history" value={this.state[ 'analysis_history' ]}
+            <textarea type="text" name="analysis_history" value={this.state[ 'analysis_history' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
