@@ -32,7 +32,7 @@ class FormerOwnerAdder extends React.Component {
     this.setState( {
       formerOwners: [
         ...this.state.formerOwners,
-        { owner: '', date: '' }
+        { owner: '', year_acquired: '' }
       ]
     }, this.notifyFormerOwners.bind( this ) );
   }
