@@ -45,21 +45,55 @@ class ExhibitAdder extends React.Component {
     this.setState( { exhibits: [] } );
   }
 
-  buildExhibits( s, i ) {
+  buildExhibits( exhibits ) {
+
+    if ( !exhibits.length ) {
+      return <div></div>
+    }
+
+    const col1 = [ <div style={{ 'marginBottom': 4 }}>Show</div> ];
+    const col2 = [ <div style={{ 'marginBottom': 4 }}>Year</div> ];
+    const col3 = [ <div style={{ 'marginBottom': 4 }}>Competition</div> ];
+    const col4 = [ <div style={{ 'marginBottom': 4 }}>Award</div> ];
+
+    exhibits.forEach( ( e, i ) => {
+
+      col1.push( (
+        <div key={i} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
+          <input key={`input_${i}`} editidx={i} type="text" name="show"
+                 value={this.state.exhibits[ i ][ 'show' ]} onChange={this.handleChange.bind( this )}/>
+        </div>
+      ) );
+
+      col2.push( (
+        <div key={i} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
+          <input key={`input_${i}`} editidx={i} type="text" name="year"
+                 value={this.state.exhibits[ i ][ 'year' ]} onChange={this.handleChange.bind( this )}/>
+        </div>
+      ) );
+
+      col3.push( (
+        <div key={i} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
+          <input key={`input_${i}`} editidx={i} type="text" name="comp"
+                 value={this.state.exhibits[ i ][ 'comp' ]} onChange={this.handleChange.bind( this )}/>
+        </div>
+      ) );
+
+      col4.push( (
+        <div key={i} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
+          <input key={`input_${i}`} editidx={i} type="text" name="award"
+                 value={this.state.exhibits[ i ][ 'award' ]} onChange={this.handleChange.bind( this )}/>
+        </div>
+      ) );
+
+    } );
+
     return (
-      <div key={i} style={{ display: 'inline-block' }}>
-        <input key={`input_${i}`} editidx={i} style={{ 'marginRight': 8 }} type="text" name="show"
-               value={this.state.exhibits[ i ][ 'show' ]}
-               onChange={this.handleChange.bind( this )}/>
-        <input key={`input_${i}`} editidx={i} style={{ 'marginRight': 8 }} type="text" name="comp"
-               value={this.state.exhibits[ i ][ 'comp' ]}
-               onChange={this.handleChange.bind( this )}/>
-        <input key={`input_${i}`} editidx={i} style={{ 'marginRight': 8 }} type="text" name="award"
-               value={this.state.exhibits[ i ][ 'award' ]}
-               onChange={this.handleChange.bind( this )}/>
-        <input key={`input_${i}`} editidx={i} style={{ 'marginRight': 8 }} type="text" name="year"
-               value={this.state.exhibits[ i ][ 'year' ]}
-               onChange={this.handleChange.bind( this )}/>
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>{col1}</div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>{col2}</div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>{col3}</div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>{col4}</div>
       </div>
     );
   }
@@ -68,11 +102,14 @@ class ExhibitAdder extends React.Component {
   render() {
     return (
       <div>
-        <div>Exhibits</div>
-        {this.state.exhibits.map( this.buildExhibits.bind( this ) )}
-        {this.state.exhibits.length ?
-          <button style={{ 'marginRight': 8 }} type="button" onClick={this.removeExhibits.bind( this )}>-</button> : ''}
-        <button style={{ 'marginRight': 8 }} type="button" onClick={this.addExhibits.bind( this )}>+</button>
+        <div style={{ marginBottom: 4 }}>
+          <span style={{ 'marginRight': 8 }}>Exhibits</span>
+          {this.state.exhibits.length ?
+            <button style={{ 'marginRight': 8 }} type="button"
+                    onClick={this.removeExhibits.bind( this )}>-</button> : ''}
+          <button style={{ 'marginRight': 8 }} type="button" onClick={this.addExhibits.bind( this )}>+</button>
+        </div>
+        <div style={{ display: 'inline-block' }}>{this.buildExhibits.call( this, this.state.exhibits )}</div>
       </div>
     );
   }
