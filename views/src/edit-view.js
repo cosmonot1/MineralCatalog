@@ -4,7 +4,7 @@ import ExhibitAdder from './exhibit-adder.js';
 import FormerOwnerAdder from './former-owner-adder.js';
 import {
   cleanMineral, GCS_IMAGE_LINK, GCS_ANALYSIS_LINK, searchCriteria, GCS_LABEL_LINK,
-  GCS_PROFESSIONAL_PHOTO_LINK, capitalize
+  GCS_PROFESSIONAL_PHOTO_LINK, capitalize, checkNumber
 } from './utils.js';
 
 class EditView extends React.Component {
@@ -94,8 +94,6 @@ class EditView extends React.Component {
   }
 
   add() {
-    return console.log( this.state );
-
     this.uploadPhotos( () => {
       this.uploadDocuments( () => {
         this.uploadLabels( () => {
@@ -110,14 +108,24 @@ class EditView extends React.Component {
             };
 
             this.setState( {
-              'physical_dimensions.weight': parseFloat( this.state[ 'physical_dimensions.weight' ] || '0' ),
-              'physical_dimensions.length': parseFloat( this.state[ 'physical_dimensions.length' ] || '0' ),
-              'physical_dimensions.width': parseFloat( this.state[ 'physical_dimensions.width' ] || '0' ),
-              'physical_dimensions.height': parseFloat( this.state[ 'physical_dimensions.height' ] || '0' ),
-              'physical_dimensions.main_crystal': parseFloat( this.state[ 'physical_dimensions.main_crystal' ] || '0' ),
-              'acquired.paid': parseFloat( this.state[ 'acquired.paid' ] || '0' ),
+              'physical_dimensions.weight': checkNumber( this.state[ 'physical_dimensions.weight' ] ),
+              'physical_dimensions.length': checkNumber( this.state[ 'physical_dimensions.length' ] ),
+              'physical_dimensions.width': checkNumber( this.state[ 'physical_dimensions.width' ] ),
+              'physical_dimensions.height': checkNumber( this.state[ 'physical_dimensions.height' ] ),
+              'physical_dimensions.main_crystal': checkNumber( this.state[ 'physical_dimensions.main_crystal' ] ),
+              'acquired.paid': checkNumber( this.state[ 'acquired.paid' ] ),
               'photos.main': this.state[ 'photos.all' ][ 0 ] || '',
-              'species.additional': this.state[ 'species.additional' ].filter( s => s.species )
+              'species.additional': this.state[ 'species.additional' ].filter( s => s.species ),
+              'provenance.prior_catalog_number': checkNumber( this.state[ 'provenance.prior_catalog_number' ] ),
+              'provenance.miguel_romero_number': checkNumber( this.state[ 'provenance.miguel_romero_number' ] ),
+              'provenance.former_owners': this.state[ 'provenance.former_owners' ].filter( o => o.owner || o.year_acquired ).map( o => {
+                o.year_acquired = checkNumber( o.year_acquired );
+                return o;
+              } ),
+              'exhibit_history': this.state[ 'exhibit_history' ].filter( e => e.show || e.year || e.comp || e.award ).map( e => {
+                e.year = checkNumber( e.year );
+                return e;
+              } )
             }, () => {
 
               if ( this.state.mode !== 'edit' ) {
@@ -757,27 +765,27 @@ class EditView extends React.Component {
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Comments</div>
             <textarea type="text" name="comments" value={this.state[ 'comments' ]}
-                   onChange={this.handleChange.bind( this )}/>
+                      onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Story</div>
             <textarea type="text" name="story" value={this.state[ 'story' ]}
-                   onChange={this.handleChange.bind( this )}/>
+                      onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Figured</div>
             <textarea type="text" name="figured" value={this.state[ 'figured' ]}
-                   onChange={this.handleChange.bind( this )}/>
+                      onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Repair History</div>
             <textarea type="text" name="repair_history" value={this.state[ 'repair_history' ]}
-                   onChange={this.handleChange.bind( this )}/>
+                      onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Analysis History</div>
             <textarea type="text" name="analysis_history" value={this.state[ 'analysis_history' ]}
-                   onChange={this.handleChange.bind( this )}/>
+                      onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Specimen Location</div>

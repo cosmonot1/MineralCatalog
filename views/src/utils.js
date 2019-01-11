@@ -6,11 +6,11 @@ const GCS_PROFESSIONAL_PHOTO_LINK = 'https://storage.googleapis.com/mineral-cata
 const cleanMineral = {
   'photos.main': '',
   'photos.all': [],
-  'physical_dimensions.weight': 0,
-  'physical_dimensions.length': 0,
-  'physical_dimensions.width': 0,
-  'physical_dimensions.height': 0,
-  'physical_dimensions.main_crystal': 0,
+  'physical_dimensions.weight': '',
+  'physical_dimensions.length': '',
+  'physical_dimensions.width': '',
+  'physical_dimensions.height': '',
+  'physical_dimensions.main_crystal': '',
   'species.main': '',
   'species.additional': [],
   'discovery_location.stope': '',
@@ -23,7 +23,7 @@ const cleanMineral = {
   'analysis.by': '',
   'analysis.method': '',
   'acquired.date': '',
-  'acquired.paid': 0,
+  'acquired.paid': '',
   'acquired.from': '',
   'acquired.where': '',
   'states.old_label': false,
@@ -75,11 +75,11 @@ const cleanMineral = {
   'provenance.old_labels': false,
   'provenance.prior_labels': false,
   'provenance.former_owners': [],
-  'provenance.prior_catalog_number': 0,
+  'provenance.prior_catalog_number': '',
   'provenance.label': false,
   'provenance.label_files': '',
   'provenance.miguel_romero': false,
-  'provenance.miguel_romero_number': 0,
+  'provenance.miguel_romero_number': '',
 
 };
 
@@ -244,6 +244,11 @@ function capitalize( a ) {
   return a.charAt( 0 ).toUpperCase() + a.slice( 1 );
 }
 
+function checkNumber( n ) {
+  n = parseFloat( n );
+  return isNaN( n ) ? null : n;
+}
+
 export {
   cleanMineral,
   GCS_IMAGE_LINK,
@@ -254,5 +259,6 @@ export {
   searchOperators,
   cleanSearchItem,
   preventDefault,
-  capitalize
+  capitalize,
+  checkNumber
 };

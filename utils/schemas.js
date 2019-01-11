@@ -33,6 +33,8 @@ module.exports.addBoolean = { type: Boolean, default: false };
 
 module.exports.addNumber = { type: [ null, Number ], default: null };
 
+module.exports.addDate = { format: 'date-null', default: null };
+
 module.exports.default_projection_field = {
   type: Object,
   default: {}
@@ -92,7 +94,7 @@ module.exports.specimen_add_ref = {
   },
   acquired: {
     type: {
-      date: { format: 'date', default: 0 },
+      date: module.exports.addDate,
       paid: module.exports.addNumber,
       from: module.exports.addString,
       where: module.exports.addString
@@ -175,7 +177,7 @@ module.exports.specimen_add_ref = {
     type: {
       type_locality: module.exports.addBoolean,
       self_collected: module.exports.addBoolean,
-      when: { format: 'date' }
+      when: module.exports.addDate
     },
     default: {}
   },
@@ -196,7 +198,7 @@ module.exports.specimen_add_ref = {
         type: [ [ {
           type: {
             owner: module.exports.addString,
-            year_acquired: { format: 'date' }
+            year_acquired: module.exports.addDate
           }
         } ] ]
       },
@@ -374,7 +376,7 @@ module.exports.specimen_update_data = {
   },
   acquired: {
     type: {
-      date: { format: 'date' },
+      date: { format: 'date-null' },
       paid: { type: Number },
       from: { type: String, format: ( s ) => s.trim().toLowerCase() },
       where: { type: String, format: ( s ) => s.trim().toLowerCase() }
@@ -452,7 +454,7 @@ module.exports.specimen_update_data = {
     type: {
       type_locality: { type: Boolean },
       self_collected: { type: Boolean },
-      when: { format: 'date' }
+      when: { format: 'date-null' }
     }
   },
   photographed: {
@@ -471,7 +473,7 @@ module.exports.specimen_update_data = {
         type: [ [ {
           type: {
             owner: { type: String, format: ( s ) => s.trim().toLowerCase() },
-            year_acquired: { format: 'date' }
+            year_acquired: { format: 'date-null' }
           }
         } ] ]
       },

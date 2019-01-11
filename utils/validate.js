@@ -14,6 +14,7 @@ module.exports.callback = validate;
 
 const formats = {
   'date': formatDate,
+  'date-null': formatDateNull,
   'moment': formatMoment,
   'iso-date': formatISODate,
   'mongodb.ObjectID': formatMongoDBObjectID,
@@ -759,6 +760,22 @@ function formatValue( input, spec, name, done ) {
 function formatDate( value ) {
 
   const date = moment( value );
+
+  if ( date.isValid() ) {
+    return date.toDate();
+  }
+
+  throw new Error( 'Invalid date.' );
+
+}
+
+function formatDateNull( value ) {
+
+  const date = moment( value );
+
+  if ( !date ) {
+    return null;
+  }
 
   if ( date.isValid() ) {
     return date.toDate();
