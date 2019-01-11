@@ -38,17 +38,36 @@ async function add( data ) {
   data.specimen = flat.unflatten( data.specimen );
 
   try {
-    //todo: dates should be checked if exist. if date exists validate it, otherwise save as a null date
     const date = moment( data.specimen.acquired.date );
-    if ( !date.isValid() ) {
+    if ( data.specimen.acquired.date !== 0 && !data.specimen.acquired.date ) {
+      data.specimen.acquired.date = null;
+    } else if ( !date || !date.isValid() ) {
       throw new Error( 'Bad date' );
+    } else {
+      data.specimen.acquired.date = date.toISOString();
     }
-    data.specimen.acquired.date = date.toISOString();
   } catch ( err ) {
     throw {
       code: 400,
       reason: 'Unable to format acquired date provided.',
       err: new Error( 'Unable to format acquired date provided.' )
+    }
+  }
+
+  try {
+    const date = moment( data.specimen.locality.when );
+    if ( data.specimen.locality.when !== 0 && !data.specimen.locality.when ) {
+      data.specimen.locality.when = null;
+    } else if ( !date || !date.isValid() ) {
+      throw new Error( 'Bad date' );
+    } else {
+      data.specimen.locality.when = date.toISOString();
+    }
+  } catch ( err ) {
+    throw {
+      code: 400,
+      reason: 'Unable to format locality when provided.',
+      err: new Error( 'Unable to format locality when provided.' )
     }
   }
 
@@ -89,19 +108,38 @@ async function download( req, res ) {
 async function update( data ) {
 
   data.set = flat.unflatten( data.set );
-
+  
   try {
-    //todo: dates should be checked if exist. if date exists validate it, otherwise save as a null date
-    const date = moment( data.set.acquired.date );
-    if ( !date.isValid() ) {
+    const date = moment( data.specimen.acquired.date );
+    if ( data.specimen.acquired.date !== 0 && !data.specimen.acquired.date ) {
+      data.specimen.acquired.date = null;
+    } else if ( !date || !date.isValid() ) {
       throw new Error( 'Bad date' );
+    } else {
+      data.specimen.acquired.date = date.toISOString();
     }
-    data.set.acquired.date = date.toISOString();
   } catch ( err ) {
     throw {
       code: 400,
       reason: 'Unable to format acquired date provided.',
       err: new Error( 'Unable to format acquired date provided.' )
+    }
+  }
+
+  try {
+    const date = moment( data.specimen.locality.when );
+    if ( data.specimen.locality.when !== 0 && !data.specimen.locality.when ) {
+      data.specimen.locality.when = null;
+    } else if ( !date || !date.isValid() ) {
+      throw new Error( 'Bad date' );
+    } else {
+      data.specimen.locality.when = date.toISOString();
+    }
+  } catch ( err ) {
+    throw {
+      code: 400,
+      reason: 'Unable to format locality when provided.',
+      err: new Error( 'Unable to format locality when provided.' )
     }
   }
 
