@@ -31,7 +31,7 @@ module.exports.addString = { type: String, format: ( s ) => s.trim().toLowerCase
 
 module.exports.addBoolean = { type: Boolean, default: false };
 
-module.exports.addNumber = { type: Number, default: 0 };
+module.exports.addNumber = { type: [ null, Number ], default: null };
 
 module.exports.default_projection_field = {
   type: Object,
@@ -302,7 +302,7 @@ module.exports.specimen_list_fields = {
   'provenance.old_labels': { type: [ Boolean, module.exports.booleanType ] },
   'provenance.prior_labels': { type: [ Boolean, module.exports.booleanType ] },
   'provenance.former_owners.owner': { type: [ String, module.exports.stringType ] },
-  'provenance.former_owners.year_acquired': { type: module.exports.dateType },
+  'provenance.former_owners.year_acquired': { type: [ Number, module.exports.numericType ] },
   'provenance.prior_catalog_number': { type: [ Number, module.exports.numericType ] },
   'provenance.label': { type: [ Boolean, module.exports.booleanType ] },
   'provenance.label_files': { type: [ String, module.exports.stringType ] },
