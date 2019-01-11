@@ -337,11 +337,11 @@ class EditView extends React.Component {
           </div>
         </div>
 
-        <div>
-          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8 }}>
             <strong>Species</strong>
           </div>
-          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8 }}>
             <div>Main</div>
             <input type="text" name="species.main" value={this.state[ 'species.main' ]}
                    onChange={this.handleChange.bind( this )}/>
@@ -503,13 +503,13 @@ class EditView extends React.Component {
           </div>
         </div>
 
-        <div>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <strong>Exhibit History</strong>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <ExhibitAdder exhibits={this.state[ 'exhibit_history' ] || []}
-                          loadExhibits={this.loadExhibitHistory().bind( this )}
+                          loadExhibits={this.loadExhibitHistory.bind( this )}
                           ref={ref => this.exhibitAdder = ref}/>
           </div>
         </div>
@@ -698,51 +698,55 @@ class EditView extends React.Component {
         </div>
 
         <div>
-          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <strong>Provenance</strong>
+          <div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <strong>Provenance</strong>
+            </div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <div>Old Labels</div>
+              <input type="checkbox" name="provenance.old_labels" checked={this.state[ 'provenance.old_labels' ]}
+                     onChange={this.handleChange.bind( this )}/>
+            </div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <div>Prior Labels</div>
+              <input type="checkbox" name="provenance.prior_labels" checked={this.state[ 'provenance.prior_labels' ]}
+                     onChange={this.handleChange.bind( this )}/>
+            </div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <div>Prior Catalog Number</div>
+              <input type="text" name="provenance.prior_catalog_number"
+                     value={this.state[ 'provenance.prior_catalog_number' ]}
+                     onChange={this.handleChange.bind( this )}/>
+            </div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <div>Label</div>
+              <input type="checkbox" name="provenance.label" checked={this.state[ 'provenance.label' ]}
+                     onChange={this.handleChange.bind( this )}/>
+            </div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <div>Label Files</div>
+              <input type="file" name="label_files" onChange={this.handleChange.bind( this )}
+                     ref={ref => this.labelFileInput = ref}
+                     multiple/>
+            </div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <div>Miguel Romero</div>
+              <input type="checkbox" name="provenance.miguel_romero" checked={this.state[ 'provenance.miguel_romero' ]}
+                     onChange={this.handleChange.bind( this )}/>
+            </div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <div>Miguel Romero Number</div>
+              <input type="text" name="provenance.miguel_romero_number"
+                     value={this.state[ 'provenance.miguel_romero_number' ]}
+                     onChange={this.handleChange.bind( this )}/>
+            </div>
           </div>
-          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <div>Old Labels</div>
-            <input type="checkbox" name="provenance.old_labels" checked={this.state[ 'provenance.old_labels' ]}
-                   onChange={this.handleChange.bind( this )}/>
-          </div>
-          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <div>Prior Labels</div>
-            <input type="checkbox" name="provenance.prior_labels" checked={this.state[ 'provenance.prior_labels' ]}
-                   onChange={this.handleChange.bind( this )}/>
-          </div>
-          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <FormerOwnerAdder formerOwners={this.state[ 'provenance.former_owners' ] || []}
-                              loadFormerOwners={this.loadFormerOwners.bind( this )}
-                              ref={ref => this.formerOwnerAdder = ref}/>
-          </div>
-          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <div>Prior Catalog Number</div>
-            <input type="text" name="provenance.prior_catalog_number"
-                   value={this.state[ 'provenance.prior_catalog_number' ]}
-                   onChange={this.handleChange.bind( this )}/>
-          </div>
-          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <div>Label</div>
-            <input type="checkbox" name="provenance.label" checked={this.state[ 'provenance.label' ]}
-                   onChange={this.handleChange.bind( this )}/>
-          </div>
-          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <div>Label Files</div>
-            <input type="file" name="label_files" onChange={this.handleChange.bind( this )}
-                   ref={ref => this.labelFileInput = ref}
-                   multiple/>
-          </div>
-          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <div>Miguel Romero</div>
-            <input type="checkbox" name="provenance.miguel_romero" checked={this.state[ 'provenance.miguel_romero' ]}
-                   onChange={this.handleChange.bind( this )}/>
-          </div>
-          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <div>Miguel Romero Number</div>
-            <input type="text" name="provenance.miguel_romero_number"
-                   value={this.state[ 'provenance.miguel_romero_number' ]}
-                   onChange={this.handleChange.bind( this )}/>
+          <div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <FormerOwnerAdder formerOwners={this.state[ 'provenance.former_owners' ] || []}
+                                loadFormerOwners={this.loadFormerOwners.bind( this )}
+                                ref={ref => this.formerOwnerAdder = ref}/>
+            </div>
           </div>
         </div>
 
