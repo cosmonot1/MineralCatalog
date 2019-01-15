@@ -48,7 +48,7 @@ class EditView extends React.Component {
     );
   }
 
-  reset() {
+  reset () {
     if ( this.state.mode === 'duplicate' ) {
       this.setState( {
         loading: false,
@@ -93,7 +93,7 @@ class EditView extends React.Component {
     this.formerOwnerAdder.reset();
   }
 
-  add() {
+  add () {
     this.uploadPhotos( () => {
       this.uploadDocuments( () => {
         this.uploadLabels( () => {
@@ -141,17 +141,17 @@ class EditView extends React.Component {
     } );
   }
 
-  handleChange( e ) {
+  handleChange ( e ) {
     const t = e.target;
     this.setState( { [ t.name ]: t.type === 'file' ? t.files : ( t.type === 'checkbox' ? t.checked : t.value ) } );
   }
 
-  goList() {
+  goList () {
     this.reset();
     this.props.goList();
   }
 
-  makePDF() {
+  makePDF () {
     const w = 203.2, h = 127, margin = 4;
     const colW = ( w - 2 * margin ) / 3;
     const contentW = colW - 2 * margin;
@@ -183,7 +183,7 @@ class EditView extends React.Component {
     doc.save( ( "00000" + this.state.catalog_number ).substr( -5, 5 ) + '.pdf' );
   }
 
-  buildPrintColumn( doc, col, width ) {
+  buildPrintColumn ( doc, col, width ) {
     return doc.splitTextToSize(
       searchCriteria
         .filter( c => c.print_col === col )
@@ -192,7 +192,7 @@ class EditView extends React.Component {
       , width
     );
 
-    function checkFmtBool( c, v ) {
+    function checkFmtBool ( c, v ) {
       switch ( c.type ) {
         case 'boolean':
           return v ? 'Yes' : 'No';
@@ -204,7 +204,7 @@ class EditView extends React.Component {
     }
   };
 
-  uploadPhotos( done ) {
+  uploadPhotos ( done ) {
 
     if ( this.state.loading ) {
       return;
@@ -216,19 +216,19 @@ class EditView extends React.Component {
 
   }
 
-  uploadDocuments( done ) {
+  uploadDocuments ( done ) {
     this.upload.call( this, this.state.analysis_files, 0, 'analysis', 'documents', done );
   }
 
-  uploadLabels( done ) {
+  uploadLabels ( done ) {
     this.upload.call( this, this.state.analysis_files, 0, 'label', 'provenance.label_files', done );
   }
 
-  uploadProfessionalPhotos( done ) {
+  uploadProfessionalPhotos ( done ) {
     this.upload.call( this, this.state.analysis_files, 0, 'professional_photo', 'photographed.files', done );
   }
 
-  upload( files, i, type, state_field, done ) {
+  upload ( files, i, type, state_field, done ) {
 
     if ( i >= files.length ) {
       return done();
@@ -269,25 +269,25 @@ class EditView extends React.Component {
     } );
   }
 
-  loadSpecies( species ) {
+  loadSpecies ( species ) {
     this.setState( {
       'species.additional': species
     } );
   }
 
-  loadExhibitHistory( exhibits ) {
+  loadExhibitHistory ( exhibits ) {
     this.setState( {
       'exhibit_history': exhibits
     } );
   }
 
-  loadFormerOwners( owners ) {
+  loadFormerOwners ( owners ) {
     this.setState( {
       'provenance.former_owners': owners
     } );
   }
 
-  render() {
+  render () {
     return (
       <div id="test">
 
@@ -315,32 +315,35 @@ class EditView extends React.Component {
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Weight (g)</div>
-            <input type="text" name="physical_dimensions.weight" value={this.state[ 'physical_dimensions.weight' ]}
+            <input type="text" name="physical_dimensions.weight"
+                   value={this.state[ 'physical_dimensions.weight' ] || ''}
                    onChange={this.handleChange.bind( this )}/>
           </div>
 
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Length (cm)</div>
-            <input type="text" name="physical_dimensions.length" value={this.state[ 'physical_dimensions.length' ]}
+            <input type="text" name="physical_dimensions.length"
+                   value={this.state[ 'physical_dimensions.length' ] || ''}
                    onChange={this.handleChange.bind( this )}/>
           </div>
 
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Width (cm)</div>
-            <input type="text" name="physical_dimensions.width" value={this.state[ 'physical_dimensions.width' ]}
+            <input type="text" name="physical_dimensions.width" value={this.state[ 'physical_dimensions.width' ] || ''}
                    onChange={this.handleChange.bind( this )}/>
           </div>
 
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Height (cm)</div>
-            <input type="text" name="physical_dimensions.height" value={this.state[ 'physical_dimensions.height' ]}
+            <input type="text" name="physical_dimensions.height"
+                   value={this.state[ 'physical_dimensions.height' ] || ''}
                    onChange={this.handleChange.bind( this )}/>
           </div>
 
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Main Crystal (cm)</div>
             <input type="text" name="physical_dimensions.main_crystal"
-                   value={this.state[ 'physical_dimensions.main_crystal' ]}
+                   value={this.state[ 'physical_dimensions.main_crystal' ] || ''}
                    onChange={this.handleChange.bind( this )}/>
           </div>
         </div>
@@ -435,12 +438,12 @@ class EditView extends React.Component {
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Date (YYYY-MM-DD ex: Sep 23 1994 = 1994-09-23)</div>
             {/*TODO: date picker*/}
-            <input type="text" name="acquired.date" value={this.state[ 'acquired.date' ]}
+            <input type="text" name="acquired.date" value={this.state[ 'acquired.date' ] || ''}
                    onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Paid ($)</div>
-            <input type="text" name="acquired.paid" value={this.state[ 'acquired.paid' ]}
+            <input type="text" name="acquired.paid" value={this.state[ 'acquired.paid' ] || ''}
                    onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
@@ -674,7 +677,7 @@ class EditView extends React.Component {
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>When (YYYY-MM-DD ex: Sep 23 1994 = 1994-09-23)</div>
             {/*TODO: date picker*/}
-            <input type="text" name="locality.when" value={this.state[ 'locality.when' ]}
+            <input type="text" name="locality.when" value={this.state[ 'locality.when' ] || ''}
                    onChange={this.handleChange.bind( this )}/>
           </div>
         </div>
@@ -725,7 +728,7 @@ class EditView extends React.Component {
             <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
               <div>Prior Catalog Number</div>
               <input type="text" name="provenance.prior_catalog_number"
-                     value={this.state[ 'provenance.prior_catalog_number' ]}
+                     value={this.state[ 'provenance.prior_catalog_number' ]||''}
                      onChange={this.handleChange.bind( this )}/>
             </div>
             <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
@@ -747,7 +750,7 @@ class EditView extends React.Component {
             <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
               <div>Miguel Romero Number</div>
               <input type="text" name="provenance.miguel_romero_number"
-                     value={this.state[ 'provenance.miguel_romero_number' ]}
+                     value={this.state[ 'provenance.miguel_romero_number' ]||''}
                      onChange={this.handleChange.bind( this )}/>
             </div>
           </div>
