@@ -39,7 +39,7 @@ async function add ( data ) {
 
   try {
     const date = moment( data.specimen.acquired.date );
-    if ( data.specimen.acquired.date !== 0 && !data.specimen.acquired.date ) {
+    if ( data.specimen.acquired.date !== 0 && !data.specimen.acquired.date && 'date' in data.specimen.acquired ) {
       data.specimen.acquired.date = null;
     } else if ( !date || !date.isValid() ) {
       throw new Error( 'Bad date' );
@@ -56,7 +56,7 @@ async function add ( data ) {
 
   try {
     const date = moment( data.specimen.locality.when );
-    if ( data.specimen.locality.when !== 0 && !data.specimen.locality.when ) {
+    if ( data.specimen.locality.when !== 0 && !data.specimen.locality.when && 'when' in data.specimen.locality) {
       data.specimen.locality.when = null;
     } else if ( !date || !date.isValid() ) {
       throw new Error( 'Bad date' );
@@ -111,7 +111,7 @@ async function update ( data ) {
 
   try {
     const date = moment( data.set.acquired.date );
-    if ( data.set.acquired.date !== 0 && !data.set.acquired.date ) {
+    if ( data.set.acquired.date !== 0 && !data.set.acquired.date && 'date' in data.set.acquired ) {
       data.set.acquired.date = null;
     } else if ( !date || !date.isValid() ) {
       throw new Error( 'Bad date' );
@@ -128,7 +128,7 @@ async function update ( data ) {
 
   try {
     const date = moment( data.set.locality.when );
-    if ( data.set.locality.when !== 0 && !data.set.locality.when ) {
+    if ( data.set.locality.when !== 0 && !data.set.locality.when && 'when' in data.set.locality ) {
       data.set.locality.when = null;
     } else if ( !date || !date.isValid() ) {
       throw new Error( 'Bad date' );
