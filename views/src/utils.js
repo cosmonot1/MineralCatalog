@@ -157,7 +157,7 @@ const searchCriteria = [
   { name: 'old labels', field: 'provenance.old_labels', type: 'boolean' },
   { name: 'prior labels', field: 'provenance.prior_labels', type: 'boolean' },
   { name: 'former owner', field: 'provenance.former_owners.owner', type: 'string' },
-  { name: 'former owner year acquired', field: 'provenance.former_owners.year_acquired', type: 'date' },
+  { name: 'former owner year acquired', field: 'provenance.former_owners.year_acquired', type: 'number' },
   { name: 'prior catalog number', field: 'provenance.prior_catalog_number', type: 'number' },
   { name: 'label', field: 'provenance.label', type: 'boolean' },
   { name: 'label files', field: 'provenance.label_files', type: 'string' },
