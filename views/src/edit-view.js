@@ -8,13 +8,13 @@ import {
 } from './utils.js';
 
 class EditView extends React.Component {
-  constructor( props ) {
+  constructor ( props ) {
     super( props );
 
     let mineral;
     if ( props.spec ) {
       const additional = props.spec.species.additional;
-      const exhibitHistory = props.spec.species.exhibit_history;
+      const exhibitHistory = props.spec.exhibit_history;
       const formerOwners = props.spec.provenance.former_owners;
 
       mineral = flatten( props.spec );
