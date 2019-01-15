@@ -29,11 +29,11 @@ module.exports = {
   upload: c( fmtBody( fmtReqRes( uploadUri ) ) )
 };
 
-function downloadC( fn ) {
+function downloadC ( fn ) {
   return ( req, res, next ) => fn( req, res ).catch( next );
 }
 
-async function add( data ) {
+async function add ( data ) {
 
   data.specimen = flat.unflatten( data.specimen );
 
@@ -74,7 +74,7 @@ async function add( data ) {
   return await Specimen.add( data );
 }
 
-async function download( req, res ) {
+async function download ( req, res ) {
 
   if ( !req.body.specimen ) {
     req.body.specimen = {};
@@ -105,18 +105,18 @@ async function download( req, res ) {
     .finally( () => archive.finalize() );
 }
 
-async function update( data ) {
+async function update ( data ) {
 
   data.set = flat.unflatten( data.set );
-  
+
   try {
-    const date = moment( data.specimen.acquired.date );
-    if ( data.specimen.acquired.date !== 0 && !data.specimen.acquired.date ) {
-      data.specimen.acquired.date = null;
+    const date = moment( data.set.acquired.date );
+    if ( data.set.acquired.date !== 0 && !data.set.acquired.date ) {
+      data.set.acquired.date = null;
     } else if ( !date || !date.isValid() ) {
       throw new Error( 'Bad date' );
     } else {
-      data.specimen.acquired.date = date.toISOString();
+      data.set.acquired.date = date.toISOString();
     }
   } catch ( err ) {
     throw {
@@ -127,13 +127,13 @@ async function update( data ) {
   }
 
   try {
-    const date = moment( data.specimen.locality.when );
-    if ( data.specimen.locality.when !== 0 && !data.specimen.locality.when ) {
-      data.specimen.locality.when = null;
+    const date = moment( data.set.locality.when );
+    if ( data.set.locality.when !== 0 && !data.set.locality.when ) {
+      data.set.locality.when = null;
     } else if ( !date || !date.isValid() ) {
       throw new Error( 'Bad date' );
     } else {
-      data.specimen.locality.when = date.toISOString();
+      data.set.locality.when = date.toISOString();
     }
   } catch ( err ) {
     throw {
@@ -146,7 +146,7 @@ async function update( data ) {
   return await Specimen.update( data );
 }
 
-async function uploadUri( data ) {
+async function uploadUri ( data ) {
 
   let bucket;
   if ( data.type === 'photo' ) {
@@ -181,7 +181,7 @@ async function uploadUri( data ) {
 
 }
 
-function fmtReqRes( fn ) {
+function fmtReqRes ( fn ) {
   return async req => {
 
     if ( !req.body.specimen ) {
@@ -197,7 +197,7 @@ function fmtReqRes( fn ) {
   };
 }
 
-async function __buildArchive( archive, query, type ) {
+async function __buildArchive ( archive, query, type ) {
   for ( let offset = 0; ; offset += EXPORT_PAGE_STEP ) {
 
     const { specimens } = await Specimen.list(
@@ -242,7 +242,7 @@ async function __buildArchive( archive, query, type ) {
   }
 }
 
-async function __buildFiles( specimens, type ) {
+async function __buildFiles ( specimens, type ) {
 
   if ( type === 'json' ) {
     return __buildJSON( specimens );
@@ -255,11 +255,11 @@ async function __buildFiles( specimens, type ) {
 
 }
 
-function __buildJSON( specimens ) {
+function __buildJSON ( specimens ) {
   return specimens.map( a => JSON.stringify( a ) );
 }
 
-function __buildCSV( specimens ) {
+function __buildCSV ( specimens ) {
   return Promise.all(
     specimens.map( a => json2csv( flat.flatten( a ), { checkSchemaDifferences: false } ) )
   );
