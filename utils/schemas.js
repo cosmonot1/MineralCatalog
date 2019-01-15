@@ -198,13 +198,13 @@ module.exports.specimen_add_ref = {
         type: [ [ {
           type: {
             owner: module.exports.addString,
-            year_acquired: module.exports.addDate
+            year_acquired: module.exports.addNumber
           }
         } ] ]
       },
       prior_catalog_number: module.exports.addNumber,
       label: module.exports.addBoolean,
-      label_files: { type: [ [ { type: String, format: ( s ) => s.toLowerCase() } ] ], default: [] },
+      label_files: { type: [ [ { type: String, format: ( s ) => s.trim().toLowerCase() } ] ], default: [] },
       miguel_romero: module.exports.addBoolean,
       miguel_romero_number: module.exports.addNumber
     },
@@ -333,11 +333,11 @@ module.exports.specimen_update_data = {
   },
   physical_dimensions: {
     type: {
-      weight: { type: Number },
-      length: { type: Number },
-      width: { type: Number },
-      height: { type: Number },
-      main_crystal: { type: Number },
+      weight: { type: [ null, Number ] },
+      length: { type: [ null, Number ] },
+      width: { type: [ null, Number ] },
+      height: { type: [ null, Number ] },
+      main_crystal: { type: [ null, Number ] },
     },
     flatten: true
   },
@@ -377,7 +377,7 @@ module.exports.specimen_update_data = {
   acquired: {
     type: {
       date: { format: 'date-null' },
-      paid: { type: Number },
+      paid: { type: [ null, Number ] },
       from: { type: String, format: ( s ) => s.trim().toLowerCase() },
       where: { type: String, format: ( s ) => s.trim().toLowerCase() }
     },
@@ -420,7 +420,7 @@ module.exports.specimen_update_data = {
     type: [ [ {
       type: {
         show: { type: String, format: ( s ) => s.trim().toLowerCase() },
-        year: { type: Number },
+        year: { type: [ null, Number ] },
         comp: { type: String, format: ( s ) => s.trim().toLowerCase() },
         award: { type: String, format: ( s ) => s.trim().toLowerCase() }
       }
@@ -473,15 +473,15 @@ module.exports.specimen_update_data = {
         type: [ [ {
           type: {
             owner: { type: String, format: ( s ) => s.trim().toLowerCase() },
-            year_acquired: { type: Number }
+            year_acquired: { type: [ null, Number ] }
           }
         } ] ]
       },
-      prior_catalog_number: { type: Number },
+      prior_catalog_number: { type: [ null, Number ] },
       label: { type: Boolean },
       label_files: { type: [ [ { type: String, format: ( s ) => s.trim().toLowerCase() } ] ] },
       miguel_romero: { type: Boolean },
-      miguel_romero_number: { type: Number },
+      miguel_romero_number: { type: [ null, Number ] },
     }
   },
   comments: { type: String, format: ( s ) => s.trim().toLowerCase() },
