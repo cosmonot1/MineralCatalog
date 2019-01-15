@@ -434,6 +434,7 @@ class EditView extends React.Component {
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Date (YYYY-MM-DD ex: Sep 23 1994 = 1994-09-23)</div>
+            {/*TODO: date picker*/}
             <input type="text" name="acquired.date" value={this.state[ 'acquired.date' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
@@ -671,8 +672,9 @@ class EditView extends React.Component {
                    onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <div>When</div>
-            <input type="checkbox" name="locality.when" checked={this.state[ 'locality.when' ]}
+            <div>When (YYYY-MM-DD ex: Sep 23 1994 = 1994-09-23)</div>
+            {/*TODO: date picker*/}
+            <input type="text" name="locality.when" value={this.state[ 'locality.when' ]}
                    onChange={this.handleChange.bind( this )}/>
           </div>
         </div>
