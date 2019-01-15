@@ -797,7 +797,8 @@ function formatDateNull ( value ) {
 
   const date = moment( value );
 
-  if ( !date ) {
+  // If no date was created or we were passed a null value
+  if ( !date || Object.prototype.toString.call( value ) === '[object Null]' ) {
     return null;
   }
 
