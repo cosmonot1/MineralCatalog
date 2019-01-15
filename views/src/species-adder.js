@@ -58,12 +58,12 @@ class SpeciesAdder extends React.Component {
       return <div></div>;
     }
 
-    const col1 = [ <div style={{ 'marginBottom': 4 }}>Modifier</div> ];
-    const col2 = [ <div style={{ 'marginBottom': 4 }}>Species</div> ];
+    const col1 = [ <div key={'col1_header'} style={{ 'marginBottom': 4 }}>Modifier</div> ];
+    const col2 = [ <div key={'col2_header'} style={{ 'marginBottom': 4 }}>Species</div> ];
 
     species.forEach( ( s, i ) => {
       col1.push( (
-        <div key={i} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
+        <div key={`col1_${i}`} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
           <select key={`select_${i}`} editidx={i} name="modifier"
                   value={this.state.species[ i ].modifier}
                   onChange={this.handleChange.bind( this )}>
@@ -73,7 +73,7 @@ class SpeciesAdder extends React.Component {
       ) );
 
       col2.push( (
-        <div key={i} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
+        <div key={`col2_${i}`} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
           <input key={`input_${i}`} editidx={i} type="text" name="species"
                  value={this.state.species[ i ][ 'species' ]}
                  onChange={this.handleChange.bind( this )}/>

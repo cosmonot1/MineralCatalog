@@ -1,7 +1,7 @@
 import React from 'react';
 
 class FormerOwnerAdder extends React.Component {
-  constructor( props ) {
+  constructor ( props ) {
     super( props );
 
     this.state = {
@@ -9,7 +9,7 @@ class FormerOwnerAdder extends React.Component {
     };
   }
 
-  handleChange( e ) {
+  handleChange ( e ) {
     const idx = parseInt( e.target.getAttribute( 'editidx' ) );
     const state = Object.assign( {}, this.state.formerOwners[ idx ], { [ e.target.name ]: e.target.value } );
 
@@ -22,13 +22,13 @@ class FormerOwnerAdder extends React.Component {
     }, this.notifyFormerOwners.bind( this ) );
   }
 
-  removeFormerOwners() {
+  removeFormerOwners () {
     this.setState( {
       formerOwners: this.state.formerOwners.slice( 0, -1 )
     }, this.notifyFormerOwners.bind( this ) );
   }
 
-  addFormerOwners() {
+  addFormerOwners () {
     this.setState( {
       formerOwners: [
         ...this.state.formerOwners,
@@ -37,35 +37,36 @@ class FormerOwnerAdder extends React.Component {
     }, this.notifyFormerOwners.bind( this ) );
   }
 
-  notifyFormerOwners() {
+  notifyFormerOwners () {
     this.props.loadFormerOwners( this.state.formerOwners );
   }
 
-  reset() {
+  reset () {
     this.setState( { formerOwners: [] } );
   }
 
-  buildFormerOwners( owners ) {
+  buildFormerOwners ( owners ) {
     if ( !owners.length ) {
       return <div></div>;
     }
 
-    const col1 = [ <div style={{ 'marginBottom': 4 }}>Owner</div> ];
-    const col2 = [ <div style={{ 'marginBottom': 4 }}>Year Acquired (By Owner)</div> ];
+    const col1 = [ <div key={'col1_header'} style={{ 'marginBottom': 4 }}>Owner</div> ];
+    const col2 = [ <div key={'col2_header'} style={{ 'marginBottom': 4 }}>Year Acquired (By Owner)</div> ];
 
     owners.forEach( ( o, i ) => {
 
       col1.push( (
-        <div key={i} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
-          <input key={`input_${i}`} editidx={i} type="text" name="owner"
+        <div key={`col1_${i}`} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
+          <input key={`input1_${i}`} editidx={i} type="text" name="owner"
                  value={this.state.formerOwners[ i ][ 'owner' ]} onChange={this.handleChange.bind( this )}/>
         </div>
       ) );
 
       col2.push( (
-        <div key={i} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
-          <input key={`input_${i}`} editidx={i} type="text" name="year_acquired"
-                 value={this.state.formerOwners[ i ][ 'year_acquired' ]} onChange={this.handleChange.bind( this )}/>
+        <div key={`col2_${i}`} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
+          <input key={`input2_${i}`} editidx={i} type="text" name="year_acquired"
+                 value={this.state.formerOwners[ i ][ 'year_acquired' ] || ''}
+                 onChange={this.handleChange.bind( this )}/>
         </div>
       ) );
 
@@ -80,7 +81,7 @@ class FormerOwnerAdder extends React.Component {
   }
 
 
-  render() {
+  render () {
     return (
       <div>
         <div style={{ marginBottom: 4 }}>
