@@ -77,7 +77,7 @@ const cleanMineral = {
   'provenance.former_owners': [],
   'provenance.prior_catalog_number': '',
   'provenance.label': false,
-  'provenance.label_files': '',
+  'provenance.label_files': [],
   'provenance.miguel_romero': false,
   'provenance.miguel_romero_number': '',
 
