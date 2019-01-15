@@ -22,7 +22,7 @@ const formats = {
   'phone': formatPhone
 };
 
-function validate( input, spec, name, _done ) {
+function validate ( input, spec, name, _done ) {
 
   const stack = new Error().stack;
 
@@ -132,11 +132,11 @@ function validate( input, spec, name, _done ) {
 
 }
 
-function getDefault( spec ) {
+function getDefault ( spec ) {
   return typeof spec.default === 'function' ? spec.default() : spec.default;
 }
 
-function validateValue( input, spec, name, done ) {
+function validateValue ( input, spec, name, done ) {
 
   const values = Utils.array( spec.value );
 
@@ -158,18 +158,19 @@ function validateValue( input, spec, name, done ) {
 
 }
 
-function validateType( input, spec, name, done ) {
+function validateType ( input, spec, name, done ) {
+
+  let failedProp = name;
 
   let types = Utils.array( spec.type );
 
   // Loop through all types
-  ( function nextType( i, n ) {
-
+  ( function nextType ( i, n ) {
     // Throw error if no type matched
     if ( i >= n ) {
       return done(
         {
-          field: name,
+          field: failedProp,
           reason: `Incompatible type of value provided for field ${name}.`,
           err: new Error( 'Invalid input.' )
         },
@@ -213,7 +214,7 @@ function validateType( input, spec, name, done ) {
       let props = Object.keys( types[ i ] );
 
       // Loop through all properties in spec
-      ( function nextProp( j, m, success ) {
+      ( function nextProp ( j, m, success ) {
 
         if ( j >= m ) {
           return success( obj );
@@ -238,7 +239,7 @@ function validateType( input, spec, name, done ) {
           }
 
           // Loop through specs in $anyOf until one matches
-          ( function nextSpec( k, l ) {
+          ( function nextSpec ( k, l ) {
 
             // If we've gone through all specs, that means none of them matched, so move onto the next type
             if ( k >= l ) {
@@ -246,7 +247,10 @@ function validateType( input, spec, name, done ) {
             }
 
             // Validate input based on spec
-            validate( input, { type: types[ i ][ p ][ k ], required: true }, name, function ( err, result ) {
+            validate( input, {
+              type: types[ i ][ p ][ k ],
+              required: true
+            }, `${name}.${p}[${k}]`, function ( err, result ) {
 
               // If there is an error, then continue to next $anyOf spec
               if ( err ) {
@@ -254,6 +258,10 @@ function validateType( input, spec, name, done ) {
                 // Stop immediately upon specification error
                 if ( err.type === 'specification' ) {
                   return done( err, null );
+                }
+
+                if ( err.type === 'validation' ) {
+                  failedProp = err.field;
                 }
 
                 return nextSpec( k + 1, l );
@@ -313,7 +321,7 @@ function validateType( input, spec, name, done ) {
           const allOfObj = {};
 
           // Loop through specs in $allOf to see if they all match
-          ( function nextSpec( k, l ) {
+          ( function nextSpec ( k, l ) {
 
             // If we've gone through all specs, that means all of them matched, so move onto next prop
             if ( k >= l ) {
@@ -352,7 +360,10 @@ function validateType( input, spec, name, done ) {
             }
 
             // Validate input based on spec
-            validate( input, { type: types[ i ][ p ][ k ], required: true }, name, function ( err, result ) {
+            validate( input, {
+              type: types[ i ][ p ][ k ],
+              required: true
+            }, `${name}.type.${p}[${k}]`, function ( err, result ) {
 
               // If there is an error, then move onto the next type
               if ( err ) {
@@ -360,6 +371,10 @@ function validateType( input, spec, name, done ) {
                 // Stop immediately upon specification error
                 if ( err.type === 'specification' ) {
                   return done( err, null );
+                }
+
+                if ( err.type === 'validation' ) {
+                  failedProp = err.field;
                 }
 
                 return nextType( i + 1, n );
@@ -413,10 +428,14 @@ function validateType( input, spec, name, done ) {
 
             // If there is an error, then continue to next type
             if ( err ) {
-
+//here
               // Stop immediately upon specification error
               if ( err.type === 'specification' ) {
                 return done( err, null );
+              }
+
+              if ( err.type === 'validation' ) {
+                failedProp = err.field;
               }
 
               return nextType( i + 1, n );
@@ -521,7 +540,7 @@ function validateType( input, spec, name, done ) {
       }
 
       // Loop through all specs in array type
-      ( function nextElemType( j, m ) {
+      ( function nextElemType ( j, m ) {
 
         // If we've gone through all specs and haven't found a match, continue to next type
         if ( j >= m ) {
@@ -529,7 +548,7 @@ function validateType( input, spec, name, done ) {
         }
 
         // Validate each element in the input array
-        ( function nextElem( k, l ) {
+        ( function nextElem ( k, l ) {
 
           // If we've gone through all elements, that means they all match, so type validation is successful
           if ( k >= l ) {
@@ -545,6 +564,10 @@ function validateType( input, spec, name, done ) {
               // Stop immediately upon specification error
               if ( err.type === 'specification' ) {
                 return done( err, null );
+              }
+
+              if ( err.type === 'validation' ) {
+                failedProp = err.field;
               }
 
               return nextElemType( j + 1, m );
@@ -633,6 +656,7 @@ function validateType( input, spec, name, done ) {
     }
 
     else {
+      failedProp = name;
       nextType( i + 1, n );
     }
 
@@ -640,13 +664,13 @@ function validateType( input, spec, name, done ) {
 
 }
 
-function handleWildcardKeys( [ input, name ], output, [ types, i, n, nextType ], done ) {
+function handleWildcardKeys ( [ input, name ], output, [ types, i, n, nextType ], done ) {
 
   const type = types[ i ];
   const props = Object.keys( type );
   const wildcards = Utils.array( type.$wildcards );
 
-  ( function nextWildcard( j, m, end ) {
+  ( function nextWildcard ( j, m, end ) {
 
     if ( j >= m ) {
       return end();
@@ -681,7 +705,7 @@ function handleWildcardKeys( [ input, name ], output, [ types, i, n, nextType ],
       .filter( matcher );                  // Ensure wildcard matches
 
     // Validate each prop
-    ( function nextWildcardProp( k, l, end ) {
+    ( function nextWildcardProp ( k, l, end ) {
 
       if ( k >= l ) {
         return end();
@@ -718,7 +742,7 @@ function handleWildcardKeys( [ input, name ], output, [ types, i, n, nextType ],
 
 }
 
-function formatValue( input, spec, name, done ) {
+function formatValue ( input, spec, name, done ) {
 
   if ( !( 'format' in spec ) ) {
     return done( null, input );
@@ -757,7 +781,7 @@ function formatValue( input, spec, name, done ) {
 
 }
 
-function formatDate( value ) {
+function formatDate ( value ) {
 
   const date = moment( value );
 
@@ -769,7 +793,7 @@ function formatDate( value ) {
 
 }
 
-function formatDateNull( value ) {
+function formatDateNull ( value ) {
 
   const date = moment( value );
 
@@ -785,7 +809,7 @@ function formatDateNull( value ) {
 
 }
 
-function formatMoment( value ) {
+function formatMoment ( value ) {
 
   const date = moment( value );
 
@@ -797,7 +821,7 @@ function formatMoment( value ) {
 
 }
 
-function formatISODate( value ) {
+function formatISODate ( value ) {
 
   const date = moment( value );
 
@@ -809,15 +833,15 @@ function formatISODate( value ) {
 
 }
 
-function formatMongoDBObjectID( value ) {
+function formatMongoDBObjectID ( value ) {
   return new mongodb.ObjectID.createFromHexString( value );
 }
 
-function trimString( value ) {
+function trimString ( value ) {
   return value.trim();
 }
 
-function formatPhone( value ) {
+function formatPhone ( value ) {
 
   if ( typeof value === 'number' ) {
     value = String( value );
