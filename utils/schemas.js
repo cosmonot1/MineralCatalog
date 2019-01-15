@@ -307,7 +307,6 @@ module.exports.specimen_list_fields = {
   'provenance.former_owners.year_acquired': { type: [ Number, module.exports.numericType ] },
   'provenance.prior_catalog_number': { type: [ Number, module.exports.numericType ] },
   'provenance.label': { type: [ Boolean, module.exports.booleanType ] },
-  'provenance.label_files': { type: [ String, module.exports.stringType ] },
   'provenance.miguel_romero': { type: [ Boolean, module.exports.booleanType ] },
   'provenance.miguel_romero_number': { type: [ Number, module.exports.numericType ] },
 };

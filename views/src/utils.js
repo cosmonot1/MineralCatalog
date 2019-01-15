@@ -123,7 +123,7 @@ const searchCriteria = [
   { name: 'date added', type: 'date', field: 'timestamps.created' },
   { name: 'date modified', type: 'date', field: 'timestamps.modified' },
   { name: 'exhibit show', field: 'exhibit_history.show', type: 'string' },
-  { name: 'exhibit year', field: 'exhibit_history.year', type: 'string' },
+  { name: 'exhibit year', field: 'exhibit_history.year', type: 'number' },
   { name: 'exhibit competition', field: 'exhibit_history.comp', type: 'string' },
   { name: 'exhibit award', field: 'exhibit_history.award', type: 'string' },
   { name: 'geology metamorphic', field: 'geology.metamorphic', type: 'boolean' },
@@ -160,7 +160,6 @@ const searchCriteria = [
   { name: 'former owner year acquired', field: 'provenance.former_owners.year_acquired', type: 'number' },
   { name: 'prior catalog number', field: 'provenance.prior_catalog_number', type: 'number' },
   { name: 'label', field: 'provenance.label', type: 'boolean' },
-  { name: 'label files', field: 'provenance.label_files', type: 'string' },
   { name: 'miguel romero', field: 'provenance.miguel_romero', type: 'boolean' },
   { name: 'miguel romero number', field: 'provenance.miguel_romero_number', type: 'number' }
 ];
