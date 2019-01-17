@@ -46,7 +46,7 @@ class ListView extends React.Component {
   }
 
   edit ( ...spec ) {
-    this.props.goEdit( ...spec );
+    this.props.changeView( 'edit', ...spec );
   }
 
   first () {

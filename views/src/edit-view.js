@@ -146,9 +146,9 @@ class EditView extends React.Component {
     this.setState( { [ t.name ]: t.type === 'file' ? t.files : ( t.type === 'checkbox' ? t.checked : t.value ) } );
   }
 
-  goList () {
+  changeView () {
     this.reset();
-    this.props.goList();
+    this.props.changeView('list');
   }
 
   makePDF () {
@@ -799,7 +799,7 @@ class EditView extends React.Component {
           </div>
         </div>
 
-        <button style={{ 'marginRight': 8 }} type="button" onClick={this.goList.bind( this )}>Cancel</button>
+        <button style={{ 'marginRight': 8 }} type="button" onClick={this.changeView.bind( this )}>Cancel</button>
         <button style={{ 'marginRight': 8 }} type="button"
                 onClick={this.add.bind( this )}>{this.state.mode === 'edit' ? 'Update!' : 'Add!'}</button>
         {this.state.mode === 'edit' ?

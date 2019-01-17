@@ -1,6 +1,7 @@
 import React from 'react';
 import EditView from './edit-view';
 import ListView from './list-view';
+import ImportView from './import-view';
 
 class Home extends React.Component {
   constructor ( props ) {
@@ -19,15 +20,36 @@ class Home extends React.Component {
   }
 
   edit () {
-    this.goEdit( null, 'add' );
+    this.changeView( 'edit', null, 'add' );
   }
 
-  goEdit ( spec, mode ) {
-    this.setState( { view: 'edit', spec: spec || null, mode: mode || 'add' } );
+  import () {
+    this.changeView( 'import' );
   }
 
-  goList () {
-    this.setState( { view: 'list', selected: '' } );
+  changeView ( type, spec, mode ) {
+    switch ( type ) {
+      case 'edit':
+        this.setState( { view: 'edit', spec: spec || null, mode: mode || 'add' } );
+        break;
+      case 'import':
+        this.setState( { view: 'import' } );
+        break;
+      default:
+        this.setState( { view: 'list', selected: '' } );
+    }
+    this.setState( {} );
+  }
+
+  selectView ( view ) {
+    switch ( view ) {
+      case 'list':
+        return <ListView changeView={this.changeView.bind( this )} goImport/>;
+      case 'edit':
+        return <EditView changeView={this.changeView.bind( this )} mode={this.state.mode} spec={this.state.spec}/>;
+      case 'import':
+        return <ImportView changeView={this.changeView.bind( this )}/>;
+    }
   }
 
   render () {
@@ -36,10 +58,11 @@ class Home extends React.Component {
         <div style={{ padding: 8 }}>
           {this.state.view === 'edit' ? '' :
             <button style={{ 'marginRight': 8 }} type="button" onClick={this.edit.bind( this )}>Add</button>}
+          {this.state.view === 'import' ? '' :
+            <button style={{ 'marginRight': 8 }} type="button" onClick={this.import.bind( this )}>Import</button>}
           <button type="button" onClick={this.logout.bind( this )}>Logout</button>
         </div>
-        <div>{this.state.view === 'list' ? <ListView goEdit={this.goEdit.bind( this )}/> :
-          <EditView goList={this.goList.bind( this )} mode={this.state.mode} spec={this.state.spec}/>}</div>
+        <div>{this.selectView( this.state.view )}</div>
       </div>
     );
   }
