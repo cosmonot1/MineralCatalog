@@ -1,16 +1,27 @@
 import React from 'react';
 import SpeciesAdder from './species-adder.js';
-import { cleanMineral, GCS_IMAGE_LINK, GCS_ANALYSIS_LINK, searchCriteria, capitalize } from './utils.js';
+import ExhibitAdder from './exhibit-adder.js';
+import FormerOwnerAdder from './former-owner-adder.js';
+import {
+  cleanMineral, GCS_IMAGE_LINK, GCS_ANALYSIS_LINK, searchCriteria, GCS_LABEL_LINK,
+  GCS_PROFESSIONAL_PHOTO_LINK, capitalize, checkNumber
+} from './utils.js';
 
 class EditView extends React.Component {
-  constructor( props ) {
+  constructor ( props ) {
     super( props );
 
     let mineral;
     if ( props.spec ) {
       const additional = props.spec.species.additional;
+      const exhibitHistory = props.spec.exhibit_history;
+      const formerOwners = props.spec.provenance.former_owners;
+
       mineral = flatten( props.spec );
+
       mineral[ 'species.additional' ] = additional;
+      mineral[ 'exhibit_history' ] = exhibitHistory;
+      mineral[ 'provenance.former_owners' ] = formerOwners;
     } else {
       mineral = JSON.parse( JSON.stringify( cleanMineral ) )
     }
@@ -19,6 +30,8 @@ class EditView extends React.Component {
       mineral[ 'photos.main' ] = '';
       mineral[ 'photos.all' ] = [];
       mineral[ 'documents' ] = [];
+      mineral[ 'photographed.files' ] = [];
+      mineral[ 'provenance.label_files' ] = [];
     }
 
     this.state = Object.assign(
@@ -27,13 +40,15 @@ class EditView extends React.Component {
         uploading: false,
         photo_files: [],
         analysis_files: [],
+        label_files: [],
+        professional_photo_files: [],
         mode: props.mode
       },
       mineral
     );
   }
 
-  reset() {
+  reset () {
     if ( this.state.mode === 'duplicate' ) {
       this.setState( {
         loading: false,
@@ -42,9 +57,15 @@ class EditView extends React.Component {
         analysis_files: [],
         'photos.main': '',
         'photos.all': [],
+        'photographed.file': [],
+        'provenance.label_files': [],
+        label_files: [],
+        professional_photo_files: [],
         documents: []
       } );
       this.photoFileInput.value = "";
+      this.labelFileInput.value = "";
+      this.professionalPhotoFileInput.value = "";
       return this.analysisFileInput.value = "";
     }
 
@@ -55,6 +76,8 @@ class EditView extends React.Component {
           loading: false,
           uploading: false,
           photo_files: [],
+          label_files: [],
+          professional_photo_files: [],
           analysis_files: []
         },
         JSON.parse( JSON.stringify( cleanMineral ) )
@@ -63,60 +86,72 @@ class EditView extends React.Component {
 
     this.photoFileInput.value = "";
     this.analysisFileInput.value = "";
+    this.labelFileInput.value = "";
+    this.professionalPhotoFileInput.value = "";
     this.speciesAdder.reset();
+    this.exhibitAdder.reset();
+    this.formerOwnerAdder.reset();
   }
 
-  checkDone() {
-    if ( this.state.loading || this.state.uploading ) {
-      return;
-    }
-  }
-
-  add() {
+  add () {
     this.uploadPhotos( () => {
       this.uploadDocuments( () => {
+        this.uploadLabels( () => {
+          this.uploadProfessionalPhotos( () => {
 
-        const done = ( err ) => {
-          this.setState( { loading: false } );
-          alert( err ? err.message : "Success!" );
-          if ( !err ) {
-            this.reset();
-          }
-        };
+            const done = ( err ) => {
+              this.setState( { loading: false } );
+              alert( err ? err.message : "Success!" );
+              if ( !err ) {
+                this.reset();
+              }
+            };
 
-        this.setState( {
-          'physical_dimensions.weight': parseFloat( this.state[ 'physical_dimensions.weight' ] || '0' ),
-          'physical_dimensions.length': parseFloat( this.state[ 'physical_dimensions.length' ] || '0' ),
-          'physical_dimensions.width': parseFloat( this.state[ 'physical_dimensions.width' ] || '0' ),
-          'physical_dimensions.height': parseFloat( this.state[ 'physical_dimensions.height' ] || '0' ),
-          'physical_dimensions.main_crystal': parseFloat( this.state[ 'physical_dimensions.main_crystal' ] || '0' ),
-          'acquired.paid': parseFloat( this.state[ 'acquired.paid' ] || '0' ),
-          'photos.main': this.state[ 'photos.all' ][ 0 ] || '',
-          'species.additional': this.state[ 'species.additional' ].filter( s => s.species )
-        }, () => {
+            this.setState( {
+              'physical_dimensions.weight': checkNumber( this.state[ 'physical_dimensions.weight' ] ),
+              'physical_dimensions.length': checkNumber( this.state[ 'physical_dimensions.length' ] ),
+              'physical_dimensions.width': checkNumber( this.state[ 'physical_dimensions.width' ] ),
+              'physical_dimensions.height': checkNumber( this.state[ 'physical_dimensions.height' ] ),
+              'physical_dimensions.main_crystal': checkNumber( this.state[ 'physical_dimensions.main_crystal' ] ),
+              'acquired.paid': checkNumber( this.state[ 'acquired.paid' ] ),
+              'photos.main': this.state[ 'photos.all' ][ 0 ] || '',
+              'species.additional': this.state[ 'species.additional' ].filter( s => s.species ),
+              'provenance.prior_catalog_number': checkNumber( this.state[ 'provenance.prior_catalog_number' ] ),
+              'provenance.miguel_romero_number': checkNumber( this.state[ 'provenance.miguel_romero_number' ] ),
+              'provenance.former_owners': this.state[ 'provenance.former_owners' ].filter( o => o.owner || o.year_acquired ).map( o => {
+                o.year_acquired = checkNumber( o.year_acquired );
+                return o;
+              } ),
+              'exhibit_history': this.state[ 'exhibit_history' ].filter( e => e.show || e.year || e.comp || e.award ).map( e => {
+                e.year = checkNumber( e.year );
+                return e;
+              } )
+            }, () => {
 
-          if ( this.state.mode !== 'edit' ) {
-            return API.specimen.add( { specimen: this.state }, done );
-          }
+              if ( this.state.mode !== 'edit' ) {
+                return API.specimen.add( { specimen: this.state }, done );
+              }
 
-          API.specimen.update( { specimen: { _id: this.state._id }, set: this.state }, done );
+              API.specimen.update( { specimen: { _id: this.state._id }, set: this.state }, done );
 
+            } );
+          } );
         } );
       } );
     } );
   }
 
-  handleChange( e ) {
+  handleChange ( e ) {
     const t = e.target;
     this.setState( { [ t.name ]: t.type === 'file' ? t.files : ( t.type === 'checkbox' ? t.checked : t.value ) } );
   }
 
-  goList() {
+  goList () {
     this.reset();
     this.props.goList();
   }
 
-  makePDF() {
+  makePDF () {
     const w = 203.2, h = 127, margin = 4;
     const colW = ( w - 2 * margin ) / 3;
     const contentW = colW - 2 * margin;
@@ -148,7 +183,7 @@ class EditView extends React.Component {
     doc.save( ( "00000" + this.state.catalog_number ).substr( -5, 5 ) + '.pdf' );
   }
 
-  buildPrintColumn( doc, col, width ) {
+  buildPrintColumn ( doc, col, width ) {
     return doc.splitTextToSize(
       searchCriteria
         .filter( c => c.print_col === col )
@@ -157,7 +192,7 @@ class EditView extends React.Component {
       , width
     );
 
-    function checkFmtBool( c, v ) {
+    function checkFmtBool ( c, v ) {
       switch ( c.type ) {
         case 'boolean':
           return v ? 'Yes' : 'No';
@@ -169,7 +204,7 @@ class EditView extends React.Component {
     }
   };
 
-  uploadPhotos( done ) {
+  uploadPhotos ( done ) {
 
     if ( this.state.loading ) {
       return;
@@ -177,102 +212,82 @@ class EditView extends React.Component {
 
     this.setState( { loading: true } );
 
-    upload.call( this, this.state.photo_files, 0 );
-
-    function upload( files, i ) {
-      if ( i >= files.length ) {
-        return done();
-      }
-
-      const file = files[ i ];
-
-      API.specimen.upload( { type: 'photo', 'content-type': file.type }, ( err, result ) => {
-        if ( err ) {
-          throw err;
-        }
-
-        const that = this;
-
-        const xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-          if ( this.readyState != 4 ) {
-            return;
-          }
-
-          if ( this.response.err ) {
-            throw this.response.err;
-          }
-
-          that.setState( {
-            'photos.all': [
-              ...that.state[ 'photos.all' ],
-              result.filename
-            ]
-          }, () => upload.call( that, files, ++i ) );
-
-        };
-
-        xhttp.open( "PUT", result.url, true );
-        xhttp.setRequestHeader( 'Content-Type', file.type );
-        xhttp.send( file );
-
-      } );
-    }
+    this.upload.call( this, this.state.photo_files, 0, 'photo', 'photos.all', done );
 
   }
 
-  loadSpecies( species ) {
+  uploadDocuments ( done ) {
+    this.upload.call( this, this.state.analysis_files, 0, 'analysis', 'documents', done );
+  }
+
+  uploadLabels ( done ) {
+    this.upload.call( this, this.state.analysis_files, 0, 'label', 'provenance.label_files', done );
+  }
+
+  uploadProfessionalPhotos ( done ) {
+    this.upload.call( this, this.state.analysis_files, 0, 'professional_photo', 'photographed.files', done );
+  }
+
+  upload ( files, i, type, state_field, done ) {
+
+    if ( i >= files.length ) {
+      return done();
+    }
+
+    const file = files[ i ];
+
+    API.specimen.upload( { type: type, 'content-type': file.type }, ( err, result ) => {
+      if ( err ) {
+        throw err;
+      }
+
+      const that = this;
+
+      const xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if ( this.readyState != 4 ) {
+          return;
+        }
+
+        if ( this.response.err ) {
+          throw this.response.err;
+        }
+
+        that.setState( {
+          state_field: [
+            ...that.state[ state_field ],
+            result.filename
+          ]
+        }, () => that.upload.call( that, files, ++i ) );
+
+      };
+
+      xhttp.open( "PUT", result.url, true );
+      xhttp.setRequestHeader( 'Content-Type', file.type );
+      xhttp.send( file );
+
+    } );
+  }
+
+  loadSpecies ( species ) {
     this.setState( {
       'species.additional': species
     } );
   }
 
-  uploadDocuments( done ) {
-    upload.call( this, this.state.analysis_files, 0 );
-
-    function upload( files, i ) {
-
-      if ( i >= files.length ) {
-        return done();
-      }
-
-      const file = files[ i ];
-
-      API.specimen.upload( { type: 'analysis', 'content-type': file.type }, ( err, result ) => {
-        if ( err ) {
-          throw err;
-        }
-
-        const that = this;
-
-        const xhttp = new XMLHttpRequest();
-        xhttp.onreadystatechange = function () {
-          if ( this.readyState != 4 ) {
-            return;
-          }
-
-          if ( this.response.err ) {
-            throw this.response.err;
-          }
-
-          that.setState( {
-            'documents': [
-              ...that.state[ 'documents' ],
-              result.filename
-            ]
-          }, () => upload.call( that, files, ++i ) );
-
-        };
-
-        xhttp.open( "PUT", result.url, true );
-        xhttp.setRequestHeader( 'Content-Type', file.type );
-        xhttp.send( file );
-
-      } );
-    }
+  loadExhibitHistory ( exhibits ) {
+    this.setState( {
+      'exhibit_history': exhibits
+    } );
   }
 
-  render() {
+  loadFormerOwners ( owners ) {
+    this.setState( {
+      'provenance.former_owners': owners
+    } );
+  }
+
+  render () {
     return (
       <div id="test">
 
@@ -300,41 +315,44 @@ class EditView extends React.Component {
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Weight (g)</div>
-            <input type="text" name="physical_dimensions.weight" value={this.state[ 'physical_dimensions.weight' ]}
+            <input type="text" name="physical_dimensions.weight"
+                   value={this.state[ 'physical_dimensions.weight' ] || ''}
                    onChange={this.handleChange.bind( this )}/>
           </div>
 
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Length (cm)</div>
-            <input type="text" name="physical_dimensions.length" value={this.state[ 'physical_dimensions.length' ]}
+            <input type="text" name="physical_dimensions.length"
+                   value={this.state[ 'physical_dimensions.length' ] || ''}
                    onChange={this.handleChange.bind( this )}/>
           </div>
 
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Width (cm)</div>
-            <input type="text" name="physical_dimensions.width" value={this.state[ 'physical_dimensions.width' ]}
+            <input type="text" name="physical_dimensions.width" value={this.state[ 'physical_dimensions.width' ] || ''}
                    onChange={this.handleChange.bind( this )}/>
           </div>
 
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Height (cm)</div>
-            <input type="text" name="physical_dimensions.height" value={this.state[ 'physical_dimensions.height' ]}
+            <input type="text" name="physical_dimensions.height"
+                   value={this.state[ 'physical_dimensions.height' ] || ''}
                    onChange={this.handleChange.bind( this )}/>
           </div>
 
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Main Crystal (cm)</div>
             <input type="text" name="physical_dimensions.main_crystal"
-                   value={this.state[ 'physical_dimensions.main_crystal' ]}
+                   value={this.state[ 'physical_dimensions.main_crystal' ] || ''}
                    onChange={this.handleChange.bind( this )}/>
           </div>
         </div>
 
-        <div>
-          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8 }}>
             <strong>Species</strong>
           </div>
-          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8 }}>
             <div>Main</div>
             <input type="text" name="species.main" value={this.state[ 'species.main' ]}
                    onChange={this.handleChange.bind( this )}/>
@@ -419,12 +437,13 @@ class EditView extends React.Component {
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Date (YYYY-MM-DD ex: Sep 23 1994 = 1994-09-23)</div>
-            <input type="text" name="acquired.date" value={this.state[ 'acquired.date' ]}
+            {/*TODO: date picker*/}
+            <input type="text" name="acquired.date" value={this.state[ 'acquired.date' ] || ''}
                    onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Paid ($)</div>
-            <input type="text" name="acquired.paid" value={this.state[ 'acquired.paid' ]}
+            <input type="text" name="acquired.paid" value={this.state[ 'acquired.paid' ] || ''}
                    onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
@@ -496,34 +515,282 @@ class EditView extends React.Component {
           </div>
         </div>
 
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <strong>Exhibit History</strong>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <ExhibitAdder exhibits={this.state[ 'exhibit_history' ] || []}
+                          loadExhibits={this.loadExhibitHistory.bind( this )}
+                          ref={ref => this.exhibitAdder = ref}/>
+          </div>
+        </div>
+
+        <div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <strong>Geology</strong>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Metamorphic</div>
+            <input type="checkbox" name="geology.metamorphic" checked={this.state[ 'geology.metamorphic' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Pegmatite</div>
+            <input type="checkbox" name="geology.pegmatite" checked={this.state[ 'geology.pegmatite' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Porphyry</div>
+            <input type="checkbox" name="geology.porphyry" checked={this.state[ 'geology.porphyry' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>CRD/Skarn</div>
+            <input type="checkbox" name="geology.crd_skarn" checked={this.state[ 'geology.crd_skarn' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Epithermal Vein</div>
+            <input type="checkbox" name="geology.epithermal_vein" checked={this.state[ 'geology.epithermal_vein' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Volcanic Related</div>
+            <input type="checkbox" name="geology.volcanic_related" checked={this.state[ 'geology.volcanic_related' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Exhalite</div>
+            <input type="checkbox" name="geology.exhalite" checked={this.state[ 'geology.exhalite' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>MVT</div>
+            <input type="checkbox" name="geology.mvt" checked={this.state[ 'geology.mvt' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Evaporite</div>
+            <input type="checkbox" name="geology.evaporite" checked={this.state[ 'geology.evaporite' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Other</div>
+            <input type="text" name="geology.other" value={this.state[ 'geology.other' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+        </div>
+
+        <div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <strong>Features</strong>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Twinned</div>
+            <input type="checkbox" name="features.twinned" checked={this.state[ 'features.twinned' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Pseudomorph</div>
+            <input type="checkbox" name="features.pseudomorph" checked={this.state[ 'features.pseudomorph' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Inclusions</div>
+            <input type="checkbox" name="features.inclusions" checked={this.state[ 'features.inclusions' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Photosensitive</div>
+            <input type="checkbox" name="features.photosensitive" checked={this.state[ 'features.photosensitive' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+        </div>
+
+        <div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <strong>Fluorescence</strong>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>SW</div>
+            <input type="checkbox" name="fluorescence.sw" checked={this.state[ 'fluorescence.sw' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>SW Details</div>
+            <input type="text" name="fluorescence.sw_details" value={this.state[ 'fluorescence.sw_details' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>LW</div>
+            <input type="checkbox" name="fluorescence.lw" checked={this.state[ 'fluorescence.lw' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>LW Details</div>
+            <input type="text" name="fluorescence.lw_details" value={this.state[ 'fluorescence.lw_details' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+        </div>
+
+        <div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <strong>Quality</strong>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Exceptional</div>
+            <input type="checkbox" name="quality.exceptional" checked={this.state[ 'quality.exceptional' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Exhibit</div>
+            <input type="checkbox" name="quality.exhibit" checked={this.state[ 'quality.exhibit' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Locality</div>
+            <input type="checkbox" name="quality.locality" checked={this.state[ 'quality.locality' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Study</div>
+            <input type="checkbox" name="quality.study" checked={this.state[ 'quality.study' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+        </div>
+
+        <div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <strong>Locality</strong>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Type Locality</div>
+            <input type="checkbox" name="locality.type_locality" checked={this.state[ 'locality.type_locality' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Self Collected</div>
+            <input type="checkbox" name="locality.self_collected" checked={this.state[ 'locality.self_collected' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>When (YYYY-MM-DD ex: Sep 23 1994 = 1994-09-23)</div>
+            {/*TODO: date picker*/}
+            <input type="text" name="locality.when" value={this.state[ 'locality.when' ] || ''}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+        </div>
+
+        <div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <strong>Photographed</strong>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Photographed</div>
+            <input type="checkbox" name="photographed.photographed" checked={this.state[ 'photographed.photographed' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>By</div>
+            <input type="text" name="photographed.by" value={this.state[ 'photographed.by' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Photo File Number</div>
+            <input type="text" name="photographed.photo_file_number"
+                   value={this.state[ 'photographed.photo_file_number' ]}
+                   onChange={this.handleChange.bind( this )}/>
+          </div>
+          <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+            <div>Photo Files</div>
+            <input type="file" name="professional_photo_files" onChange={this.handleChange.bind( this )}
+                   ref={ref => this.professionalPhotoFileInput = ref}
+                   multiple/>
+          </div>
+        </div>
+
+        <div>
+          <div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <strong>Provenance</strong>
+            </div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <div>Old Labels</div>
+              <input type="checkbox" name="provenance.old_labels" checked={this.state[ 'provenance.old_labels' ]}
+                     onChange={this.handleChange.bind( this )}/>
+            </div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <div>Prior Labels</div>
+              <input type="checkbox" name="provenance.prior_labels" checked={this.state[ 'provenance.prior_labels' ]}
+                     onChange={this.handleChange.bind( this )}/>
+            </div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <div>Prior Catalog Number</div>
+              <input type="text" name="provenance.prior_catalog_number"
+                     value={this.state[ 'provenance.prior_catalog_number' ]||''}
+                     onChange={this.handleChange.bind( this )}/>
+            </div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <div>Label</div>
+              <input type="checkbox" name="provenance.label" checked={this.state[ 'provenance.label' ]}
+                     onChange={this.handleChange.bind( this )}/>
+            </div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <div>Label Files</div>
+              <input type="file" name="label_files" onChange={this.handleChange.bind( this )}
+                     ref={ref => this.labelFileInput = ref}
+                     multiple/>
+            </div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <div>Miguel Romero</div>
+              <input type="checkbox" name="provenance.miguel_romero" checked={this.state[ 'provenance.miguel_romero' ]}
+                     onChange={this.handleChange.bind( this )}/>
+            </div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <div>Miguel Romero Number</div>
+              <input type="text" name="provenance.miguel_romero_number"
+                     value={this.state[ 'provenance.miguel_romero_number' ]||''}
+                     onChange={this.handleChange.bind( this )}/>
+            </div>
+          </div>
+          <div>
+            <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
+              <FormerOwnerAdder formerOwners={this.state[ 'provenance.former_owners' ] || []}
+                                loadFormerOwners={this.loadFormerOwners.bind( this )}
+                                ref={ref => this.formerOwnerAdder = ref}/>
+            </div>
+          </div>
+        </div>
+
         <div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <strong>Other</strong>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Comments</div>
-            <input type="text" name="comments" value={this.state[ 'comments' ]}
-                   onChange={this.handleChange.bind( this )}/>
+            <textarea type="text" name="comments" value={this.state[ 'comments' ]}
+                      onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Story</div>
-            <input type="text" name="story" value={this.state[ 'story' ]}
-                   onChange={this.handleChange.bind( this )}/>
+            <textarea type="text" name="story" value={this.state[ 'story' ]}
+                      onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Figured</div>
-            <input type="text" name="figured" value={this.state[ 'figured' ]}
-                   onChange={this.handleChange.bind( this )}/>
+            <textarea type="text" name="figured" value={this.state[ 'figured' ]}
+                      onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Repair History</div>
-            <input type="text" name="repair_history" value={this.state[ 'repair_history' ]}
-                   onChange={this.handleChange.bind( this )}/>
+            <textarea type="text" name="repair_history" value={this.state[ 'repair_history' ]}
+                      onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Analysis History</div>
-            <input type="text" name="analysis_history" value={this.state[ 'analysis_history' ]}
-                   onChange={this.handleChange.bind( this )}/>
+            <textarea type="text" name="analysis_history" value={this.state[ 'analysis_history' ]}
+                      onChange={this.handleChange.bind( this )}/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Specimen Location</div>

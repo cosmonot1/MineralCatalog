@@ -32,7 +32,9 @@
       "keyFile": "./gcloud.json",
       "bucket": "mineral-catalog-images",
       "imageBaseLink": "https://storage.googleapis.com/mineral-catalog-images/",
-      "analysisDocBaseLink": "https://storage.googleapis.com/mineral-catalog-analysis-documents/"
+      "analysisDocBaseLink": "https://storage.googleapis.com/mineral-catalog-analysis-documents/",
+      "labelBaseLink": "https://storage.googleapis.com/mineral-catalog-catalog-labels/",
+      "professionalPhotoBaseLink": "https://storage.googleapis.com/mineral-catalog-professional-photos/"
     },
     "db": {
       "mongodb": {
