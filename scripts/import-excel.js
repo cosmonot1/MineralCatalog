@@ -1,9 +1,9 @@
 'use strict';
 
-const pkg = require( '../package' );
+const pkg = require( '../package.json' );
 const _Config = require( '../utils/config' )( pkg.name );
 
-_Config.load( '../config/app.json' );
+_Config.load( require( '../config/app.json' ), {}, pkg.name );
 
 const Config = _Config.current;
 const mongojs = require( '../utils/mongojs' );
@@ -19,9 +19,7 @@ const collection = mongojs( Config().services.db.mongodb.uri, [ 'specimens' ] ).
  * Usage: npm run import-excel path/to/file.xlsx
  */
 
-console.log( proces.argv );
-
-main( process.argv[ 3 ] )
+main( process.argv[ 2 ] )
   .then( () => {
     console.log( '[DONE!!!]' );
     process.exit();
@@ -38,6 +36,7 @@ async function main ( file_path ) {
   const workbook = XLSX.readFile( file_path );
 
   // Parse workbook
-  console.log( workbook.utils.sheet_to_json );
+  const sheet_name_list = workbook.SheetNames;
+  console.log( XLSX.utils.sheet_to_json( workbook.Sheets[ sheet_name_list[ 0 ] ] ) );
 
 }
