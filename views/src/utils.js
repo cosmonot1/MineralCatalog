@@ -238,8 +238,8 @@ const cleanSearchItem = {
 };
 
 const linkColumns = [
-  // {display_name:'', link:'photos.main'},
-  // {'photos.all': []},
+  { display_name: 'Main Photo', link: 'photos.main' },
+  { display_name: 'Photos', 'photos.all': [] },
   { display_name: 'Weight', link: 'physical_dimensions.weight' },
   { display_name: 'Length', link: 'physical_dimensions.length' },
   { display_name: 'Width', link: 'physical_dimensions.width' },
@@ -276,103 +276,56 @@ const linkColumns = [
   { display_name: 'Repair History', link: 'repair_history' },
   { display_name: 'Analysis History', link: 'analysis_history' },
   { display_name: 'Specimen Location', link: 'specimen_location' },
-  // { display_name: 'Documents', link: 'documents' },
+  { display_name: 'Documents', link: 'documents' },
   { display_name: 'Exhibit History', link: 'exhibit_history' },
-  { display_name: 'Geology', link: 'geology.metamorphic' },
-  { display_name: '', link: 'geology.pegmatite' },
-  { display_name: '', link: 'geology.porphyry' },
-  { display_name: '', link: 'geology.crd_skarn' },
-  { display_name: '', link: 'geology.epithermal_vein' },
-  { display_name: '', link: 'geology.volcanic_related' },
-  { display_name: '', link: 'geology.exhalite' },
-  { display_name: '', link: 'geology.mvt' },
-  { display_name: '', link: 'geology.evaporite' },
-  { display_name: '', link: 'geology.other' },
-  { display_name: '', link: 'features.twinned' },
-  { display_name: '', link: 'features.pseudomorph' },
-  { display_name: '', link: 'features.inclusions' },
-  { display_name: '', link: 'features.photosensitive' },
-  { display_name: '', link: 'fluorescence.sw' },
-  { display_name: '', link: 'fluorescence.sw_details' },
-  { display_name: '', link: 'fluorescence.lw' },
-  { display_name: '', link: 'fluorescence.lw_details' },
-  { display_name: '', link: 'quality.exceptional' },
-  { display_name: '', link: 'quality.exhibit' },
-  { display_name: '', link: 'quality.locality' },
-  { display_name: '', link: 'quality.study' },
-  { display_name: '', link: 'locality.type_locality' },
-  { display_name: '', link: 'locality.self_collected' },
-  { display_name: '', link: 'locality.when' },
-  { display_name: '', link: 'photographed.photographed' },
-  { display_name: '', link: 'photographed.by' },
-  { display_name: '', link: 'photographed.photo_file_number'
-:
-},
-{
-  display_name:'', link
-:
-  'photographed.files'
-}
-,
-{
-  display_name:'', link
-:
-  'provenance.old_labels'
-}
-,
-{
-  display_name:'', link
-:
-  'provenance.prior_labels'
-}
-,
-{
-  display_name:'', link
-:
-  'provenance.former_owners'
-}
-,
-{
-  display_name:'', link
-:
-  'provenance.prior_catalog_number'
-}
-,
-{
-  display_name:'', link
-:
-  'provenance.label'
-}
-,
-{
-  display_name:'', link
-:
-  'provenance.label_files'
-}
-,
-{
-  display_name:'', link
-:
-  'provenance.miguel_romero'
-}
-,
-{
-  display_name:'', link
-:
-  'provenance.miguel_romero_number'
-}
-]
-;
+  { display_name: 'Geology Metamorphic', link: 'geology.metamorphic' },
+  { display_name: 'Geology Pegmatite', link: 'geology.pegmatite' },
+  { display_name: 'Geology Porphyry', link: 'geology.porphyry' },
+  { display_name: 'Geology CRD Skarn', link: 'geology.crd_skarn' },
+  { display_name: 'Geology Epithermal Vein', link: 'geology.epithermal_vein' },
+  { display_name: 'Geology Volcanic Related', link: 'geology.volcanic_related' },
+  { display_name: 'Geology Exhalite', link: 'geology.exhalite' },
+  { display_name: 'Geology MVT', link: 'geology.mvt' },
+  { display_name: 'Geology Evaporite', link: 'geology.evaporite' },
+  { display_name: 'Geology Other', link: 'geology.other' },
+  { display_name: 'Features Twinned', link: 'features.twinned' },
+  { display_name: 'Features Pseudomrph', link: 'features.pseudomorph' },
+  { display_name: 'Features Inclusions', link: 'features.inclusions' },
+  { display_name: 'Features Photosensitive', link: 'features.photosensitive' },
+  { display_name: 'Fluorescence SW', link: 'fluorescence.sw' },
+  { display_name: 'Fluorescence SW Details', link: 'fluorescence.sw_details' },
+  { display_name: 'Fluorescence LW', link: 'fluorescence.lw' },
+  { display_name: 'Fluorescence LW Details', link: 'fluorescence.lw_details' },
+  { display_name: 'Quality Exceptional', link: 'quality.exceptional' },
+  { display_name: 'Quality Exhibit', link: 'quality.exhibit' },
+  { display_name: 'Quality Locality', link: 'quality.locality' },
+  { display_name: 'Quality Study', link: 'quality.study' },
+  { display_name: 'Locality Type Locality', link: 'locality.type_locality' },
+  { display_name: 'Locality Self Collected', link: 'locality.self_collected' },
+  { display_name: 'Locality When', link: 'locality.when' },
+  { display_name: 'Photographed', link: 'photographed.photographed' },
+  { display_name: 'Photographed By', link: 'photographed.by' },
+  { display_name: 'Photographed File Number', link: 'photographed.photo_file_number' },
+  { display_name: 'Photographed Files', link: 'photographed.files' },
+  { display_name: 'Provenance Old Labels', link: 'provenance.old_labels' },
+  { display_name: 'Provenance Prior Labels', link: 'provenance.prior_labels' },
+  { display_name: 'Provenance Former Owners', link: 'provenance.former_owners' },
+  { display_name: 'Provenance Prior Catalog Number', link: 'provenance.prior_catalog_number' },
+  { display_name: 'Provenance Label', link: 'provenance.label' },
+  { display_name: 'Provenance Label Files', link: 'provenance.label_files' },
+  { display_name: 'Provenance Miguel Romero', link: 'provenance.miguel_romero' },
+  { display_name: 'Provenance Miguel Romero Number', link: 'provenance.miguel_romero_number' }
+];
 
-function preventDefault ( e ) {
+function preventDefault( e ) {
   e.preventDefault()
 }
 
-function capitalize ( a ) {
+function capitalize( a ) {
   return a.charAt( 0 ).toUpperCase() + a.slice( 1 );
 }
 
-function checkNumber ( n ) {
+function checkNumber( n ) {
   n = parseFloat( n );
   return isNaN( n ) ? null : n;
 }
