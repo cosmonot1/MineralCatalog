@@ -1,9 +1,9 @@
 import React from 'react';
 import XLSX from '../../node_modules/xlsx/dist/xlsx.full.min.js';
-import { cleanMineral, Modal } from './utils';
+import { linkColumns, Modal } from './utils';
 
 class ImportView extends React.Component {
-  constructor ( props ) {
+  constructor( props ) {
     super( props );
     this.state = {
       sheet: [],
@@ -12,17 +12,17 @@ class ImportView extends React.Component {
     };
   }
 
-  reset () {
+  reset() {
     this.fileInput.value = '';
-    this.setState( { sheet: [], columns: [], modal: false } );
+    this.setState( { sheet: [], columns: [], modal: false, linkCol: undefined } );
   }
 
-  goHome () {
+  goHome() {
     this.reset();
     this.props.changeView( 'list' );
   }
 
-  loadFile ( e ) {
+  loadFile( e ) {
     const reader = new FileReader();
     reader.onload = ( e ) => {
       // Parse workbook
@@ -35,18 +35,26 @@ class ImportView extends React.Component {
       sheet.forEach( s => Object.keys( s ).forEach( k => headerNames.add( k ) ) );
       const columns = [ ...headerNames ].map( v => ( { sheet_name: v, display_name: '', link: '' } ) );
 
+      const linkCol = JSON.parse( JSON.stringify( linkColumns ) );
+
       // Set column names
-      this.setState( { sheet, columns } );
+      this.setState( { sheet, columns, linkCol } );
     };
     reader.readAsBinaryString( e.target.files[ 0 ] );
   }
 
-  import () {
+  import() {
+    // Make sure that all columns are linked. If not throw a pop up that forces user to confirm that they want to
+    // proceed with potentially incomplete info for specimens
     // Build specimens from association
     // Call to API to bulk add
   }
 
-  formatLoadedColumns () {
+  formatLoadedColumns( c ) {
+    if ( !c || !c.length ) {
+      return '';
+    }
+
     return this.state.columns.map( ( c, i ) => {
       return (
         <div key={uuidv4()}>
@@ -57,23 +65,33 @@ class ImportView extends React.Component {
     } );
   }
 
-  showModal ( e ) {
+  formatLinkableColumns( c ) {
+    if ( !c || !c.length ) {
+      return '';
+    }
+
+  }
+
+  showModal( e ) {
     const idx = parseInt( e.target.getAttribute( 'editidx' ) );
     this.setState( { modal: true, idx } );
   }
 
-  hideModal () {
+  hideModal() {
+    // get selected link column from state
+    // Assign link column to proper column[state.idx]
+    // Remove linked column from link column list
     this.setState( { modal: false, idx: undefined } );
   }
 
-  linkColumn ( e ) {
+  linkColumn( e ) {
     const columns = this.state.columns;
     columns[ this.state.idx ].display_name = 'test';
     columns[ this.state.idx ].link = 'test';
     this.setState( { columns } );
   }
 
-  render () {
+  render() {
     return (
       <div>
         <div>
@@ -85,11 +103,12 @@ class ImportView extends React.Component {
           <button type="button" onClick={this.import.bind( this )}>Import</button>
         </div>
         <div>
-          {this.formatLoadedColumns.call( this )}
+          {( this.state.columns && this.state.columns.length ) : <div><span>Loaded Excel Sheet Columns</span></div> ? ''}
+          {this.formatLoadedColumns.call( this, this.state.columns )}
         </div>
         <Modal show={this.state.modal} handleClose={this.hideModal}>
-          <p>Link Column</p>
-          <p>Data</p>
+          <p>Link Specimen Data Field to Excel Column</p>
+          {this.formatLinkableColumns.call( this, this.state.linkCol )}
         </Modal>
       </div>
     );
