@@ -1,3 +1,5 @@
+import React from 'react';
+
 const GCS_IMAGE_LINK = 'https://storage.googleapis.com/mineral-catalog-images/';
 const GCS_ANALYSIS_LINK = 'https://storage.googleapis.com/mineral-catalog-analysis-documents/';
 const GCS_LABEL_LINK = 'https://storage.googleapis.com/mineral-catalog-labels/';
@@ -235,15 +237,142 @@ const cleanSearchItem = {
   checked: false
 };
 
-function preventDefault( e ) {
+const linkColumns = [
+  // {display_name:'', link:'photos.main'},
+  // {'photos.all': []},
+  { display_name: 'Weight', link: 'physical_dimensions.weight' },
+  { display_name: 'Length', link: 'physical_dimensions.length' },
+  { display_name: 'Width', link: 'physical_dimensions.width' },
+  { display_name: 'Height', link: 'physical_dimensions.height' },
+  { display_name: 'Main Crystal', link: 'physical_dimensions.main_crystal' },
+  { display_name: 'Species', link: 'species.main' },
+  { display_name: 'Species Mod', link: 'species.additional.*.modifier', type: 'array' },
+  { display_name: 'Additional Species', link: 'species.additional.*.species', type: 'array' },
+  { display_name: 'Stope', link: 'discovery_location.stope' },
+  { display_name: 'Level', link: 'discovery_location.level' },
+  { display_name: 'Mine', link: 'discovery_location.mine' },
+  { display_name: 'District', link: 'discovery_location.district' },
+  { display_name: 'State', link: 'discovery_location.state' },
+  { display_name: 'Country', link: 'discovery_location.country' },
+  { display_name: 'Analyzed', link: 'analysis.analyzed' },
+  { display_name: 'Analyzed By', link: 'analysis.by' },
+  { display_name: 'Analysis Method', link: 'analysis.method' },
+  { display_name: 'Date Acquired', link: 'acquired.date' },
+  { display_name: 'Paid', link: 'acquired.paid' },
+  { display_name: 'Acquired From', link: 'acquired.from' },
+  { display_name: 'Acquired Where', link: 'acquired.where' },
+  { display_name: 'Old Label', link: 'states.old_label' },
+  { display_name: 'Repair', link: 'states.repair' },
+  { display_name: 'Story', link: 'states.story' },
+  { display_name: 'Figured', link: 'states.figured' },
+  { display_name: 'Storage Location Exhibit', link: 'storage_location.exhibit' },
+  { display_name: 'Storage Location Inside', link: 'storage_location.inside' },
+  { display_name: 'Storage Location Outside', link: 'storage_location.outside' },
+  { display_name: 'Storage Location Loan', link: 'storage_location.loan' },
+  { display_name: 'Storage Location Details', link: 'storage_location.details' },
+  { display_name: 'Comments', link: 'comments' },
+  { display_name: 'Story', link: 'story' },
+  { display_name: 'Figured', link: 'figured' },
+  { display_name: 'Repair History', link: 'repair_history' },
+  { display_name: 'Analysis History', link: 'analysis_history' },
+  { display_name: 'Specimen Location', link: 'specimen_location' },
+  // { display_name: 'Documents', link: 'documents' },
+  { display_name: 'Exhibit History', link: 'exhibit_history' },
+  { display_name: 'Geology', link: 'geology.metamorphic' },
+  { display_name: '', link: 'geology.pegmatite' },
+  { display_name: '', link: 'geology.porphyry' },
+  { display_name: '', link: 'geology.crd_skarn' },
+  { display_name: '', link: 'geology.epithermal_vein' },
+  { display_name: '', link: 'geology.volcanic_related' },
+  { display_name: '', link: 'geology.exhalite' },
+  { display_name: '', link: 'geology.mvt' },
+  { display_name: '', link: 'geology.evaporite' },
+  { display_name: '', link: 'geology.other' },
+  { display_name: '', link: 'features.twinned' },
+  { display_name: '', link: 'features.pseudomorph' },
+  { display_name: '', link: 'features.inclusions' },
+  { display_name: '', link: 'features.photosensitive' },
+  { display_name: '', link: 'fluorescence.sw' },
+  { display_name: '', link: 'fluorescence.sw_details' },
+  { display_name: '', link: 'fluorescence.lw' },
+  { display_name: '', link: 'fluorescence.lw_details' },
+  { display_name: '', link: 'quality.exceptional' },
+  { display_name: '', link: 'quality.exhibit' },
+  { display_name: '', link: 'quality.locality' },
+  { display_name: '', link: 'quality.study' },
+  { display_name: '', link: 'locality.type_locality' },
+  { display_name: '', link: 'locality.self_collected' },
+  { display_name: '', link: 'locality.when' },
+  { display_name: '', link: 'photographed.photographed' },
+  { display_name: '', link: 'photographed.by' },
+  { display_name: '', link: 'photographed.photo_file_number'
+:
+},
+{
+  display_name:'', link
+:
+  'photographed.files'
+}
+,
+{
+  display_name:'', link
+:
+  'provenance.old_labels'
+}
+,
+{
+  display_name:'', link
+:
+  'provenance.prior_labels'
+}
+,
+{
+  display_name:'', link
+:
+  'provenance.former_owners'
+}
+,
+{
+  display_name:'', link
+:
+  'provenance.prior_catalog_number'
+}
+,
+{
+  display_name:'', link
+:
+  'provenance.label'
+}
+,
+{
+  display_name:'', link
+:
+  'provenance.label_files'
+}
+,
+{
+  display_name:'', link
+:
+  'provenance.miguel_romero'
+}
+,
+{
+  display_name:'', link
+:
+  'provenance.miguel_romero_number'
+}
+]
+;
+
+function preventDefault ( e ) {
   e.preventDefault()
 }
 
-function capitalize( a ) {
+function capitalize ( a ) {
   return a.charAt( 0 ).toUpperCase() + a.slice( 1 );
 }
 
-function checkNumber( n ) {
+function checkNumber ( n ) {
   n = parseFloat( n );
   return isNaN( n ) ? null : n;
 }
@@ -259,5 +388,26 @@ export {
   cleanSearchItem,
   preventDefault,
   capitalize,
-  checkNumber
+  checkNumber,
+  Modal,
+  linkColumns
 };
+
+const Modal = ( { handleClose, show, children } ) => {
+  const showHideClassName = show ? 'modal display-block' : 'modal display-none';
+  return (
+    <div className={showHideClassName}>
+      <section className='modal-main'>
+        {children}
+        <button onClick={handleClose}> Close</button>
+      </section>
+    </div>
+  );
+};
+
+/* Modal use example
+<Modal show={this.state.show} handleClose={this.hideModal} >
+  <p>Modal</p>
+  <p>Data</p>
+</Modal>
+ */
