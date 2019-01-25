@@ -239,7 +239,7 @@ const cleanSearchItem = {
 
 const linkColumns = [
   { display_name: 'Main Photo', link: 'photos.main' },
-  { display_name: 'Photos', 'photos.all': [] },
+  { display_name: 'Photos', link: 'photos.all'},
   { display_name: 'Weight', link: 'physical_dimensions.weight' },
   { display_name: 'Length', link: 'physical_dimensions.length' },
   { display_name: 'Width', link: 'physical_dimensions.width' },
