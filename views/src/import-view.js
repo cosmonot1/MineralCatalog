@@ -44,10 +44,73 @@ class ImportView extends React.Component {
   }
 
   import() {
-    // Make sure that all columns are linked. If not throw a pop up that forces user to confirm that they want to
-    // proceed with potentially incomplete info for specimens
+
+    // Check to make sure that all of the columns loaded from the excel file are assigned to a specimen field
+    const allLinked = this.state.columns.some( c => !c.link );
+    let shouldContinue = true;
+
+    // See if the user wants to proceed
+    if ( !allLinked ) {
+      //TODO: make this a better dialog actually in the app
+      shouldContinue = confirm( "Not all imported columns were linked to a specimen field. Proceeding may result in incomplete data in the database. Do you want to continue with the import?" );
+    }
+
+    if ( !shouldContinue ) {
+      return;
+    }
+
     // Build specimens from association
+    const fieldMap = {};
+    this.state.columns.filter( c => c.link ).forEach( c => fieldMap[ c.sheet_name ] = c );
+    const specimens = this.state.sheet.map( buildSpecimen.call( this, fieldMap ) ).filter( s => s );
+
     // Call to API to bulk add
+    console.log( specimens );
+
+    function buildSpecimen( fieldMap ) {
+
+      return s => {
+        const specimen = {};
+        let found;
+        // For each property in the object imported from excel
+        for ( let k in s ) {
+
+          // Make sure the property is mapped to a specimen field
+          if ( k in fieldMap ) {
+            found = true;
+            const field = Object.assign( {}, fieldMap[ k ] );
+
+            if ( field.nestedArray ) {
+              const linkParts = field.link.split( '.*.' );
+              field.link = linkParts[ 0 ];
+              field.nestedPath = linkParts[ 1 ];
+
+              console.log( field.link, field.nestedPath );
+
+              if ( !specimen[ field.link ] ) {
+                specimen[ field.link ] = [];
+              }
+
+              //TODO: HAVE IDX COME FROM A FIELD MAMP
+              const idx = parseInt( field.sheet_name.split( '_' ).slice( -1 )[ 0 ], 10 ) || 0;
+              if ( !specimen[ field.link ][ idx ] ) {
+                specimen[ field.link ][ idx ] = {};
+              }
+
+              specimen[ field.link ][ idx ][ field.nestedPath ] = s[ k ];
+            } else {
+              if ( !field.link ) {
+                console.log( field );
+              }
+              specimen[ field.link ] = s[ k ];
+            }
+          }
+        }
+
+        return found ? specimen : null;
+
+      };
+    }
   }
 
   formatLoadedColumns( c ) {
@@ -161,6 +224,10 @@ class ImportView extends React.Component {
   }
 
   linkColumn( e ) {
+    //TODO: FIGURE OUT HOW TO DO DOCUMENTS AND PHOTOS -> CSV OR WHITESPACE-SV OR EXCEL COLUMN PER DOC/PHOTO
+    //TODO: UPLOAD FIELD FOR DOCUMENTS AND STUFF
+    //TODO: FOR NESTEDARRAY TYPES, HAVE A USER INPUT FIELD THAT SETS WHAT ARRAY INDEX ORDER IT IS
+
     const linkIdx = parseInt( e.currentTarget.getAttribute( 'linkidx' ) );
     const linkCol = this.state.linkCol[ linkIdx ];
 
