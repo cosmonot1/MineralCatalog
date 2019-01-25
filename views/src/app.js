@@ -1,6 +1,7 @@
 import React from 'react';
 import LoginView from './login-view.js';
 import Home from './home.js';
+import './app.css';
 
 class App extends React.Component {
   constructor( props ) {
