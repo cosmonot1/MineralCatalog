@@ -52,17 +52,61 @@ class ImportView extends React.Component {
 
   formatLoadedColumns( c ) {
     if ( !c || !c.length ) {
-      return '';
+      return <div></div>;
     }
 
-    return this.state.columns.map( ( c, i ) => {
-      return (
-        <div key={uuidv4()}>
-          <span>{c.sheet_name}</span>=><span>{c.display_name}</span>
-          <button onClick={this.showModal} editidx={i}>Link</button>
-        </div>
-      );
+    const col1 = [
+      <div key={'col1_header'} style={{ 'marginRight': 8, 'marginBottom': 4 }}>
+        <strong>Loaded Column</strong>
+      </div>
+    ];
+    const col2 = [
+      <div key={'col2_header'} style={{ 'marginRight': 8, 'marginBottom': 4 }}>
+        <strong>-></strong>
+      </div>
+    ];
+    const col3 = [
+      <div key={'col3_header'} style={{ 'marginRight': 8, 'marginBottom': 4 }}>
+        <strong>Specimen Field</strong>
+      </div>
+    ];
+    const col4 = [
+      <div key={'col4_header'} style={{ 'marginRight': 8, 'marginBottom': 4 }}>
+        <strong>Link</strong>
+      </div>
+    ];
+
+    c.forEach( ( c, i ) => {
+      col1.push(
+        <div key={`col1_${i}`} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
+          <span>{c.sheet_name}</span>
+        </div> );
+
+      col2.push(
+        <div key={`col2_${i}`} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
+          <span>-></span>
+        </div> );
+
+      col3.push(
+        <div key={`col3_${i}`} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
+          <span>{c.display_name}</span>
+        </div> );
+
+      col4.push(
+        <div key={`col4_${i}`} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
+          <button onClick={c.link ? this.unlinkColumn.bind( this ) : this.showModal.bind( this )}
+                  editidx={i}>{c.link ? 'Unlink' : 'Link'}</button>
+        </div> );
     } );
+
+    return (
+      <div style={{ display: 'flex', flexDirection: 'row' }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>{col1}</div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>{col2}</div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>{col3}</div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>{col4}</div>
+      </div>
+    );
   }
 
   formatLinkableColumns( c ) {
@@ -70,6 +114,17 @@ class ImportView extends React.Component {
       return '';
     }
 
+    return (
+      <div>
+        {this.state.linkCol.map( ( c, i ) => {
+          return (
+            <div key={uuidv4()} linkidx={i} onClick={this.linkColumn.bind( this )}>
+              <span>{c.display_name}</span>
+            </div>
+          );
+        } )}
+      </div>
+    );
   }
 
   showModal( e ) {
@@ -78,37 +133,75 @@ class ImportView extends React.Component {
   }
 
   hideModal() {
-    // get selected link column from state
-    // Assign link column to proper column[state.idx]
-    // Remove linked column from link column list
     this.setState( { modal: false, idx: undefined } );
   }
 
+  unlinkColumn( e ) {
+    const idx = parseInt( e.target.getAttribute( 'editidx' ) );
+    const column = this.state.columns[ idx ];
+
+    const link = { display_name: column.display_name, link: column.link, nestedArray: column.nestedArray };
+    delete column.display_name;
+    delete column.link;
+    delete column.nestedArray;
+
+    const linkCol = this.state.linkCol;
+    if ( !link.nestedArray ) {
+      linkCol.push( link );
+    }
+
+    this.setState( {
+      columns: [
+        ...this.state.columns.slice( 0, idx ),
+        column,
+        ...this.state.columns.slice( idx + 1 )
+      ],
+      linkCol
+    } );
+  }
+
   linkColumn( e ) {
+    const linkIdx = parseInt( e.currentTarget.getAttribute( 'linkidx' ) );
+    const linkCol = this.state.linkCol[ linkIdx ];
+
     const columns = this.state.columns;
-    columns[ this.state.idx ].display_name = 'test';
-    columns[ this.state.idx ].link = 'test';
-    this.setState( { columns } );
+    columns[ this.state.idx ] = Object.assign(
+      {},
+      columns[ this.state.idx ],
+      linkCol
+    );
+
+    this.setState( {
+      columns,
+      linkCol: [
+        ...this.state.linkCol.slice( 0, linkIdx ),
+        ...this.state.linkCol.slice( linkIdx + Number( !linkCol.nestedArray ) ),
+      ]
+    } );
+
+    this.hideModal();
   }
 
   render() {
     return (
-      <div>
-        <div>
+      <div style={{ marginLeft: 8 }}>
+        <div style={{ marginBottom: 8 }}>
           <span>Import into the database. Supports Excel files.</span>
         </div>
-        <div>
+
+        <div style={{ marginBottom: 8 }}>
           <input type="file" name="file_input" onChange={this.loadFile.bind( this )}
                  ref={ref => this.fileInput = ref}/>
           <button type="button" onClick={this.import.bind( this )}>Import</button>
         </div>
+
         <div>
-          {( this.state.columns && this.state.columns.length ) : <div><span>Loaded Excel Sheet Columns</span></div> ? ''}
           {this.formatLoadedColumns.call( this, this.state.columns )}
         </div>
-        <Modal show={this.state.modal} handleClose={this.hideModal}>
+
+        <Modal show={this.state.modal} handleClose={this.hideModal.bind( this )}>
           <p>Link Specimen Data Field to Excel Column</p>
-          {this.formatLinkableColumns.call( this, this.state.linkCol )}
+          <div>{this.formatLinkableColumns.call( this, this.state.linkCol )}</div>
         </Modal>
       </div>
     );
