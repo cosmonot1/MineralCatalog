@@ -3,26 +3,29 @@ import XLSX from '../../node_modules/xlsx/dist/xlsx.full.min.js';
 import { linkColumns, Modal } from './utils';
 
 class ImportView extends React.Component {
-  constructor( props ) {
+  constructor ( props ) {
     super( props );
     this.state = {
       sheet: [],
       columns: [],
-      modal: false
+      modal: false,
+      importErrors: []
     };
   }
 
-  reset() {
+  reset () {
     this.fileInput.value = '';
-    this.setState( { sheet: [], columns: [], modal: false, linkCol: undefined } );
+    this.setState( {
+      sheet: [], columns: [], modal: false, linkCol: undefined, importErrors: []
+    } );
   }
 
-  goHome() {
+  goHome () {
     this.reset();
     this.props.changeView( 'list' );
   }
 
-  loadFile( e ) {
+  loadFile ( e ) {
     const reader = new FileReader();
     reader.onload = ( e ) => {
       // Parse workbook
@@ -43,7 +46,7 @@ class ImportView extends React.Component {
     reader.readAsBinaryString( e.target.files[ 0 ] );
   }
 
-  import() {
+  import () {
 
     // Check to make sure that all of the columns loaded from the excel file are assigned to a specimen field
     const allLinked = this.state.columns.some( c => !c.link );
@@ -65,9 +68,17 @@ class ImportView extends React.Component {
     const specimens = this.state.sheet.map( buildSpecimen.call( this, fieldMap ) ).filter( s => s );
 
     // Call to API to bulk add
-    console.log( specimens );
+    API.specimen.bulk.add( { specimens }, ( err ) => {
+      if ( !err ) {
+        alert( 'Import successful' );
+        return this.reset();
+      }
+      console.log( err );
+      alert( 'Import errors found and shown below.' );
+      this.setState( { importErrors: err || [] } );
+    } );
 
-    function buildSpecimen( fieldMap ) {
+    function buildSpecimen ( fieldMap ) {
 
       return s => {
         const specimen = {};
@@ -113,9 +124,13 @@ class ImportView extends React.Component {
     }
   }
 
-  formatLoadedColumns( c ) {
+  formatLoadedColumns ( c ) {
     if ( !c || !c.length ) {
       return <div></div>;
+    }
+
+    if ( this.state.importErrors.length ) {
+      return <div></div>
     }
 
     const col1 = [
@@ -172,7 +187,7 @@ class ImportView extends React.Component {
     );
   }
 
-  formatLinkableColumns( c ) {
+  formatLinkableColumns ( c ) {
     if ( !c || !c.length ) {
       return '';
     }
@@ -190,16 +205,31 @@ class ImportView extends React.Component {
     );
   }
 
-  showModal( e ) {
+  showModal ( e ) {
     const idx = parseInt( e.target.getAttribute( 'editidx' ) );
     this.setState( { modal: true, idx } );
   }
 
-  hideModal() {
+  hideModal () {
     this.setState( { modal: false, idx: undefined } );
   }
 
-  unlinkColumn( e ) {
+  formatErrors ( errors ) {
+    if ( !errors.length ) {
+      return <div></div>;
+    }
+
+    return (
+      <div>
+        <div><span>Failed to import {errors.length} of {this.state.sheet.length} specimens</span></div>
+        <div>
+          {/*Error*/}
+        </div>
+      </div>
+    );
+  }
+
+  unlinkColumn ( e ) {
     const idx = parseInt( e.target.getAttribute( 'editidx' ) );
     const column = this.state.columns[ idx ];
 
@@ -223,7 +253,7 @@ class ImportView extends React.Component {
     } );
   }
 
-  linkColumn( e ) {
+  linkColumn ( e ) {
     //TODO: FIGURE OUT HOW TO DO DOCUMENTS AND PHOTOS -> CSV OR WHITESPACE-SV OR EXCEL COLUMN PER DOC/PHOTO
     //TODO: UPLOAD FIELD FOR DOCUMENTS AND STUFF
     //TODO: FOR NESTEDARRAY TYPES, HAVE A USER INPUT FIELD THAT SETS WHAT ARRAY INDEX ORDER IT IS
@@ -249,7 +279,7 @@ class ImportView extends React.Component {
     this.hideModal();
   }
 
-  render() {
+  render () {
     return (
       <div style={{ marginLeft: 8 }}>
         <div style={{ marginBottom: 8 }}>
@@ -263,6 +293,7 @@ class ImportView extends React.Component {
         </div>
 
         <div>
+          {this.formatErrors.call( this, this.state.importErrors )}
           {this.formatLoadedColumns.call( this, this.state.columns )}
         </div>
 

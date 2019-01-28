@@ -53,13 +53,14 @@ async function add ( data ) {
     throw {
       code: 400,
       reason: 'Unable to format acquired date provided.',
+      field:'specimen.acquired.date',
       err: new Error( 'Unable to format acquired date provided.' )
     }
   }
 
   try {
     const date = moment( data.specimen.locality.when );
-    if ( data.specimen.locality.when !== 0 && !data.specimen.locality.when && 'when' in data.specimen.locality) {
+    if ( data.specimen.locality.when !== 0 && !data.specimen.locality.when && 'when' in data.specimen.locality ) {
       data.specimen.locality.when = null;
     } else if ( !date || !date.isValid() ) {
       throw new Error( 'Bad date' );
@@ -70,6 +71,7 @@ async function add ( data ) {
     throw {
       code: 400,
       reason: 'Unable to format locality when provided.',
+      field:'specimen.locality.when',
       err: new Error( 'Unable to format locality when provided.' )
     }
   }
