@@ -21,6 +21,9 @@ const EXPORT_PAGE_STEP = 100;
 
 module.exports = {
   add: c( fmtBody( fmtReqRes( add ) ) ),
+  bulk: {
+    add: c( fmtBody( fmtReqRes( addBulk ) ) )
+  },
   download: downloadC( fmtBody( download ) ),
   get: c( fmtBody( fmtReqRes( Specimen.get ) ) ),
   list: c( fmtBody( fmtReqRes( Specimen.list ) ) ),
@@ -72,6 +75,33 @@ async function add ( data ) {
   }
 
   return await Specimen.add( data );
+}
+
+// Not batched. Is slow. Intentional.
+// Need to collect errors on which specimens failed and why.
+async function addBulk ( data ) {
+  if ( !data.specimens ) {
+    data.specimens = [];
+  }
+
+  const errors = [];
+  let error = false;
+
+  for ( let i = 0; i < data.specimens.length; i++ ) {
+    try {
+      await add( { specimen: data.specimens[ i ] } );
+    } catch ( err ) {
+      error = true;
+      errors.push( { i, err } );
+    }
+  }
+
+  if ( error ) {
+    throw errors;
+  }
+
+  return null;
+
 }
 
 async function download ( req, res ) {

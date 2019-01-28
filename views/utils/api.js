@@ -1,6 +1,6 @@
 'use strict';
 
-window.API = ( function API() {
+window.API = ( function API () {
 
   // Detect browser support for CORS
   if ( !( 'withCredentials' in new XMLHttpRequest() ) && typeof XDomainRequest === 'undefined' ) {
@@ -78,6 +78,11 @@ window.API = ( function API() {
 
     add: ( data, done ) =>
       ajax( 'POST', '/api/v0/specimen', data, done ),
+
+    bulk: {
+      add: () =>
+        ajax( 'POST', '/api/v0/bulk/specimen', data, done )
+    },
 
     get: ( data, done ) =>
       ajax( 'GET', `/api/v0/specimen/${data.specimen._id}`, data, done ),

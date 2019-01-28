@@ -12,6 +12,9 @@ module.exports = function () {
   router.route( '/specimen' )
     .post( API.v0.specimen.add );
 
+  router.route( '/bulk/specimen' )
+    .post( API.v0.specimen.bulk.add );
+
   router.route( '/specimen/list' )
     .post( API.v0.specimen.list );
 
