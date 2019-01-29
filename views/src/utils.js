@@ -239,7 +239,7 @@ const cleanSearchItem = {
 
 const linkColumns = [
   { display_name: 'Main Photo', link: 'photos.main' },
-  { display_name: 'Photos', link: 'photos.all'},
+  { display_name: 'Photos', link: 'photos.all' },
   { display_name: 'Weight', link: 'physical_dimensions.weight' },
   { display_name: 'Length', link: 'physical_dimensions.length' },
   { display_name: 'Width', link: 'physical_dimensions.width' },
@@ -325,15 +325,15 @@ const linkColumns = [
   { display_name: 'Provenance Miguel Romero Number', link: 'provenance.miguel_romero_number' }
 ];
 
-function preventDefault( e ) {
+function preventDefault ( e ) {
   e.preventDefault()
 }
 
-function capitalize( a ) {
+function capitalize ( a ) {
   return a.charAt( 0 ).toUpperCase() + a.slice( 1 );
 }
 
-function checkNumber( n ) {
+function checkNumber ( n ) {
   n = parseFloat( n );
   return isNaN( n ) ? null : n;
 }
@@ -357,7 +357,7 @@ export {
 const Modal = ( { handleClose, show, children } ) => {
   const showHideClassName = show ? 'modal display-block' : 'modal display-none';
   return (
-    <div className={showHideClassName}>
+    <div className={showHideClassName} style={{ overflow: 'auto' }}>
       <section className='modal-main'>
         {children}
         <button onClick={handleClose}> Close</button>
