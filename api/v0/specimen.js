@@ -40,6 +40,8 @@ async function add ( data ) {
 
   data.specimen = flat.unflatten( data.specimen );
 
+  data.specimen = Object.assign( { acquired: { date: null }, locality: { when: null } }, data.specimen );
+
   try {
     const date = moment( data.specimen.acquired.date );
     if ( data.specimen.acquired.date !== 0 && !data.specimen.acquired.date && 'date' in data.specimen.acquired ) {
@@ -53,7 +55,7 @@ async function add ( data ) {
     throw {
       code: 400,
       reason: 'Unable to format acquired date provided.',
-      field:'specimen.acquired.date',
+      field: 'specimen.acquired.date',
       err: new Error( 'Unable to format acquired date provided.' )
     }
   }
@@ -71,7 +73,7 @@ async function add ( data ) {
     throw {
       code: 400,
       reason: 'Unable to format locality when provided.',
-      field:'specimen.locality.when',
+      field: 'specimen.locality.when',
       err: new Error( 'Unable to format locality when provided.' )
     }
   }
@@ -98,11 +100,7 @@ async function addBulk ( data ) {
     }
   }
 
-  if ( error ) {
-    throw errors;
-  }
-
-  return null;
+  return errors;
 
 }
 
