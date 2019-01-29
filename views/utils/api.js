@@ -80,7 +80,7 @@ window.API = ( function API () {
       ajax( 'POST', '/api/v0/specimen', data, done ),
 
     bulk: {
-      add: () =>
+      add: ( data, done ) =>
         ajax( 'POST', '/api/v0/bulk/specimen', data, done )
     },
 
