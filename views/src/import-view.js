@@ -141,18 +141,18 @@ class ImportView extends React.Component {
           }
         }
 
-        return found ? specimen : null;
+        return found ? Object.assign( {}, specimen ) : null;
 
       };
     }
   }
 
-  formatLoadedColumns ( c ) {
+  formatLoadedColumns ( c, errs ) {
     if ( !c || !c.length ) {
       return <div></div>;
     }
 
-    if ( this.state.importErrors.length ) {
+    if ( errs && errs.length ) {
       return <div></div>
     }
 
@@ -161,16 +161,19 @@ class ImportView extends React.Component {
         <strong>Loaded Column</strong>
       </div>
     ];
+
     const col2 = [
       <div key={'col2_header'} style={{ 'marginRight': 8, 'marginBottom': 4 }}>
         <strong>-></strong>
       </div>
     ];
+
     const col3 = [
       <div key={'col3_header'} style={{ 'marginRight': 8, 'marginBottom': 4 }}>
         <strong>Specimen Field</strong>
       </div>
     ];
+
     const col4 = [
       <div key={'col4_header'} style={{ 'marginRight': 8, 'marginBottom': 4 }}>
         <strong>Link</strong>
@@ -242,11 +245,52 @@ class ImportView extends React.Component {
       return <div></div>;
     }
 
+    const col1 = [
+      <div key={'col1_header'} style={{ marginRight: 8, marginBottom: 4 }}>
+        <strong>Error Reason</strong>
+      </div>
+    ];
+
+    const col2 = [
+      <div key={'col2_header'} style={{ marginRight: 8, marginBottom: 4 }}>
+        <strong>Error - Failed Specimen Field</strong>
+      </div>
+    ];
+
+    const col3 = [
+      <div key={'col3_header'} style={{ marginRight: 8, marginBottom: 4 }}>
+        <strong>Specimen Excel Row Number</strong>
+      </div>
+    ];
+
+    errors.forEach( ( errObj, i ) => {
+      col1.push(
+        <div key={`col1_${i}`} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
+          <span style={{ width: 200, whiteSpace: 'normal' }}>{errObj.err.reason}</span>
+        </div>
+      );
+
+      col2.push(
+        <div key={`col2_${i}`} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
+          <span style={{ width: 200, whiteSpace: 'normal' }}>{errObj.err.field}</span>
+        </div>
+      );
+
+      col3.push(
+        <div key={`col3_${i}`} style={{ 'marginRight': 8, 'marginBottom': 4, flex: 1 }}>
+          <span>{errObj.i - 1}</span>
+        </div>
+      );
+    } );
+
     return (
       <div>
         <div><span>Failed to import {errors.length} of {this.state.sheet.length} specimens</span></div>
-        <div>
-          {/*Error*/}
+        <button onClick={this.reset.bind( this )}>Reset</button>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>{col1}</div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>{col2}</div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>{col3}</div>
         </div>
       </div>
     );
@@ -279,7 +323,7 @@ class ImportView extends React.Component {
   linkColumn ( e ) {
     //TODO: FIGURE OUT HOW TO DO DOCUMENTS AND PHOTOS -> CSV OR WHITESPACE-SV OR EXCEL COLUMN PER DOC/PHOTO
     //TODO: UPLOAD FIELD FOR DOCUMENTS AND STUFF
-    //TODO: FOR NESTEDARRAY TYPES, HAVE A USER INPUT FIELD THAT SETS WHAT ARRAY INDEX ORDER IT IS
+    //TODO: FOR NESTED-ARRAY TYPES, HAVE A USER INPUT FIELD THAT SETS WHAT ARRAY INDEX ORDER IT IS
 
     const linkIdx = parseInt( e.currentTarget.getAttribute( 'linkidx' ) );
     const linkCol = this.state.linkCol[ linkIdx ];
@@ -309,15 +353,17 @@ class ImportView extends React.Component {
           <span>Import into the database. Supports Excel files.</span>
         </div>
 
+        {/*TODO: make this div not show if there are errors*/}
         <div style={{ marginBottom: 8 }}>
           <input type="file" name="file_input" onChange={this.loadFile.bind( this )}
                  ref={ref => this.fileInput = ref}/>
+          {/*TODO: make this button not show if there is no sheet selected*/}
           <button type="button" onClick={this.import.bind( this )}>Import</button>
         </div>
 
         <div>
           {this.formatErrors.call( this, this.state.importErrors )}
-          {this.formatLoadedColumns.call( this, this.state.columns )}
+          {this.formatLoadedColumns.call( this, this.state.columns, this.state.importErrors )}
         </div>
 
         <Modal show={this.state.modal} handleClose={this.hideModal.bind( this )}>
