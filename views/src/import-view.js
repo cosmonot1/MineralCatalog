@@ -49,7 +49,7 @@ class ImportView extends React.Component {
   import () {
 
     // Check to make sure that all of the columns loaded from the excel file are assigned to a specimen field
-    const allLinked = this.state.columns.some( c => !c.link );
+    const allLinked = this.state.columns.every( c => c.link );
     let shouldContinue = true;
 
     // See if the user wants to proceed
