@@ -124,8 +124,6 @@ class ImportView extends React.Component {
               field.link = linkParts[ 0 ];
               field.nestedPath = linkParts[ 1 ];
 
-              console.log( field.link, field.nestedPath );
-
               if ( !specimen[ field.link ] ) {
                 specimen[ field.link ] = [];
               }
@@ -138,9 +136,6 @@ class ImportView extends React.Component {
 
               specimen[ field.link ][ idx ][ field.nestedPath ] = s[ k ];
             } else {
-              if ( !field.link ) {
-                console.log( field );
-              }
               specimen[ field.link ] = s[ k ];
             }
           }
