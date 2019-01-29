@@ -67,16 +67,44 @@ class ImportView extends React.Component {
     this.state.columns.filter( c => c.link ).forEach( c => fieldMap[ c.sheet_name ] = c );
     const specimens = this.state.sheet.map( buildSpecimen.call( this, fieldMap ) ).filter( s => s );
 
-    // Call to API to bulk add
-    API.specimen.bulk.add( { specimens }, ( err ) => {
-      if ( !err ) {
+    recursiveAdd( specimens, [], 0, 10, ( err, errors ) => {
+      if ( err ) {
+        alert( `Import failed with an unexpected error: ${err.message}` );
+        throw err;
+      }
+
+      if ( !errors.length ) {
         alert( 'Import successful' );
         return this.reset();
       }
-      console.log( err );
+
       alert( 'Import errors found and shown below.' );
-      this.setState( { importErrors: err || [] } );
+      this.setState( { importErrors: errors || [] } );
     } );
+
+    function recursiveAdd ( specimens, errors, i, chunk, done ) {
+      if ( i >= specimens.length ) {
+        return done( null, errors );
+      }
+
+      const addSpecimens = specimens.slice( i, i + chunk );
+
+      // Call to API to bulk add
+      API.specimen.bulk.add( { specimens: addSpecimens }, ( err, result ) => {
+        if ( err ) {
+          return done( err );
+        }
+
+        //TODO: Make errors point to excel col number not filtered import number
+        result.forEach( r => r.i = i + r.i );
+
+        console.log( addSpecimens );
+        console.log( result );
+
+        errors.push( ...( result || [] ) );
+        recursiveAdd( specimens, errors, i + chunk, chunk, done );
+      } );
+    }
 
     function buildSpecimen ( fieldMap ) {
 
