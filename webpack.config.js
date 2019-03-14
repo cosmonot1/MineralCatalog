@@ -1,7 +1,7 @@
 const path = require( "path" );
 
 module.exports = {
-  entry: './views/src/index.js',
+  entry: path.resolve( __dirname, './views/src/index.js' ),
   module: {
     rules: [
       {
