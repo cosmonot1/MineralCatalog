@@ -1,4 +1,5 @@
 import React from 'react';
+import Moment from 'moment';
 import { GCS_IMAGE_LINK } from './utils.js';
 
 class Specimen extends React.Component {
@@ -62,7 +63,7 @@ class Specimen extends React.Component {
                                                                  readOnly
                                                                  checked={this.props.spec.analysis.analyzed}/>
               </td>
-              <td style={{ 'paddingRight': 8 }}>Date: {this.props.spec.acquired.date}</td>
+              <td style={{ 'paddingRight': 8 }}>Date: {Moment(this.props.spec.acquired.date).format('DD-MM-YYYY')}</td>
               <td style={{ 'paddingRight': 8 }}>Old Label: <input type="checkbox" name="checked"
                                                                   readOnly
                                                                   checked={this.props.spec.states.old_label}/>
