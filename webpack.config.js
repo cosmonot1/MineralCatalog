@@ -16,7 +16,9 @@ module.exports = {
       }
     ]
   },
-  resolve: { extensions: [ "*", ".js", ".jsx" ] },
+  resolve: {
+    modules:['node_modules', path.resolve(__dirname,'views')],
+    extensions: [ "*", ".js", ".jsx" ] },
   output: {
     path: path.resolve( __dirname, "./views/build/" ),
     filename: 'index.js',
