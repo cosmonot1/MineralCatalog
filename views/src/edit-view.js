@@ -5,7 +5,7 @@ import FormerOwnerAdder from './former-owner-adder.js';
 import DatePicker from 'react-date-picker';
 import {
   cleanMineral, GCS_IMAGE_LINK, GCS_ANALYSIS_LINK, searchCriteria, GCS_LABEL_LINK,
-  GCS_PROFESSIONAL_PHOTO_LINK, capitalize, checkNumber
+  GCS_PROFESSIONAL_PHOTO_LINK, capitalize, checkNumber, buildPDF
 } from './utils.js';
 
 class EditView extends React.Component {
@@ -159,57 +159,8 @@ class EditView extends React.Component {
   }
 
   makePDF () {
-    const w = 203.2, h = 127, margin = 4;
-    const colW = ( w - 2 * margin ) / 3;
-    const contentW = colW - 2 * margin;
-
-    //docs https://rawgit.com/MrRio/jsPDF/master/docs/index.html
-    //examples https://rawgit.com/MrRio/jsPDF/master/
-
-    const doc = new jsPDF( {
-      orientation: 'l',
-      unit: 'mm',
-      format: [ w, h ],
-      lineHeight: 1
-    } );
-
-    if ( !this.state[ 'photos.main' ] ) {
-      doc.text( 'No Image', 2 * margin, 3 * margin )
-    } else {
-      doc.addImage( GCS_IMAGE_LINK + this.state[ 'photos.main' ], '', 2 * margin, 2 * margin, contentW, contentW );
-    }
-
-    //TODO: put in catalog number
-    doc.setFontSize( 12 )
-      .text( this.buildPrintColumn( doc, 0, contentW ), 2 * margin, contentW + 4 * margin )
-      .text( this.buildPrintColumn( doc, 1, contentW ), colW + 2 * margin, 3 * margin )
-      .text( this.buildPrintColumn( doc, 2, contentW ), 2 * colW + 2 * margin, 3 * margin );
-
-    doc.addPage( [ w, h ], 'l' );
-
-    doc.save( ( "00000" + this.state.catalog_number ).substr( -5, 5 ) + '.pdf' );
+    buildPDF(this.state);
   }
-
-  buildPrintColumn ( doc, col, width ) {
-    return doc.splitTextToSize(
-      searchCriteria
-        .filter( c => c.print_col === col )
-        .map( c => `${capitalize( c.name )}: ${checkFmtBool( c, this.state[ c.field ] )} ${c.unit ? `(${c.unit})` : ``}` )
-        .join( '\n\n' )
-      , width
-    );
-
-    function checkFmtBool ( c, v ) {
-      switch ( c.type ) {
-        case 'boolean':
-          return v ? 'Yes' : 'No';
-        case 'date':
-          return v.split( 'T' )[ 0 ];
-        default:
-          return v;
-      }
-    }
-  };
 
   uploadPhotos ( done ) {
 

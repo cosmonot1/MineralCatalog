@@ -1,3 +1,5 @@
+import jsPDF from 'jspdf';
+
 const GCS_IMAGE_LINK = 'https://storage.googleapis.com/mineral-catalog-images/';
 const GCS_ANALYSIS_LINK = 'https://storage.googleapis.com/mineral-catalog-analysis-documents/';
 const GCS_LABEL_LINK = 'https://storage.googleapis.com/mineral-catalog-labels/';
@@ -248,6 +250,76 @@ function checkNumber( n ) {
   return isNaN( n ) ? null : n;
 }
 
+//docs https://rawgit.com/MrRio/jsPDF/master/docs/index.html
+//examples https://rawgit.com/MrRio/jsPDF/master/
+function buildPDF( spec ) {
+
+  const w = 576, h = 360, margin = 9;
+  const colW = ( w ) / 3;
+  const contentW = colW - 2 * margin;
+
+  // For some reason the unit parameter doesn't do anything and it still uses pt as the scale
+  const doc = new jsPDF( {
+    orientation: 'l',
+    // unit: 'mm',
+    format: [ w, h ],
+    lineHeight: 1
+  } );
+
+  // PAGE 1
+  // COL 1
+  // Image
+  const imgw = 205.2, imgh = 273.6;
+  try{
+    console.log('h=',margin + imgh/2)
+    doc.text( 'No Image', /*margin + imgw/2*/0, .5*/*margin + imgh/2*/0);//, {align: 'center' } );
+    doc.text( 'No Image', /*margin + imgw/2*/0, .5*/*margin + imgh/2*/36*1);//, {align: 'center' } );
+    doc.text( 'No Image', /*margin + imgw/2*/0, .5*/*margin + imgh/2*/36*7);//, {align: 'center' } );
+    doc.text( 'No Image', /*margin + imgw/2*/0, .5*/*margin + imgh/2*/36*6);//, {align: 'center' } );
+    doc.text( 'No Image', /*margin + imgw/2*/0, .5*/*margin + imgh/2*/36*5);//, {align: 'center' } );
+    doc.text( 'No Image', /*margin + imgw/2*/0, .5*/*margin + imgh/2*/36*4);//, {align: 'center' } );
+    doc.text( 'No Image', /*margin + imgw/2*/0, .5*/*margin + imgh/2*/36*3);//, {align: 'center' } );
+    doc.text( 'No Image', /*margin + imgw/2*/0, .5*/*margin + imgh/2*/36*2);//, {align: 'center' } );
+    // doc.addImage( GCS_IMAGE_LINK + spec[ 'photos.main' ], '', 2 * margin, 2 * margin, contentW, contentW );
+  }
+  catch(err){
+    console.warn(err);
+    doc.text( 'No Image', margin + imgw/2, margin + imgh/2, {align: 'center' } );
+  }
+  doc.text('This is helvetica bold.', 20, 50);
+
+  // Physical props
+  const physicalDimsions =
+  `${spec[ 'physical_dimensions.weight' ]} (g)
+  ${spec[ 'physical_dimensions.length' ] } (g)
+  ${spec[ 'physical_dimensions.width' ] } (cm)
+  ${spec[ 'physical_dimensions.height' ] } (cm)
+  ${spec[ 'physical_dimensions.main_crystal' ] } (cm)`;
+
+  // 3.8in + margin top and 3 margin bot
+  doc.text(physicalDimsions, margin, 96.52+4 * margin);
+
+  // COL 2
+  // Species
+
+  // Discovery location
+
+  // COL 3
+  // Catalog #
+
+  // Acquired
+
+  // Analyzed
+
+  // Labels
+
+  // PAGE 2
+  doc.addPage( [ w, h ], 'l' );
+
+  // Save!
+  doc.save( ( "00000" + spec.catalog_number ).substr( -5, 5 ) + '.pdf' );
+}
+
 export {
   cleanMineral,
   GCS_IMAGE_LINK,
@@ -259,5 +331,6 @@ export {
   cleanSearchItem,
   preventDefault,
   capitalize,
-  checkNumber
+  checkNumber,
+  buildPDF
 };
