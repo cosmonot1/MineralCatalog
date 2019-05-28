@@ -22,7 +22,7 @@ const cleanMineral = {
   'analysis.analyzed': false,
   'analysis.by': '',
   'analysis.method': '',
-  'acquired.date': '',
+  'acquired.date': null,
   'acquired.paid': '',
   'acquired.from': '',
   'acquired.where': '',

@@ -1,6 +1,7 @@
 import React from 'react';
 import Moment from 'moment';
 import { GCS_IMAGE_LINK } from './utils.js';
+import DatePicker from 'react-date-picker';
 
 class Specimen extends React.Component {
   constructor ( props ) {
