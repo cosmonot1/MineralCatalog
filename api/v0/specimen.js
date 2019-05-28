@@ -14,6 +14,8 @@ const { Storage } = require( '@google-cloud/storage' );
 const storage = new Storage();
 const image_bucket = storage.bucket( 'mineral-catalog-images' );
 const analysis_bucket = storage.bucket( 'mineral-catalog-analysis-documents' );
+const label_bucket = storage.bucket( 'mineral-catalog-labels' );
+const professional_photo_bucket = storage.bucket( 'mineral-catalog-professional-photos' );
 
 const EXPORT_PAGE_STEP = 100;
 
@@ -27,20 +29,23 @@ module.exports = {
   upload: c( fmtBody( fmtReqRes( uploadUri ) ) )
 };
 
-function downloadC( fn ) {
+function downloadC ( fn ) {
   return ( req, res, next ) => fn( req, res ).catch( next );
 }
 
-async function add( data ) {
+async function add ( data ) {
 
   data.specimen = flat.unflatten( data.specimen );
 
   try {
     const date = moment( data.specimen.acquired.date );
-    if ( !date.isValid() ) {
+    if ( data.specimen.acquired.date !== 0 && !data.specimen.acquired.date && 'date' in data.specimen.acquired ) {
+      data.specimen.acquired.date = null;
+    } else if ( !date || !date.isValid() ) {
       throw new Error( 'Bad date' );
+    } else {
+      data.specimen.acquired.date = date.toISOString();
     }
-    data.specimen.acquired.date = date.toISOString();
   } catch ( err ) {
     throw {
       code: 400,
@@ -49,10 +54,27 @@ async function add( data ) {
     }
   }
 
+  try {
+    const date = moment( data.specimen.locality.when );
+    if ( data.specimen.locality.when !== 0 && !data.specimen.locality.when && 'when' in data.specimen.locality) {
+      data.specimen.locality.when = null;
+    } else if ( !date || !date.isValid() ) {
+      throw new Error( 'Bad date' );
+    } else {
+      data.specimen.locality.when = date.toISOString();
+    }
+  } catch ( err ) {
+    throw {
+      code: 400,
+      reason: 'Unable to format locality when provided.',
+      err: new Error( 'Unable to format locality when provided.' )
+    }
+  }
+
   return await Specimen.add( data );
 }
 
-async function download( req, res ) {
+async function download ( req, res ) {
 
   if ( !req.body.specimen ) {
     req.body.specimen = {};
@@ -83,16 +105,19 @@ async function download( req, res ) {
     .finally( () => archive.finalize() );
 }
 
-async function update( data ) {
+async function update ( data ) {
 
   data.set = flat.unflatten( data.set );
 
   try {
     const date = moment( data.set.acquired.date );
-    if ( !date.isValid() ) {
+    if ( data.set.acquired.date !== 0 && !data.set.acquired.date && 'date' in data.set.acquired ) {
+      data.set.acquired.date = null;
+    } else if ( !date || !date.isValid() ) {
       throw new Error( 'Bad date' );
+    } else {
+      data.set.acquired.date = date.toISOString();
     }
-    data.set.acquired.date = date.toISOString();
   } catch ( err ) {
     throw {
       code: 400,
@@ -101,19 +126,37 @@ async function update( data ) {
     }
   }
 
+  try {
+    const date = moment( data.set.locality.when );
+    if ( data.set.locality.when !== 0 && !data.set.locality.when && 'when' in data.set.locality ) {
+      data.set.locality.when = null;
+    } else if ( !date || !date.isValid() ) {
+      throw new Error( 'Bad date' );
+    } else {
+      data.set.locality.when = date.toISOString();
+    }
+  } catch ( err ) {
+    throw {
+      code: 400,
+      reason: 'Unable to format locality when provided.',
+      err: new Error( 'Unable to format locality when provided.' )
+    }
+  }
+
   return await Specimen.update( data );
 }
 
-async function uploadUri( data ) {
-
-  console.log( data );
+async function uploadUri ( data ) {
 
   let bucket;
   if ( data.type === 'photo' ) {
     bucket = image_bucket;
   } else if ( data.type === 'analysis' ) {
-    console.log( 'analysis bucket' );
     bucket = analysis_bucket;
+  } else if ( data.type === 'label' ) {
+    bucket = label_bucket;
+  } else if ( data.type === 'professional_photo' ) {
+    bucket = professional_photo_bucket;
   } else {
     throw {
       code: 400,
@@ -134,13 +177,11 @@ async function uploadUri( data ) {
     expires: moment().add( 30, 'd' ).toISOString()
   } );
 
-  console.log( 'filename:', filename, '\nurl:', url );
-
   return { url, filename };
 
 }
 
-function fmtReqRes( fn ) {
+function fmtReqRes ( fn ) {
   return async req => {
 
     if ( !req.body.specimen ) {
@@ -156,7 +197,7 @@ function fmtReqRes( fn ) {
   };
 }
 
-async function __buildArchive( archive, query, type ) {
+async function __buildArchive ( archive, query, type ) {
   for ( let offset = 0; ; offset += EXPORT_PAGE_STEP ) {
 
     const { specimens } = await Specimen.list(
@@ -177,6 +218,8 @@ async function __buildArchive( archive, query, type ) {
       }
       s.photos.all = s.photos.all.map( photo => Config().services.gcloud.imageBaseLink + photo );
       s.documents = s.documents.map( doc => Config().services.gcloud.analysisDocBaseLink + doc );
+      s.provenance.label_files = s.documents.map( doc => Config().services.gcloud.labelBaseLink + doc );
+      s.photographed.files = s.documents.map( doc => Config().services.gcloud.professionalPhotoBaseLink + doc );
     } );
 
     const files = await __buildFiles( specimens, type );
@@ -199,7 +242,7 @@ async function __buildArchive( archive, query, type ) {
   }
 }
 
-async function __buildFiles( specimens, type ) {
+async function __buildFiles ( specimens, type ) {
 
   if ( type === 'json' ) {
     return __buildJSON( specimens );
@@ -212,11 +255,11 @@ async function __buildFiles( specimens, type ) {
 
 }
 
-function __buildJSON( specimens ) {
+function __buildJSON ( specimens ) {
   return specimens.map( a => JSON.stringify( a ) );
 }
 
-function __buildCSV( specimens ) {
+function __buildCSV ( specimens ) {
   return Promise.all(
     specimens.map( a => json2csv( flat.flatten( a ), { checkSchemaDifferences: false } ) )
   );

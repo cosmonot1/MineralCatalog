@@ -31,8 +31,9 @@ ENV GIT_DIR /home/app
 RUN npm install --unsafe-perm --quiet --only=dev
 
 # Add source files
-ADD views/src /home/app/views/src
+ADD views /home/app/views
 ADD .babelrc /home/app/.babelrc
+ADD webpack.config.js /home/app/webpack.config.js
 
 # Build app
 RUN npm run build
