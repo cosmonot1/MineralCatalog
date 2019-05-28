@@ -2,6 +2,7 @@ import React from 'react';
 import SpeciesAdder from './species-adder.js';
 import ExhibitAdder from './exhibit-adder.js';
 import FormerOwnerAdder from './former-owner-adder.js';
+import DatePicker from 'react-date-picker';
 import {
   cleanMineral, GCS_IMAGE_LINK, GCS_ANALYSIS_LINK, searchCriteria, GCS_LABEL_LINK,
   GCS_PROFESSIONAL_PHOTO_LINK, capitalize, checkNumber
@@ -33,6 +34,8 @@ class EditView extends React.Component {
       mineral[ 'photographed.files' ] = [];
       mineral[ 'provenance.label_files' ] = [];
     }
+
+    new Date( mineral[ 'acquired.date' ] || '' );
 
     this.state = Object.assign(
       {
@@ -144,6 +147,10 @@ class EditView extends React.Component {
   handleChange ( e ) {
     const t = e.target;
     this.setState( { [ t.name ]: t.type === 'file' ? t.files : ( t.type === 'checkbox' ? t.checked : t.value ) } );
+  }
+
+  handleChangeAddName(name){
+    return (value)=>this.handleChange({target:{name:name, value: (new Date(value)).toISOString()}});
   }
 
   goList () {
@@ -436,10 +443,7 @@ class EditView extends React.Component {
             <strong>Acquired</strong>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
-            <div>Date (YYYY-MM-DD ex: Sep 23 1994 = 1994-09-23)</div>
-            {/*TODO: date picker*/}
-            <input type="text" name="acquired.date" value={this.state[ 'acquired.date' ] || ''}
-                   onChange={this.handleChange.bind( this )}/>
+            <DatePicker name="acquired.date" format="dd-MM-y" maxDetail="month" value={new Date(this.state[ 'acquired.date' ] || null)} onChange={this.handleChangeAddName.call(this,'acquired.date') }/>
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>Paid ($)</div>
@@ -676,9 +680,7 @@ class EditView extends React.Component {
           </div>
           <div style={{ 'paddingRight': 8, 'paddingBottom': 8, display: 'inline-block' }}>
             <div>When (YYYY-MM-DD ex: Sep 23 1994 = 1994-09-23)</div>
-            {/*TODO: date picker*/}
-            <input type="text" name="locality.when" value={this.state[ 'locality.when' ] || ''}
-                   onChange={this.handleChange.bind( this )}/>
+            <DatePicker name="locality.when" calendarIcon="iconTest" clearIcon="testClear" format="dd-MM-y" maxDetail="month" value={new Date(this.state[ 'locality.when' ] || null)} onChange={this.handleChangeAddName.call(this,'locality.when') }/>
           </div>
         </div>
 
