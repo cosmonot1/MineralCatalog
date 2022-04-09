@@ -33,7 +33,7 @@
     "json-2-csv": "^2.4.0",
     "jsonwebtoken": "^8.4.0",
     "lodash": "^4.17.11",
-    "moment": "^2.22.2",
+    "moment": "^2.29.2",
     "mongodb": "^3.1.10",
     "mongojs": "^2.6.0",
     "object-path": "^0.11.4",
