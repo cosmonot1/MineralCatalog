@@ -28,7 +28,7 @@
     "cookie-parser": "^1.4.3",
     "deep-equal": "^1.0.1",
     "deepmerge": "^3.0.0",
-    "express": "^4.16.4",
+    "express": "^4.17.3",
     "flat": "^4.1.0",
     "json-2-csv": "^2.4.0",
     "jsonwebtoken": "^8.4.0",
